@@ -16,16 +16,9 @@ class User(AbstractUser):
         (OWNER,'Owner'),
     )
 
-    username = models.CharField(
-        max_length=30,
-        unique=True,
-        validators=[RegexValidator(
-            regex=r'^@\w{3,}$',
-            message='Username must consist of @ followed by at least three alphanumericals'
-        )]
-    )
+    username = models.EmailField(unique=True, blank=False)
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
-    email = models.EmailField(unique=True, blank=False)
     bio = models.CharField(max_length=520, blank=True)
     role = models.PositiveSmallIntegerField(choices = ROLE_CHOICES, default = APPLICANT)
+#jacky12 = User.objects.create_user(username = 'jack234y23@gmail.com', first_name = 'john', last_name = 'doe', password = 'Password123', bio = 'hi i hope this works', role = 2)
