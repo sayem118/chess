@@ -8,13 +8,13 @@ from clubs.models import User
 class UserModelTestCase(TestCase):
     """Unit tests for the User model."""
 
+    fixtures = [
+        "clubs/tests/fixtures/default_user.json",
+        "clubs/tests/fixtures/other_users.json"
+    ]
+
     def setUp(self):
-        self.user = User.objects.create_user(
-            email="johndoe@example.org",
-            first_name="John",
-            last_name="Doe",
-            bio="The quick brown fox jumped over the lazy dog."
-        )
+        self.user = User.objects.get(email="johndoe@example.org")
 
     def test_valid_user(self):
         self._assert_user_is_valid()
@@ -24,12 +24,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_first_name_need_not_be_unique(self):
-        second_user = User.objects.create_user(
-            email="janedoe@example.org",
-            first_name="Jane",
-            last_name="Doe",
-            bio="This is my bio."
-        )
+        second_user = User.objects.get(email="janedoe@example.org")
         self.user.first_name = second_user.first_name
         self._assert_user_is_valid()
 
@@ -46,12 +41,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_last_name_need_not_be_unique(self):
-        second_user = User.objects.create_user(
-            email="janedoe@example.org",
-            first_name="Jane",
-            last_name="Doe",
-            bio="This is my bio."
-        )
+        second_user = User.objects.get(email="janedoe@example.org")
         self.user.last_name = second_user.last_name
         self._assert_user_is_valid()
 
@@ -68,12 +58,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_email_must_be_unique(self):
-        second_user = User.objects.create_user(
-            email="janedoe@example.org",
-            first_name="Jane",
-            last_name="Doe",
-            bio="This is my bio."
-        )
+        second_user = User.objects.get(email="janedoe@example.org")
         self.user.email = second_user.email
         self._assert_user_is_invalid()
 
@@ -102,12 +87,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_bio_need_not_be_unique(self):
-        second_user = User.objects.create_user(
-            email="janedoe@example.org",
-            first_name="Jane",
-            last_name="Doe",
-            bio="This is my bio."
-        )
+        second_user = User.objects.get(email="janedoe@example.org")
         self.user.bio = second_user.bio
         self._assert_user_is_valid()
 
