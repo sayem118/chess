@@ -11,8 +11,12 @@ class LogInForm(forms.Form):
 class SignUpForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'bio']
-        widgets = {"bio": forms.Textarea()}
+        fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
+        widgets = {
+            'bio': forms.Textarea(),
+            'experience_level': forms.Textarea(),
+            'personal_statement': forms.Textarea()
+        }
 
     new_password = forms.CharField(
         label='Password',
@@ -41,6 +45,8 @@ class SignUpForm(forms.ModelForm):
             last_name=self.cleaned_data.get('last_name'),
             email=self.cleaned_data.get('email'),
             bio=self.cleaned_data.get('bio'),
-            password=self.cleaned_data.get('new_password'),
+            experience_level=self.cleaned_data.get('experience_level'),
+            personal_statement=self.cleaned_data.get('personal_statement'),
+            password=self.cleaned_data.get('new_password')
         )
         return user

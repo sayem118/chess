@@ -7,6 +7,8 @@
       "last_name": "Doe",
       "email": "janedoe@example.org",
       "bio": "The quick brown fox jumps over the lazy dog.",
+      "experience_level": "I am a beginner.",
+      "personal_statement": "I am a second-year student.",
       "password": "pbkdf2_sha256$260000$pILinojg9wMnsFm4bzW9LQ$PgODjeC0Rz9GVDdVHRCbjIWUbXwP/boO6kpydA/SIrU=",
       "is_active": true
     }

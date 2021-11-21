@@ -99,6 +99,40 @@ class UserModelTestCase(TestCase):
         self.user.bio = 'x' * 521
         self._assert_user_is_invalid()
 
+    def test_experience_level_must_not_be_blank(self):
+        self.user.experience_level = ''
+        self._assert_user_is_invalid()
+
+    def test_experience_level_need_not_be_unique(self):
+        second_user = User.objects.get(email="janedoe@example.org")
+        self.user.experience_level = second_user.experience_level
+        self._assert_user_is_valid()
+
+    def test_experience_level_may_contain_520_characters(self):
+        self.user.experience_level = 'x' * 520
+        self._assert_user_is_valid()
+
+    def test_experience_level_must_not_contain_more_than_520_characters(self):
+        self.user.experience_level = 'x' * 521
+        self._assert_user_is_invalid()
+
+    def test_personal_statement_must_not_be_blank(self):
+        self.user.personal_statement = ''
+        self._assert_user_is_invalid()
+
+    def test_personal_statement_need_not_be_unique(self):
+        second_user = User.objects.get(email="janedoe@example.org")
+        self.user.personal_statement = second_user.personal_statement
+        self._assert_user_is_valid()
+
+    def test_personal_statement_may_contain_520_characters(self):
+        self.user.personal_statement = 'x' * 520
+        self._assert_user_is_valid()
+
+    def test_personal_statement_must_not_contain_more_than_520_characters(self):
+        self.user.personal_statement = 'x' * 521
+        self._assert_user_is_invalid()
+
     def test_default_role_is_applicant(self):
         self.assertEqual(self.user.role, User.APPLICANT)
 
