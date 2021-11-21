@@ -57,6 +57,8 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     bio = models.CharField(max_length=520, blank=True)
+    experience_level = models.CharField(max_length=520, blank=False)
+    personal_statement = models.CharField(max_length=520, blank=False)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=APPLICANT)
 
     USERNAME_FIELD = 'email'

@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.db import IntegrityError
 from faker import Faker
 from clubs.models import User
+
 
 class Command(BaseCommand):
     PASSWORD = "Password123"
@@ -13,10 +15,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user_count = 0
         while user_count < Command.USER_COUNT:
-            print(f'Seeding user {user_count}',  end='\r')
+            print(f'Seeding user {user_count}', end='\r')
             try:
                 self._create_user()
-            except (django.db.utils.IntegrityError):
+            except IntegrityError:
                 continue
             user_count += 1
         print('User seeding complete')
@@ -26,12 +28,16 @@ class Command(BaseCommand):
         last_name = self.faker.last_name()
         email = self._email(first_name, last_name)
         bio = self.faker.text(max_nb_chars=520)
+        experience_level = self.faker.text(max_nb_chars=520)
+        personal_statement = self.faker.text(max_nb_chars=520)
         User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             email=email,
             password=Command.PASSWORD,
-            bio=bio
+            bio=bio,
+            experience_level=experience_level,
+            personal_statement=personal_statement
         )
 
     def _email(self, first_name, last_name):
