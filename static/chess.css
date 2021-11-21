@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'chicken';
-  src:  url('fonts/chicken.eot?lgzsjg');
-  src:  url('fonts/chicken.eot?lgzsjg#iefix') format('embedded-opentype'),
-    url('fonts/chicken.ttf?lgzsjg') format('truetype'),
-    url('fonts/chicken.woff?lgzsjg') format('woff'),
-    url('fonts/chicken.svg?lgzsjg#icomoon') format('svg');
+  src:  url('fonts/chess.eot?lgzsjg');
+  src:  url('fonts/chess.eot?lgzsjg#iefix') format('embedded-opentype'),
+    url('fonts/chess.ttf?lgzsjg') format('truetype'),
+    url('fonts/chess.woff?lgzsjg') format('woff'),
+    url('fonts/chess.svg?lgzsjg#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
