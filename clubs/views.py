@@ -1,5 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ObjectDoesNotExist, ImproperlyConfigured
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.http import HttpResponseForbidden, Http404
+from django.conf import settings
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormView, UpdateView, CreateView
+from django.urls import reverse
 from .models import User
 from .forms import LogInForm, SignUpForm
 from django.urls import reverse
@@ -8,38 +19,75 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 
-@login_prohibited
-def log_in(request):
-    if request.method == 'POST':
+
+class LoginProhibitedMixin:
+    """Mixin that redirects when a user is logged in"""
+
+    redirect_when_logged_in_url = None
+
+    def dispatch(self, *args, **kwargs):
+        """Redirects when logged in or dispatch as normal otherwise."""
+        if self.request.user.is_authenticated:
+            return self.handle_already_logged_in(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
+
+    def get_redirect_when_logged_in_url(self):
+        if self.redirect_when_logged_in_url is None:
+            raise ImproperlyConfigured(
+                "LoginProhibitedMixin requires either a value for "
+                "'redirect_when_logged_in_url', or an implementation for "
+                "'get_redirect_when_logged_in_url()'"
+            )
+        else:
+            return self.redirect_when_logged_in_url
+
+    def handle_already_logged_in(self, *args, **kwargs):
+        url = self.get_redirect_when_logged_in_url()
+        return redirect(url)
+
+class LogInView(LoginProhibitedMixin, View):
+    """View that handles log in"""
+
+    http_method_names = ['get', 'post']
+    redirect_when_logged_in_url = 'start'
+
+    def get(self, request):
+        """Display log in template"""
+        self.next = request.GET.get('next') or ''
+        return self.render()
+
+    def post(self, request):
+        """Handle log in attempt"""
         form = LogInForm(request.POST)
-        next = request.POST.get('next') or ''
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(email=email, password=password)
-            if user is not None:
-                login(request, user)
-                redirect_url = next or 'start'
-                return redirect(redirect_url)
-        messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
-    else:
-        next = request.GET.get('next') or ''
-    form = LogInForm()
-    return render(request, 'log_in.html', {'form': form, 'next': next})
-
-
-@login_prohibited
-def sign_up(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
+        user = form.get_user()
+        if user is not None:
             login(request, user)
-            return redirect('start')
-    else:
-        form = SignUpForm()
-    return render(request, 'sign_up.html', {'form': form})
+            return redirect(self.next)
+        messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+        return self.render()
 
+    def render(self):
+        """Render log in template with blank log in form"""
+
+        form = LogInForm()
+        return render(self.request, 'log_in.html', {'form': form, 'next': self.next})
+
+
+class SignUpView(LoginProhibitedMixin, FormView):
+    """View that signs up user."""
+
+    form_class = SignUpForm
+    template_name = "sign_up.html"
+    redirect_when_logged_in_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
+
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 @login_prohibited
 def home(request):
