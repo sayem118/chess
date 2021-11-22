@@ -6,7 +6,7 @@ from django.urls import reverse
 from .helpers import login_prohibited
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
+from django.contrib.auth import get_user_model
 
 @login_prohibited
 def log_in(request):
@@ -51,6 +51,9 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
+def user_list(request):
+    users = get_user_model().objects.all()
+    return render(request, 'user_list.html', {'users': users})
 
 @login_required
 def start(request):

@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <title>Fellow comrades</title>
+  </head>
+  <body>
+    <h1>User List</h1>
+    {% for user in users %}
+    <p>
+      <h1>{{user.first_name}} {{user.last_name}}</h1>
+      <h1>{{user.bio}}</h1>
+      <h1>{{user.email}}</h1>
+      <h1>----------------------------------------------</h1>
+    </p>
+    {%endfor%}
+  </body>
+</head>
+</html>
