@@ -106,3 +106,7 @@ def user_list(request):
 @login_required
 def start(request):
     return render(request, 'start.html')
+
+@login_required
+def member_status(request):
+    return render(request, 'member_status.html')
