@@ -113,7 +113,7 @@ def member_status(request):
     if current_user.role == User.APPLICANT:
         return render(request, 'applicant_status.html')
     elif current_user.role == User.MEMBER:
-        return render(request, 'applicant_status.html')
+        return render(request, 'member_status.html')
     elif current_user.role == User.OFFICER:
         return render(request, 'officer_status.html')
     elif current_user.role == User.OWNER:
