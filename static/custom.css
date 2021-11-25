@@ -142,6 +142,31 @@ h3.profile-title {
 }
 
 /*
+ *  Listed user
+ */
+.user-list-fullname {
+  font-weight: bold;
+}
+
+.user-list-bio {
+  margin-left: 10px;
+  color: #777777;
+}
+
+.user-list-email {
+  margin-left: 10px;
+}
+
+.user-list-btn {
+  margin-left:10px;
+}
+
+.user-list-hr{
+  margin-top: 0.2rem;
+  margin-bottom:0.2rem;
+}
+
+/*
  * Hyperlinks
  */
 .content a {
