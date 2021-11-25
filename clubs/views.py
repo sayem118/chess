@@ -12,7 +12,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, UpdateView, CreateView
 from django.urls import reverse
 from .models import User
-from .forms import LogInForm, SignUpForm
+from .forms import LogInForm, SignUpForm, UserForm
 from django.urls import reverse
 from .helpers import login_prohibited
 from django.contrib.auth.decorators import login_required
@@ -118,3 +118,16 @@ def member_status(request):
         return render(request, 'officer_status.html')
     elif current_user.role == User.OWNER:
         return render(request, 'owner_status.html')
+
+@login_required
+def profile(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = UserForm(instance=current_user, data=request.POST)
+        if form.is_valid():
+            messages.add_message(request, messages.SUCCESS, "Profile updated!")
+            form.save()
+            return redirect('start')
+    else:
+        form = UserForm(instance=current_user)
+    return render(request, 'profile.html', {'form': form})
