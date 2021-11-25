@@ -1,8 +1,8 @@
 """Unit tests of the user form."""
 from django import forms
 from django.test import TestCase
-from microblogs.forms import UserForm
-from microblogs.models import User
+from clubs.forms import UserForm
+from clubs.models import User
 
 class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
@@ -38,7 +38,7 @@ class UserFormTestCase(TestCase):
         self.assertFalse(form.is_valid())
 
     def test_form_must_save_correctly(self):
-        user = User.objects.get(username='@johndoe')
+        user = User.objects.get(email='johndoe@example.org')
         form = UserForm(instance=user, data=self.form_input)
         before_count = User.objects.count()
         form.save()
