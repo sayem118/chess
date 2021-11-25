@@ -8,14 +8,13 @@ class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
 
     fixtures = [
-        'microblogs/tests/fixtures/default_user.json'
+        'clubs/tests/fixtures/default_user.json'
     ]
 
     def setUp(self):
         self.form_input = {
             'first_name': 'Jane',
             'last_name': 'Doe',
-            'username': '@janedoe',
             'email': 'janedoe@example.org',
             'bio': 'My bio',
         }
@@ -24,7 +23,6 @@ class UserFormTestCase(TestCase):
         form = UserForm()
         self.assertIn('first_name', form.fields)
         self.assertIn('last_name', form.fields)
-        self.assertIn('username', form.fields)
         self.assertIn('email', form.fields)
         email_field = form.fields['email']
         self.assertTrue(isinstance(email_field, forms.EmailField))
@@ -35,7 +33,7 @@ class UserFormTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_form_uses_model_validation(self):
-        self.form_input['username'] = 'badusername'
+        self.form_input['email'] = 'bademail@@'
         form = UserForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
@@ -46,7 +44,6 @@ class UserFormTestCase(TestCase):
         form.save()
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
-        self.assertEqual(user.username, '@janedoe')
         self.assertEqual(user.first_name, 'Jane')
         self.assertEqual(user.last_name, 'Doe')
         self.assertEqual(user.email, 'janedoe@example.org')
