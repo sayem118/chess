@@ -1,6 +1,7 @@
-from django.core.validators import RegexValidator
-from django.contrib.auth import authenticate
 from django import forms
+from django.contrib.auth import authenticate
+from django.core.validators import RegexValidator
+
 from .models import User
 
 
@@ -19,6 +20,7 @@ class LogInForm(forms.Form):
             password = self.cleaned_data.get('password')
             user = authenticate(email=email, password=password)
         return user
+
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -63,6 +65,7 @@ class SignUpForm(forms.ModelForm):
         )
         return user
 
+
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
 
@@ -71,7 +74,8 @@ class UserForm(forms.ModelForm):
 
         model = User
         fields = ['first_name', 'last_name', 'email', 'bio']
-        widgets = { 'bio': forms.Textarea() }
+        widgets = {'bio': forms.Textarea()}
+
 
 class PasswordForm(forms.Form):
     """Form enabling users to change their password."""
@@ -84,7 +88,7 @@ class PasswordForm(forms.Form):
             regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
             message='Password must contain an uppercase character, a lowercase '
                     'character and a number'
-            )]
+        )]
     )
     password_confirmation = forms.CharField(label='Password confirmation', widget=forms.PasswordInput())
 

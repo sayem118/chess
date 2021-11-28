@@ -10,7 +10,8 @@
       "experience_level": "I am a beginner.",
       "personal_statement": "I am a second-year student.",
       "password": "pbkdf2_sha256$260000$pILinojg9wMnsFm4bzW9LQ$PgODjeC0Rz9GVDdVHRCbjIWUbXwP/boO6kpydA/SIrU=",
-      "is_active": true
+      "is_active": true,
+      "role": 2
     }
   }
 ]

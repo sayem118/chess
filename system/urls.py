@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
 from clubs import views
 
 urlpatterns = [
@@ -25,7 +26,8 @@ urlpatterns = [
     path('start/', views.start, name='start'),
     path('password/', views.password, name='password'),
     path('log_out/', views.log_out, name='log_out'),
-    path('user_list/', views.user_list, name = 'user_list'),
-    path('member_status/', views.member_status, name = 'member_status'),
+    path('user_list/', views.user_list, name='user_list'),
+    path('member_status/', views.member_status, name='member_status'),
     path('profile/', views.profile, name='profile'),
+    path('approve_applicant/<int:user_id>', views.approve_applicant, name='approve_applicant')
 ]

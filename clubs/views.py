@@ -1,23 +1,18 @@
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect, render
-from django.contrib.auth.hashers import check_password
-from django.core.exceptions import ObjectDoesNotExist, ImproperlyConfigured
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views import View
-from django.utils.decorators import method_decorator
-from django.http import HttpResponseForbidden, Http404
 from django.conf import settings
-from django.views.generic import ListView
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView, UpdateView, CreateView
-from django.urls import reverse
-from .models import User
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
-from django.urls import reverse
-from .helpers import login_prohibited
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views import View
+from django.views.generic.edit import FormView
+
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
+from .helpers import login_prohibited, officer_only
+from .models import User
 
 
 class LoginProhibitedMixin:
@@ -44,6 +39,7 @@ class LoginProhibitedMixin:
     def handle_already_logged_in(self, *args, **kwargs):
         url = self.get_redirect_when_logged_in_url()
         return redirect(url)
+
 
 class LogInView(LoginProhibitedMixin, View):
     """View that handles log in"""
@@ -89,6 +85,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
+
 @login_prohibited
 def home(request):
     logout(request)
@@ -99,13 +96,16 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
+
 def user_list(request):
     users = get_user_model().objects.all()
     return render(request, 'user_list.html', {'users': users})
 
+
 @login_required
 def start(request):
     return render(request, 'start.html')
+
 
 @login_required
 def member_status(request):
@@ -115,9 +115,11 @@ def member_status(request):
     elif current_user.role == User.MEMBER:
         return render(request, 'member_status.html')
     elif current_user.role == User.OFFICER:
-        return render(request, 'officer_status.html')
+        applicants = User.objects.filter(role=User.APPLICANT)
+        return render(request, 'officer_status.html', {'applicants': applicants})
     elif current_user.role == User.OWNER:
         return render(request, 'owner_status.html')
+
 
 @login_required
 def profile(request):
@@ -131,6 +133,7 @@ def profile(request):
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
+
 
 @login_required
 def password(request):
@@ -148,3 +151,16 @@ def password(request):
                 return redirect('start')
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
+
+
+@officer_only
+def approve_applicant(request, user_id):
+    try:
+        applicant = User.objects.get(id=user_id)
+        if applicant.role == User.APPLICANT:
+            applicant.role = User.MEMBER
+            applicant.save()
+    except ObjectDoesNotExist:
+        return redirect('start')
+    else:
+        return redirect('member_status')

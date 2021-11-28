@@ -16,23 +16,20 @@
     {% for user in users %}
     <div class="row">
       <div class="col-12">
-        <p>
-          <h1 class="user-list-fullname">{{user.first_name}} {{user.last_name}}</h1>
-          <h1 class="user-list-email">{{user.email}}</h1>
-          {% randomIdNumber as idNumber %}
-          <button class="btn btn-primary user-list-btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBio{{idNumber}}" aria-expanded="false" aria-controls="collapseBio{{idNumber}}">
-              Toggle bio
-          </button>
-          <h1 class="user-list-bio collapse" id="collapseBio{{idNumber}}">
-            {{user.bio}}
-          </h1>
-        </p>
+        <h1 class="user-list-fullname">{{user.first_name}} {{user.last_name}}</h1>
+        <h1 class="user-list-email">{{user.email}}</h1>
+        {% randomIdNumber as idNumber %}
+        <button class="btn btn-primary user-list-btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBio{{idNumber}}" aria-expanded="false" aria-controls="collapseBio{{idNumber}}">
+            Toggle bio
+        </button>
+        <h1 class="user-list-bio collapse" id="collapseBio{{idNumber}}">
+          {{user.bio}}
+        </h1>
       </div>
     </div>
     <hr class="user-list-hr"/>
     {%endfor%}
     </div>
   </body>
-</head>
 </html>
 {% endblock %}
