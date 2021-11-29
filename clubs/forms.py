@@ -52,7 +52,7 @@ class SignUpForm(forms.ModelForm):
 
     def save(self):
         """Create a new user."""
-
+        #num = User.objects.count()
         super().save(commit=False)
         user = User.objects.create_user(
             first_name=self.cleaned_data.get('first_name'),

@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrap_pagination',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -136,3 +137,6 @@ MESSAGE_TAGS = {
     message_constants.DEBUG: 'dark',
     message_constants.ERROR: 'danger',
 }
+
+# Page length
+USERS_PER_PAGE = 10

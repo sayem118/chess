@@ -1,35 +1,26 @@
 {% extends 'base_content.html' %}
+{% load bootstrap_pagination %}
 {% block content %}
-{% load random_id_generator %}
-<html>
-  <head>
-    <title>Chess</title>
-  </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-              <h1>User List</h1>
-        </div>
-      </div>
-      <hr class="user-list-hr"/>
-    {% for user in users %}
-    <div class="row">
-      <div class="col-12">
-        <h1 class="user-list-fullname">{{user.first_name}} {{user.last_name}}</h1>
-        <h1 class="user-list-email">{{user.email}}</h1>
-        {% randomIdNumber as idNumber %}
-        <button class="btn btn-primary user-list-btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBio{{idNumber}}" aria-expanded="false" aria-controls="collapseBio{{idNumber}}">
-            Toggle bio
-        </button>
-        <h1 class="user-list-bio collapse" id="collapseBio{{idNumber}}">
-          {{user.bio}}
-        </h1>
-      </div>
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Users</h1>
+      {% bootstrap_paginate page_obj range=6 previous_label="Previous" next_label="Next" show_first_last="true" %}
+      <table class="table">
+        {% for user in users %}
+          {% if user.role == 1 %}
+            <tr>
+              <td>
+                <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.email }}" class="rounded-circle" >
+              </td>
+              <td>{{ user.full_name }}</td>
+              <td><a href="{% url 'show_user' user.id %}">{{ user.email }}</a></td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+      {% bootstrap_paginate page_obj range=6 previous_label="Previous" next_label="Next" show_first_last="true" %}
     </div>
-    <hr class="user-list-hr"/>
-    {%endfor%}
-    </div>
-  </body>
-</html>
+  </div>
+</div>
 {% endblock %}

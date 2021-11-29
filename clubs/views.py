@@ -6,9 +6,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.shortcuts import redirect, render
+from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
 from django.urls import reverse
 from django.views import View
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
+from django.views.generic import ListView
 
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
 from .helpers import login_prohibited, officer_only
@@ -40,6 +45,35 @@ class LoginProhibitedMixin:
         url = self.get_redirect_when_logged_in_url()
         return redirect(url)
 
+class ShowUserView(DetailView):
+    """View that shows indiviual user details"""
+
+    model = User
+    template_name = 'show_user.html'
+    context_object_name = "user"
+    pk_url_kwarg = 'user_id'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        """Generate content to be displayed in the template"""
+
+        context = super().get_context_data(*args, **kwargs)
+        user = self.get_object()
+        context['bio'] = self.request.user.bio
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """handle get request, and redirect to user_list if user_id invalid"""
+        if self.request.user.role == User.MEMBER:
+            try:
+                return super().get(request, *args, **kwargs)
+            except Http404:
+                return redirect('user_list')
+        else:
+            return redirect('user_list')
 
 class LogInView(LoginProhibitedMixin, View):
     """View that handles log in"""
@@ -97,9 +131,13 @@ def log_out(request):
     return redirect('home')
 
 
-def user_list(request):
-    users = get_user_model().objects.all()
-    return render(request, 'user_list.html', {'users': users})
+class UserListView(LoginRequiredMixin, ListView):
+    """View that shows a list of all users"""
+
+    model = User
+    template_name = "user_list.html"
+    context_object_name = "users"
+    paginate_by = settings.USERS_PER_PAGE
 
 
 @login_required
