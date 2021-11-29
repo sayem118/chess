@@ -67,12 +67,13 @@ class ShowUserView(DetailView):
 
     def get(self, request, *args, **kwargs):
         """handle get request, and redirect to user_list if user_id invalid"""
-        if self.request.user.role == User.MEMBER:
-            try:
+
+        try:
+            if self.get_object().role == User.MEMBER:
                 return super().get(request, *args, **kwargs)
-            except Http404:
+            else:
                 return redirect('user_list')
-        else:
+        except Http404:
             return redirect('user_list')
 
 class LogInView(LoginProhibitedMixin, View):
