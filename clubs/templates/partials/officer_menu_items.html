@@ -1,0 +1,5 @@
+{% if user.role == 2 %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'applicants_list' %}">Approve applicants</a>
+    </li>
+{% endif %}

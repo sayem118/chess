@@ -1,22 +1,21 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
-from django.shortcuts import redirect, render
-from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.http import Http404
+from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
-from django.views.generic import ListView
 
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
-from .helpers import login_prohibited, officer_only
+from .helpers import login_prohibited, permission_required
 from .models import User
 
 
@@ -157,8 +156,6 @@ def member_status(request):
         return render(request, 'member_status.html')
     elif current_user.role == User.OFFICER:
         return render(request, 'officer_status.html')
-        # applicants = User.objects.filter(role=User.APPLICANT)
-        # return render(request, 'accept_applicants.html', {'applicants': applicants})
     elif current_user.role == User.OWNER:
         return render(request, 'owner_status.html')
 
@@ -195,13 +192,13 @@ def password(request):
     return render(request, 'password.html', {'form': form})
 
 
-@officer_only
+@permission_required(User.OFFICER)
 def applicants_list(request):
     applicants = User.objects.filter(role=User.APPLICANT)
-    return render(request, 'accept_applicants.html', {'applicants': applicants})
+    return render(request, 'approve_applicants.html', {'applicants': applicants})
 
 
-@officer_only
+@permission_required(User.OFFICER)
 def approve_applicant(request, user_id):
     try:
         applicant = User.objects.get(id=user_id)
@@ -212,3 +209,41 @@ def approve_applicant(request, user_id):
         return redirect('start')
     else:
         return redirect('applicants_list')
+
+
+@permission_required(User.OWNER)
+def members_list(request):
+    members = User.objects.filter(role=User.MEMBER)
+    return render(request, 'promote_members.html', {'members': members})
+
+
+@permission_required(User.OWNER)
+def promote_member(request, user_id):
+    try:
+        member = User.objects.get(id=user_id)
+        if member.role == User.MEMBER:
+            member.role = User.OFFICER
+            member.save()
+    except ObjectDoesNotExist:
+        return redirect('start')
+    else:
+        return redirect('members_list')
+
+
+@permission_required(User.OWNER)
+def officers_list(request):
+    officers = User.objects.filter(role=User.OFFICER)
+    return render(request, 'demote_officers.html', {'officers': officers})
+
+
+@permission_required(User.OWNER)
+def demote_officer(request, user_id):
+    try:
+        officer = User.objects.get(id=user_id)
+        if officer.role == User.OFFICER:
+            officer.role = User.MEMBER
+            officer.save()
+    except ObjectDoesNotExist:
+        return redirect('start')
+    else:
+        return redirect('officers_list')

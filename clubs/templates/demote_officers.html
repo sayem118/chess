@@ -3,14 +3,14 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>Approve applicants</h1>
+                <h1>Demote officers</h1>
                 <table class="table">
-                    {% for applicant in applicants %}
+                    {% for officer in officers %}
                         <tr>
-                        {% include 'partials/user_row.html' with user=applicant %}
+                        {% include 'partials/user_row.html' with user=officer %}
                             <td>
-                                <form action="{% url 'approve_applicant' user_id=applicant.id %}" method="get">
-                                    <button class="btn btn-primary">Approve</button>
+                                <form action="{% url 'demote_officer' user_id=officer.id %}" method="get">
+                                    <button class="btn btn-primary">Demote</button>
                                 </form>
                             </td>
                         </tr>
