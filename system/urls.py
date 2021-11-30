@@ -30,5 +30,6 @@ urlpatterns = [
     path('user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),    
     path('member_status/', views.member_status, name='member_status'),
     path('profile/', views.profile, name='profile'),
+    path('applicants_list/', views.applicants_list, name='applicants_list'),
     path('approve_applicant/<int:user_id>', views.approve_applicant, name='approve_applicant')
 ]

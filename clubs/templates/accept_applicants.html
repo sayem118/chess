@@ -1,0 +1,26 @@
+{% extends "base_content.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>Applicants to be approved</h1>
+                <table class="table">
+                    {% for applicant in applicants %}
+                        <tr>
+                            <td>
+                                <img src="{{ applicant.mini_gravatar }}"
+                                     alt="Gravatar of {{ applicant.full_name }}" class="rounded-circle">
+                            </td>
+                            <td>{{ applicant.full_name }}</td>
+                            <td>
+                                <form action="{% url 'approve_applicant' user_id=applicant.id %}" method="get">
+                                    <button class="btn btn-primary">Approve</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

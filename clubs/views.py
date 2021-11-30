@@ -45,6 +45,7 @@ class LoginProhibitedMixin:
         url = self.get_redirect_when_logged_in_url()
         return redirect(url)
 
+
 class ShowUserView(DetailView):
     """View that shows indiviual user details"""
 
@@ -75,6 +76,7 @@ class ShowUserView(DetailView):
                 return redirect('user_list')
         except Http404:
             return redirect('user_list')
+
 
 class LogInView(LoginProhibitedMixin, View):
     """View that handles log in"""
@@ -154,8 +156,9 @@ def member_status(request):
     elif current_user.role == User.MEMBER:
         return render(request, 'member_status.html')
     elif current_user.role == User.OFFICER:
-        applicants = User.objects.filter(role=User.APPLICANT)
-        return render(request, 'officer_status.html', {'applicants': applicants})
+        return render(request, 'officer_status.html')
+        # applicants = User.objects.filter(role=User.APPLICANT)
+        # return render(request, 'accept_applicants.html', {'applicants': applicants})
     elif current_user.role == User.OWNER:
         return render(request, 'owner_status.html')
 
@@ -193,6 +196,12 @@ def password(request):
 
 
 @officer_only
+def applicants_list(request):
+    applicants = User.objects.filter(role=User.APPLICANT)
+    return render(request, 'accept_applicants.html', {'applicants': applicants})
+
+
+@officer_only
 def approve_applicant(request, user_id):
     try:
         applicant = User.objects.get(id=user_id)
@@ -202,4 +211,4 @@ def approve_applicant(request, user_id):
     except ObjectDoesNotExist:
         return redirect('start')
     else:
-        return redirect('member_status')
+        return redirect('applicants_list')
