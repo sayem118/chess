@@ -64,12 +64,7 @@ class ShowUserView(DetailView):
 
         context = super().get_context_data(*args, **kwargs)
         user = self.get_object()
-        if self.client.role == User.OFFICER:
-            context['bio'] = self.request.user.bio
-            context['personal_statement'] = self.request.user.personal_statement
-            context['experience_level'] = self.request.user.experience_level
-        else:
-            context['bio'] = self.request.user.bio
+        context['is_staff'] = self.request.user.role in {User.OFFICER, User.OWNER}
         return context
 
     def get(self, request, *args, **kwargs):
