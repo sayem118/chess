@@ -43,3 +43,6 @@ class Command(BaseCommand):
     def _email(self, first_name, last_name):
         email = f'{first_name}.{last_name}@example.org'
         return email
+
+    def _add_default_users(self):
+        pass
