@@ -149,7 +149,10 @@ class UserListView(LoginRequiredMixin, ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        return User.objects.exclude(role = User.APPLICANT)
+        if self.request.user == User.MEMBER:
+            return User.objects.filter(role = User.MEMBER)
+        else:
+            return User.objects.exclude(role = User.APPLICANT)
 
 
 @login_required
