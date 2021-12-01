@@ -62,11 +62,6 @@ class ShowUserTest(TestCase):
         self.assertNotContains(response, "Jenny Doe")
         self.assertNotContains(response, "johndoe@example.org")
 
-    def test_get_show_user_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
-        response = self.client.get(self.url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-
     def test_redirects_for_user_that_is_an_applicant(self):
         self.client.login(email=self.applicant.email, password='Password123')
         url = reverse('show_user', kwargs={'user_id': self.member.id})
@@ -74,6 +69,19 @@ class ShowUserTest(TestCase):
         response_url = reverse('start')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
+
+    def test_get_show_user_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
+    def test_get_show_user_with_invalid_id(self):
+        self.client.login(email=self.member.email, password='Password123')
+        url = reverse('show_user', kwargs={'user_id': self.member.id+9999})
+        response = self.client.get(url, follow=True)
+        response_url = reverse('user_list')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'user_list.html')
 
     def test_members_cannot_view_officer(self):
         self.client.login(email=self.member.email, password='Password123')

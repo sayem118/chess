@@ -1,9 +1,11 @@
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
+from with_asserts.mixin import AssertHTMLMixin
 from clubs.models import User
 
-class UserListTest(TestCase):
+
+class UserListTest(TestCase, AssertHTMLMixin):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -73,7 +75,7 @@ class UserListTest(TestCase):
         self.assertFalse(page_obj.has_next())
 
     def test_get_user_list_redirects_when_not_logged_in(self):
-        redirect_url = reverse('home')
+        redirect_url = reverse('log_in')
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
@@ -84,6 +86,7 @@ class UserListTest(TestCase):
         response_url = reverse('start')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
+        self.assertNotContains(response, "Users", html=True)
 
     def test_members_are_only_displayed_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password='Password123')
@@ -95,6 +98,7 @@ class UserListTest(TestCase):
         self.assertNotContains(response, "John Doe")
         self.assertNotContains(response, "Jane Doe")
         self.assertNotContains(response, "Jenny Doe")
+        self.assertContains(response, "Users", html=True)
 
     def test_all_members_are_only_displayed_when_logged_in_as_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -106,6 +110,7 @@ class UserListTest(TestCase):
         self.assertContains(response, "Jane Doe")
         self.assertContains(response, "Jenny Doe")
         self.assertNotContains(response, "John Doe")
+        self.assertContains(response, "Users", html=True)
 
     def test_all_members_are_only_displayed_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -117,6 +122,7 @@ class UserListTest(TestCase):
         self.assertContains(response, "Jane Doe")
         self.assertContains(response, "Jenny Doe")
         self.assertNotContains(response, "John Doe")
+        self.assertContains(response, "Users", html=True)
 
     def _create_test_users(self, user_count=10):
         for user_id in range(user_count):

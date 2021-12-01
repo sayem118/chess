@@ -28,7 +28,7 @@ def officer_only(view_function):
 def applicant_prohibited(view_function):
     def modified_view_function(request, *args, **kwargs):
         if request.user.is_anonymous:
-            return redirect('home')
+            return redirect('log_in')
         elif request.user.role == User.APPLICANT:
             return redirect('start')
         else:
