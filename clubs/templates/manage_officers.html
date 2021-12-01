@@ -3,14 +3,19 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>Demote officers</h1>
+                <h1>Manage officers</h1>
                 <table class="table">
                     {% for officer in officers %}
                         <tr>
-                        {% include 'partials/user_row.html' with user=officer %}
+                            {% include 'partials/user_row.html' with user=officer %}
                             <td>
                                 <form action="{% url 'demote_officer' user_id=officer.id %}" method="get">
                                     <button class="btn btn-primary">Demote</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="{% url 'transfer_ownership' user_id=officer.id %}" method="get">
+                                    <button class="btn btn-primary">Transfer ownership</button>
                                 </form>
                             </td>
                         </tr>

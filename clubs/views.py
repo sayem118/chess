@@ -233,7 +233,7 @@ def promote_member(request, user_id):
 @permission_required(User.OWNER)
 def officers_list(request):
     officers = User.objects.filter(role=User.OFFICER)
-    return render(request, 'demote_officers.html', {'officers': officers})
+    return render(request, 'manage_officers.html', {'officers': officers})
 
 
 @permission_required(User.OWNER)
@@ -247,3 +247,20 @@ def demote_officer(request, user_id):
         return redirect('start')
     else:
         return redirect('officers_list')
+
+
+@permission_required(User.OWNER)
+def transfer_ownership(request, user_id):
+    try:
+        new_owner = User.objects.get(id=user_id)
+        if new_owner.role == User.OFFICER:
+            old_owner = request.user
+            old_owner.role = User.OFFICER
+            old_owner.save()
+
+            new_owner.role = User.OWNER
+            new_owner.save()
+    except ObjectDoesNotExist:
+        return redirect('start')
+    else:
+        return redirect('start')
