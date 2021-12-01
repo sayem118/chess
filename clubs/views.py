@@ -71,6 +71,9 @@ class ShowUserView(DetailView):
         """handle get request, and redirect to user_list if user_id invalid"""
 
         try:
+            if self.request.user.role == User.MEMBER:
+                if self.get_object().role in {User.OFFICER, User.OWNER}:
+                    return redirect('user_list')
             return super().get(request, *args, **kwargs)
         except Http404:
             return redirect('user_list')
@@ -144,10 +147,9 @@ class UserListView(LoginRequiredMixin, ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        if self.request.user == User.MEMBER:
+        if self.request.user.role == User.MEMBER:
             return User.objects.filter(role = User.MEMBER)
-        else:
-            return User.objects.exclude(role = User.APPLICANT)
+        return User.objects.exclude(role = User.APPLICANT)
 
 
 @login_required

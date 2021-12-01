@@ -13,5 +13,35 @@
       "is_active": true,
       "role": 2
     }
+  },
+  {
+    "model": "clubs.user",
+    "pk": 3,
+    "fields": {
+      "first_name": "James",
+      "last_name": "Doe",
+      "email": "jamesdoe@example.org",
+      "bio": "I am James.",
+      "experience_level": "I am an amateur.",
+      "personal_statement": "I am a MSc student.",
+      "password": "pbkdf2_sha256$260000$pILinojg9wMnsFm4bzW9LQ$PgODjeC0Rz9GVDdVHRCbjIWUbXwP/boO6kpydA/SIrU=",
+      "is_active": true,
+      "role": 1
+    }
+  },
+  {
+    "model": "clubs.user",
+    "pk": 4,
+    "fields": {
+      "first_name": "Jenny",
+      "last_name": "Doe",
+      "email": "jennydoe@example.org",
+      "bio": "Jenny D.",
+      "experience_level": "I am a grandmaster.",
+      "personal_statement": "I am a professional chess player.",
+      "password": "pbkdf2_sha256$260000$pILinojg9wMnsFm4bzW9LQ$PgODjeC0Rz9GVDdVHRCbjIWUbXwP/boO6kpydA/SIrU=",
+      "is_active": true,
+      "role": 3
+    }
   }
 ]

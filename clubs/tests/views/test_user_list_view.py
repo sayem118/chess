@@ -2,21 +2,26 @@ from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User
-from clubs.tests.helpers import reverse_with_next
 
 class UserListTest(TestCase):
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = [
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json'
+    ]
 
     def setUp(self):
         self.url = reverse('user_list')
-        self.user = User.objects.get(email='johndoe@example.org')
+        self.applicant = User.objects.get(email='johndoe@example.org')
+        self.member = User.objects.get(email='jamesdoe@example.org')
+        self.officer = User.objects.get(email="janedoe@example.org")
+        self.owner = User.objects.get(email='jennydoe@example.org')
 
     def test_user_list_url(self):
         self.assertEqual(self.url,'/user_list/')
 
-    def test_get_user_list(self):
-        self.client.login(email=self.user.email, password='Password123')
+    def test_get_user_list_when_member(self):
+        self.client.login(email=self.member.email, password='Password123')
         self._create_test_users(settings.USERS_PER_PAGE-1)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -32,7 +37,7 @@ class UserListTest(TestCase):
             self.assertContains(response, user_url)
 
     def test_get_user_list_with_pagination(self):
-        self.client.login(email=self.user.email, password='Password123')
+        self.client.login(email=self.member.email, password='Password123')
         self._create_test_users(settings.USERS_PER_PAGE*2+3-1)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -68,9 +73,50 @@ class UserListTest(TestCase):
         self.assertFalse(page_obj.has_next())
 
     def test_get_user_list_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
+        redirect_url = reverse('home')
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
+    def test_redirects_for_user_that_is_an_applicant(self):
+        self.client.login(email=self.applicant.email, password='Password123')
+        url = reverse('user_list')
+        response = self.client.get(url, follow=True)
+        response_url = reverse('start')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'start.html')
+
+    def test_members_are_only_displayed_when_logged_in_as_member(self):
+        self.client.login(email=self.member.email, password='Password123')
+        url = reverse('user_list')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'user_list.html')
+        self.assertContains(response, "James Doe")
+        self.assertNotContains(response, "John Doe")
+        self.assertNotContains(response, "Jane Doe")
+        self.assertNotContains(response, "Jenny Doe")
+
+    def test_all_members_are_only_displayed_when_logged_in_as_officer(self):
+        self.client.login(email=self.officer.email, password='Password123')
+        url = reverse('user_list')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'user_list.html')
+        self.assertContains(response, "James Doe")
+        self.assertContains(response, "Jane Doe")
+        self.assertContains(response, "Jenny Doe")
+        self.assertNotContains(response, "John Doe")
+
+    def test_all_members_are_only_displayed_when_logged_in_as_owner(self):
+        self.client.login(email=self.owner.email, password='Password123')
+        url = reverse('user_list')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'user_list.html')
+        self.assertContains(response, "James Doe")
+        self.assertContains(response, "Jane Doe")
+        self.assertContains(response, "Jenny Doe")
+        self.assertNotContains(response, "John Doe")
 
     def _create_test_users(self, user_count=10):
         for user_id in range(user_count):
