@@ -24,3 +24,14 @@ def officer_only(view_function):
             return view_function(request, *args, **kwargs)
 
     return modified_view_function
+
+def applicant_prohibited(view_function):
+    def modified_view_function(request, *args, **kwargs):
+        if request.user.is_anonymous:
+            return redirect('home')
+        elif request.user.role == User.APPLICANT:
+            return redirect('start')
+        else:
+            return view_function(request, *args, **kwargs)
+
+    return modified_view_function

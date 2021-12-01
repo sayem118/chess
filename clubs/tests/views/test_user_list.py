@@ -81,5 +81,5 @@ class UserListTest(TestCase):
                 bio=f'Bio {user_id}',
                 personal_statement=f'I am {user_id}',
                 experience_level='Medium',
-                role=User.MEMBER               
+                role=User.MEMBER
             )

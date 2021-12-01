@@ -8,15 +8,13 @@
       {% bootstrap_paginate page_obj range=6 previous_label="Previous" next_label="Next" show_first_last="true" %}
       <table class="table">
         {% for user in users %}
-          {% if user.role == 1 %}
-            <tr>
-              <td>
-                <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.email }}" class="rounded-circle" >
-              </td>
-              <td>{{ user.full_name }}</td>
-              <td><a href="{% url 'show_user' user.id %}">{{ user.email }}</a></td>
-            </tr>
-          {% endif %}
+          <tr>
+            <td>
+              <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.email }}" class="rounded-circle" >
+            </td>
+            <td>{{ user.full_name }}</td>
+            <td><a href="{% url 'show_user' user.id %}">{{ user.email }}</a></td>
+          </tr>
         {% endfor %}
       </table>
       {% bootstrap_paginate page_obj range=6 previous_label="Previous" next_label="Next" show_first_last="true" %}
