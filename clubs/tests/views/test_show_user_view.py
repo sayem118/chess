@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from with_asserts.mixin import AssertHTMLMixin
 from clubs.models import User
 from clubs.tests.helpers import reverse_with_next
 
@@ -33,6 +34,9 @@ class ShowUserTest(TestCase):
         self.assertNotContains(response, "janedoe@example.org")
         self.assertNotContains(response, "Jenny Doe")
         self.assertNotContains(response, "johndoe@example.org")
+        self.assertNotContains(response, "<h6>Bio</h6>", html=True)
+        self.assertNotContains(response, "<h6>Experience Level</h6>", html=True)
+        self.assertNotContains(response, "<h6>Personal Statement</h6>", html=True)
 
     def test_get_show_user_with_user_who_is_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -47,6 +51,9 @@ class ShowUserTest(TestCase):
         self.assertNotContains(response, "janedoe@example.org")
         self.assertNotContains(response, "Jenny Doe")
         self.assertNotContains(response, "johndoe@example.org")
+        self.assertContains(response, "<h6>Bio</h6>", html=True)
+        self.assertContains(response, "<h6>Experience Level</h6>", html=True)
+        self.assertContains(response, "<h6>Personal Statement</h6>", html=True)
 
     def test_get_show_user_with_user_who_is_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -61,6 +68,9 @@ class ShowUserTest(TestCase):
         self.assertNotContains(response, "janedoe@example.org")
         self.assertNotContains(response, "Jenny Doe")
         self.assertNotContains(response, "johndoe@example.org")
+        self.assertContains(response, "<h6>Bio</h6>", html=True)
+        self.assertContains(response, "<h6>Experience Level</h6>", html=True)
+        self.assertContains(response, "<h6>Personal Statement</h6>", html=True)
 
     def test_redirects_for_user_that_is_an_applicant(self):
         self.client.login(email=self.applicant.email, password='Password123')
