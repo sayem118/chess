@@ -1,7 +1,7 @@
 """Tests of the members list view and promotion functionality"""
 
 from django.test import TestCase
-from clubs.models import User,UserManager
+from clubs.models import User
 from django.urls import reverse
 
 class MembersListViewTestCase(TestCase):
