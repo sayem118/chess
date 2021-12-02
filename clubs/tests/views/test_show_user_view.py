@@ -34,9 +34,6 @@ class ShowUserTest(TestCase):
         self.assertNotContains(response, "janedoe@example.org")
         self.assertNotContains(response, "Jenny Doe")
         self.assertNotContains(response, "johndoe@example.org")
-        self.assertNotContains(response, "<h6>Bio</h6>", html=True)
-        self.assertNotContains(response, "<h6>Experience Level</h6>", html=True)
-        self.assertNotContains(response, "<h6>Personal Statement</h6>", html=True)
 
     def test_get_show_user_with_user_who_is_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -51,9 +48,6 @@ class ShowUserTest(TestCase):
         self.assertNotContains(response, "janedoe@example.org")
         self.assertNotContains(response, "Jenny Doe")
         self.assertNotContains(response, "johndoe@example.org")
-        self.assertContains(response, "<h6>Bio</h6>", html=True)
-        self.assertContains(response, "<h6>Experience Level</h6>", html=True)
-        self.assertContains(response, "<h6>Personal Statement</h6>", html=True)
 
     def test_get_show_user_with_user_who_is_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -68,9 +62,6 @@ class ShowUserTest(TestCase):
         self.assertNotContains(response, "janedoe@example.org")
         self.assertNotContains(response, "Jenny Doe")
         self.assertNotContains(response, "johndoe@example.org")
-        self.assertContains(response, "<h6>Bio</h6>", html=True)
-        self.assertContains(response, "<h6>Experience Level</h6>", html=True)
-        self.assertContains(response, "<h6>Personal Statement</h6>", html=True)
 
     def test_redirects_for_user_that_is_an_applicant(self):
         self.client.login(email=self.applicant.email, password='Password123')
@@ -108,3 +99,39 @@ class ShowUserTest(TestCase):
         response_url = reverse('user_list')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'user_list.html')
+
+    def test_all_details_are_not_available_for_members(self):
+        self.client.login(email=self.member.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'show_user.html')
+        self.assertContains(response, self.member.bio, html=True)
+        self.assertNotContains(response, "<h6>Bio</h6>", html=True)
+        self.assertNotContains(response, "<h6>Experience Level</h6>", html=True)
+        self.assertNotContains(response, self.member.experience_level, html=True)
+        self.assertNotContains(response, "<h6>Personal Statement</h6>", html=True)
+        self.assertNotContains(response, self.member.personal_statement, html=True)
+
+    def test_all_details_are_available_for_officers(self):
+        self.client.login(email=self.officer.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'show_user.html')
+        self.assertContains(response, "<h6>Bio</h6>", html=True)
+        self.assertContains(response, self.member.bio, html=True)
+        self.assertContains(response, "<h6>Experience Level</h6>", html=True)
+        self.assertContains(response, self.member.experience_level, html=True)
+        self.assertContains(response, "<h6>Personal Statement</h6>", html=True)
+        self.assertContains(response, self.member.personal_statement, html=True)
+
+    def test_all_details_are_available_for_owners(self):
+        self.client.login(email=self.owner.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'show_user.html')
+        self.assertContains(response, "<h6>Bio</h6>", html=True)
+        self.assertContains(response, self.member.bio, html=True)
+        self.assertContains(response, "<h6>Experience Level</h6>", html=True)
+        self.assertContains(response, self.member.experience_level, html=True)
+        self.assertContains(response, "<h6>Personal Statement</h6>", html=True)
+        self.assertContains(response, self.member.personal_statement, html=True)

@@ -86,7 +86,6 @@ class UserListTest(TestCase, AssertHTMLMixin):
         response_url = reverse('start')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
-        self.assertNotContains(response, """<a class="nav-link" href="/user_list/">Users</a>""", html=True)
 
     def test_members_are_displayed_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password='Password123')
@@ -98,6 +97,37 @@ class UserListTest(TestCase, AssertHTMLMixin):
         self.assertNotContains(response, "John Doe")
         self.assertNotContains(response, "Jane Doe")
         self.assertNotContains(response, "Jenny Doe")
+
+    def test_user_list_button_in_menu_does_not_display_when_logged_in_as_applicant(self):
+        self.client.login(email=self.applicant.email, password='Password123')
+        url = reverse('start')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'start.html')
+        self.assertNotContains(response, """<a class="nav-link" href="/user_list/">Users</a>""", html=True)
+
+    def test_user_list_button_in_menu_displays_when_logged_in_as_member(self):
+        self.client.login(email=self.member.email, password='Password123')
+        url = reverse('start')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'start.html')
+        self.assertContains(response, """<a class="nav-link" href="/user_list/">Users</a>""", html=True)
+
+    def test_user_list_button_in_menu_displays_when_logged_in_as_officer(self):
+        self.client.login(email=self.officer.email, password='Password123')
+        url = reverse('start')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'start.html')
+        self.assertContains(response, """<a class="nav-link" href="/user_list/">Users</a>""", html=True)
+
+    def test_user_list_button_in_menu_displays_when_logged_in_as_owner(self):
+        self.client.login(email=self.owner.email, password='Password123')
+        url = reverse('start')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'start.html')
         self.assertContains(response, """<a class="nav-link" href="/user_list/">Users</a>""", html=True)
 
     def test_all_members_are_displayed_when_logged_in_as_officer(self):
@@ -110,7 +140,6 @@ class UserListTest(TestCase, AssertHTMLMixin):
         self.assertContains(response, "Jane Doe")
         self.assertContains(response, "Jenny Doe")
         self.assertNotContains(response, "John Doe")
-        self.assertContains(response, """<a class="nav-link" href="/user_list/">Users</a>""", html=True)
 
     def test_all_members_are_displayed_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -122,7 +151,6 @@ class UserListTest(TestCase, AssertHTMLMixin):
         self.assertContains(response, "Jane Doe")
         self.assertContains(response, "Jenny Doe")
         self.assertNotContains(response, "John Doe")
-        self.assertContains(response, """<a class="nav-link" href="/user_list/">Users</a>""", html=True)
 
     def _create_test_users(self, user_count=10):
         for user_id in range(user_count):
