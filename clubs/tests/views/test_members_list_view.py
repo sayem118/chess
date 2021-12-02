@@ -66,8 +66,9 @@ class MembersListViewTestCase(TestCase):
 
         response = self.client.get( promote_view_url )
 
-        user_to_promote = User.objects.get( email = "janedoe@example.org" )
-        self.assertEqual(user_to_promote.role , User.OFFICER)
+        # Getting the user again from the db is needed because the instance user_to_promote points to does not get updated automatically.
+        check_if_promoted = User.objects.get( email = "janedoe@example.org" )
+        self.assertEqual(check_if_promoted.role , User.OFFICER)
 
         members_list_url = reverse('members_list')
 
@@ -83,12 +84,37 @@ class MembersListViewTestCase(TestCase):
 
         response = self.client.get( promote_view_url )
 
-        user_to_promote = User.objects.get( email = "janedoe@example.org" )
-        self.assertEqual(user_to_promote.role , User.MEMBER)
+        # Getting the user again from the db is needed because the instance user_to_promote points to does not get updated automatically.
+        check_if_promoted = User.objects.get( email = "janedoe@example.org" )
+        self.assertEqual(check_if_promoted.role , User.MEMBER)
 
         home_url = reverse('home')
 
         self.assertRedirects( response, home_url, status_code = 302, target_status_code = 200 )
+
+    def test_cant_promote_a_member_when_not_owner(self):
+        self.user.role = User.OFFICER
+        self.user.save()
+
+        self.client.login( email = self.user.email, password = "Password123")
+
+        user_to_promote = User.objects.get( email = "janedoe@example.org" )
+        user_to_promote.role = User.MEMBER
+        user_to_promote.save()
+
+        promote_view_url = reverse('promote_member', kwargs = {'user_id':user_to_promote.id} )
+
+        response = self.client.get( promote_view_url )
+
+        start_url = reverse('start')
+
+        self.assertRedirects( response, start_url, status_code = 302, target_status_code = 200 )
+
+        # Getting the user again from the db is needed because the instance user_to_promote points to does not get updated automatically.
+
+        check_if_promoted = User.objects.get( email = "janedoe@example.org" )
+        self.assertEqual( check_if_promoted.role, User.MEMBER)
+
 
     def test_only_members_show_on_members_list_page(self):
         self.user.role = User.OWNER

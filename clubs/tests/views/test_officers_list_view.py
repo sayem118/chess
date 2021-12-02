@@ -74,6 +74,8 @@ class OfficersListViewTestCase(TestCase):
 
         self.assertRedirects(response, self.officers_list_url, status_code = 302, target_status_code = 200)
 
+        # Getting the user again from the db is needed because the instance officer_to_demote points to does not get updated automatically. 
+
         check_if_demoted = User.objects.get( email = "janedoe@example.org" )
 
         self.assertEqual( check_if_demoted.role, User.MEMBER )
@@ -91,9 +93,36 @@ class OfficersListViewTestCase(TestCase):
 
         self.assertRedirects( response, home_url, status_code = 302, target_status_code = 200 )
 
+        # Getting the user again from the db is needed because the instance officer_to_demote points to does not get updated automatically.
+
         check_if_demoted = User.objects.get( email = "janedoe@example.org" )
 
         self.assertEqual( check_if_demoted.role, User.OFFICER )
+
+    def test_cant_demote_an_officer_when_not_owner(self):
+        self.user.role = User.OFFICER
+        self.user.save()
+
+        self.client.login( email = self.user.email , password = "Password123" )
+
+        officer_to_demote = User.objects.get( email = "janedoe@example.org" )
+        officer_to_demote.role = User.OFFICER
+        officer_to_demote.save()
+
+        demote_view_url = reverse('demote_officer', kwargs = {'user_id':officer_to_demote.id} )
+
+        response = self.client.get(demote_view_url)
+
+        start_url = reverse('start')
+
+        self.assertRedirects( response, start_url, status_code = 302, target_status_code = 200 )
+
+        # Getting the user again from the db is needed because the instance officer_to_demote points to does not get updated automatically.
+
+        check_if_demoted = User.objects.get( email = "janedoe@example.org" )
+
+        self.assertEqual( check_if_demoted.role, User.OFFICER )
+
 
     def test_only_officers_show_on_officers_list_page(self):
         self.user.role = User.OWNER
