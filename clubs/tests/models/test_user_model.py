@@ -137,6 +137,27 @@ class UserModelTestCase(TestCase):
     def test_default_role_is_applicant(self):
         self.assertEqual(self.user.role, User.APPLICANT)
 
+    def test_create_user_with_no_email_raises_error(self):
+        with self.assertRaises(ValueError):
+            User.objects._create_user(None, "Password123")
+
+    def test_successful_create_super_user(self):
+        user = User.objects.create_superuser(email="super@example.org", password="Password123")
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)
+
+    def test_is_staff_attribute_false_in_superuser(self):
+        with self.assertRaises(ValueError):
+            user = User.objects.create_superuser(email="super@example.org", password="Password123", is_staff=False)
+            self.assertFalse(user.is_staff)
+            self.assertTrue(user.is_superuser)
+
+    def test_is_superuser_attribute_false_in_superuser(self):
+        with self.assertRaises(ValueError):
+            user = User.objects.create_superuser(email="super@example.org", password="Password123", is_superuser=False)
+            self.assertTrue(user.is_staff)
+            self.assertFalse(user.is_superuser)
+
     def _assert_user_is_valid(self):
         try:
             self.user.full_clean()
