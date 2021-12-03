@@ -15,7 +15,11 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
+<<<<<<< HEAD
 from .helpers import login_prohibited, permission_required
+=======
+from .helpers import login_prohibited, officer_only, applicant_prohibited
+>>>>>>> 09-user-list
 from .models import User
 
 
@@ -54,6 +58,7 @@ class ShowUserView(DetailView):
     pk_url_kwarg = 'user_id'
 
     @method_decorator(login_required)
+    @method_decorator(applicant_prohibited)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -62,17 +67,17 @@ class ShowUserView(DetailView):
 
         context = super().get_context_data(*args, **kwargs)
         user = self.get_object()
-        context['bio'] = self.request.user.bio
+        context['is_staff'] = self.request.user.role in {User.OFFICER, User.OWNER}
         return context
 
     def get(self, request, *args, **kwargs):
         """handle get request, and redirect to user_list if user_id invalid"""
 
         try:
-            if self.get_object().role == User.MEMBER:
-                return super().get(request, *args, **kwargs)
-            else:
-                return redirect('user_list')
+            if self.request.user.role == User.MEMBER:
+                if self.get_object().role in {User.OFFICER, User.OWNER}:
+                    return redirect('user_list')
+            return super().get(request, *args, **kwargs)
         except Http404:
             return redirect('user_list')
 
@@ -132,7 +137,6 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
-
 class UserListView(LoginRequiredMixin, ListView):
     """View that shows a list of all users"""
 
@@ -140,6 +144,15 @@ class UserListView(LoginRequiredMixin, ListView):
     template_name = "user_list.html"
     context_object_name = "users"
     paginate_by = settings.USERS_PER_PAGE
+
+    @method_decorator(applicant_prohibited)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        if self.request.user.role == User.MEMBER:
+            return User.objects.filter(role = User.MEMBER)
+        return User.objects.exclude(role = User.APPLICANT)
 
 
 @login_required

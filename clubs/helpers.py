@@ -39,3 +39,15 @@ def permission_required(required_role):
         return modified_view_function
 
     return actual_decorator
+
+
+def applicant_prohibited(view_function):
+    def modified_view_function(request, *args, **kwargs):
+        if request.user.is_anonymous:
+            return redirect('log_in')
+        elif request.user.role == User.APPLICANT:
+            return redirect('start')
+        else:
+            return view_function(request, *args, **kwargs)
+
+    return modified_view_function
