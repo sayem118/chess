@@ -35,5 +35,7 @@ def permission_required(required_role):
                 return redirect('start')
             else:
                 return view_function(request, *args, **kwargs)
+
         return modified_view_function
+
     return actual_decorator

@@ -1,7 +1,8 @@
 """Unit tests of the sign up form."""
-from django.contrib.auth.hashers import check_password
 from django import forms
+from django.contrib.auth.hashers import check_password
 from django.test import TestCase
+
 from clubs.forms import SignUpForm
 from clubs.models import User
 
