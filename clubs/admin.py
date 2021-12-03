@@ -10,5 +10,5 @@ class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
-        'username', 'first_name', 'last_name', 'email', 'experience_level', 'role'
+        'first_name', 'last_name', 'email', 'experience_level', 'role'
     ]
