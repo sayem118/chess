@@ -15,11 +15,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
-<<<<<<< HEAD
-from .helpers import login_prohibited, permission_required
-=======
-from .helpers import login_prohibited, officer_only, applicant_prohibited
->>>>>>> 09-user-list
+from .helpers import login_prohibited, permission_required, applicant_prohibited
 from .models import User
 
 
