@@ -63,7 +63,8 @@ class ShowUserView(DetailView):
 
         context = super().get_context_data(*args, **kwargs)
         context['user'] = self.request.user
-        context['is_staff'] = self.request.user.current_club_role in {Membership.OFFICER, Membership.OWNER}
+        context['is_staff'] = self.request.user.current_club_not_none and self.request.user.current_club_role in {
+            Membership.OFFICER, Membership.OWNER}
         return context
 
     def get(self, request, *args, **kwargs):
@@ -162,14 +163,16 @@ def start(request):
 @login_required
 def member_status(request):
     current_user = request.user
-    if current_user.current_club_role == Membership.APPLICANT:
-        return render(request, 'applicant_status.html')
-    elif current_user.current_club_role == Membership.MEMBER:
-        return render(request, 'member_status.html')
-    elif current_user.current_club_role == Membership.OFFICER:
-        return render(request, 'officer_status.html')
-    elif current_user.current_club_role == Membership.OWNER:
-        return render(request, 'owner_status.html')
+    if current_user.current_club_not_none:
+        if current_user.current_club_role == Membership.APPLICANT:
+            return render(request, 'applicant_status.html')
+        elif current_user.current_club_role == Membership.MEMBER:
+            return render(request, 'member_status.html')
+        elif current_user.current_club_role == Membership.OFFICER:
+            return render(request, 'officer_status.html')
+        elif current_user.current_club_role == Membership.OWNER:
+            return render(request, 'owner_status.html')
+    return render(request, 'applicant_status.html')
 
 
 @login_required
