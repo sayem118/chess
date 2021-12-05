@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 
-from .models import User
+from .models import User, Club
 
 
 class LogInForm(forms.Form):
@@ -100,3 +100,7 @@ class PasswordForm(forms.Form):
         password_confirmation = self.cleaned_data.get('password_confirmation')
         if new_password != password_confirmation:
             self.add_error('password_confirmation', 'Confirmation does not match password.')
+
+
+class SelectClubForm(forms.Form):
+    club = forms.ModelChoiceField(queryset=Club.objects.none())

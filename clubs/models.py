@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -61,6 +62,20 @@ class User(AbstractUser):
     personal_statement = models.CharField(max_length=520, blank=False)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=APPLICANT)
 
+    current_club = models.ForeignKey('Club', null=True, on_delete=models.SET_NULL)
+
+    def select_club(self, club):
+        self.current_club = club
+        self.save()
+
+    @property
+    def current_club_not_none(self):
+        return self.current_club is not None
+
+    @property
+    def current_club_role(self):
+        return self.current_club.membership_set.get(user=self).role
+
     class Meta:
         """Model options."""
 
@@ -68,8 +83,6 @@ class User(AbstractUser):
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
-
-
 
     def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""
@@ -85,3 +98,45 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+
+class Club(models.Model):
+    name = models.CharField(unique=True, blank=False, max_length=50)
+    location = models.CharField(blank=False, max_length=50)
+    mission_statement = models.CharField(blank=True, max_length=520)
+    associates = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership')
+
+    def add_user(self, user):
+        self.associates.add(user)
+
+    def exist(self, user):
+        return self.membership_set.filter(user=user).exists()
+
+    def is_of_role(self, user, role):
+        return self.membership_set.get(user=user).role == role
+
+    def change_role(self, user, new_role):
+        membership = self.membership_set.get(user=user)
+        membership.role = new_role
+        membership.save()
+
+    def __str__(self):
+        return self.name
+
+
+class Membership(models.Model):
+    APPLICANT = 0
+    MEMBER = 1
+    OFFICER = 2
+    OWNER = 3
+
+    ROLE_CHOICES = (
+        (APPLICANT, 'Applicant'),
+        (MEMBER, 'Member'),
+        (OFFICER, 'Officer'),
+        (OWNER, 'Owner'),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=APPLICANT)

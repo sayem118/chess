@@ -14,9 +14,9 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
-from .helpers import login_prohibited, permission_required, applicant_prohibited
-from .models import User
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm
+from .helpers import login_prohibited, required_role, prohibited_role
+from .models import User, Membership, Club
 
 
 class LoginProhibitedMixin:
@@ -46,7 +46,7 @@ class LoginProhibitedMixin:
 
 
 class ShowUserView(DetailView):
-    """View that shows indiviual user details"""
+    """View that shows individual user details"""
 
     model = User
     template_name = 'show_user.html'
@@ -54,7 +54,7 @@ class ShowUserView(DetailView):
     pk_url_kwarg = 'user_id'
 
     @method_decorator(login_required)
-    @method_decorator(applicant_prohibited)
+    @method_decorator(prohibited_role(Membership.APPLICANT))
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -62,8 +62,8 @@ class ShowUserView(DetailView):
         """Generate content to be displayed in the template"""
 
         context = super().get_context_data(*args, **kwargs)
-        user = self.get_object()
-        context['is_staff'] = self.request.user.role in {User.OFFICER, User.OWNER}
+        context['user'] = self.request.user
+        context['is_staff'] = self.request.user.current_club_role in {Membership.OFFICER, Membership.OWNER}
         return context
 
     def get(self, request, *args, **kwargs):
@@ -133,6 +133,7 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
+
 class UserListView(LoginRequiredMixin, ListView):
     """View that shows a list of all users"""
 
@@ -141,14 +142,16 @@ class UserListView(LoginRequiredMixin, ListView):
     context_object_name = "users"
     paginate_by = settings.USERS_PER_PAGE
 
-    @method_decorator(applicant_prohibited)
+    @method_decorator(prohibited_role(Membership.APPLICANT))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        if self.request.user.role == User.MEMBER:
-            return User.objects.filter(role = User.MEMBER)
-        return User.objects.exclude(role = User.APPLICANT)
+        user = self.request.user
+        club = user.current_club
+        if user.current_club_role == Membership.MEMBER:
+            return club.associates.filter(membership__role=Membership.MEMBER)
+        return club.associates.filter(membership__role=Membership.APPLICANT)
 
 
 @login_required
@@ -159,13 +162,13 @@ def start(request):
 @login_required
 def member_status(request):
     current_user = request.user
-    if current_user.role == User.APPLICANT:
+    if current_user.current_club_role == Membership.APPLICANT:
         return render(request, 'applicant_status.html')
-    elif current_user.role == User.MEMBER:
+    elif current_user.current_club_role == Membership.MEMBER:
         return render(request, 'member_status.html')
-    elif current_user.role == User.OFFICER:
+    elif current_user.current_club_role == Membership.OFFICER:
         return render(request, 'officer_status.html')
-    elif current_user.role == User.OWNER:
+    elif current_user.current_club_role == Membership.OWNER:
         return render(request, 'owner_status.html')
 
 
@@ -201,75 +204,102 @@ def password(request):
     return render(request, 'password.html', {'form': form})
 
 
-@permission_required(User.OFFICER)
+@required_role(Membership.OFFICER)
 def applicants_list(request):
-    applicants = User.objects.filter(role=User.APPLICANT)
+    club = request.user.current_club
+    applicants = club.associates.filter(membership__role=Membership.APPLICANT)
     return render(request, 'approve_applicants.html', {'applicants': applicants})
 
 
-@permission_required(User.OFFICER)
+@required_role(Membership.OFFICER)
 def approve_applicant(request, user_id):
     try:
-        applicant = User.objects.get(id=user_id)
-        if applicant.role == User.APPLICANT:
-            applicant.role = User.MEMBER
-            applicant.save()
+        old_role = Membership.APPLICANT
+        new_role = Membership.MEMBER
+        club = request.user.current_club
+        user = User.objects.get(id=user_id)
+        if club.exist(user) and club.is_of_role(user, old_role):
+            club.change_role(user, new_role)
     except ObjectDoesNotExist:
         return redirect('start')
     else:
         return redirect('applicants_list')
 
 
-@permission_required(User.OWNER)
+@required_role(Membership.OWNER)
 def members_list(request):
-    members = User.objects.filter(role=User.MEMBER)
+    club = request.user.current_club
+    members = club.associates.filter(membership__role=Membership.MEMBER)
     return render(request, 'promote_members.html', {'members': members})
 
 
-@permission_required(User.OWNER)
+@required_role(Membership.OWNER)
 def promote_member(request, user_id):
     try:
-        member = User.objects.get(id=user_id)
-        if member.role == User.MEMBER:
-            member.role = User.OFFICER
-            member.save()
+        old_role = Membership.MEMBER
+        new_role = Membership.OFFICER
+        club = request.user.current_club
+        user = User.objects.get(id=user_id)
+        if club.exist(user) and club.is_of_role(user, old_role):
+            club.change_role(user, new_role)
     except ObjectDoesNotExist:
         return redirect('start')
     else:
         return redirect('members_list')
 
 
-@permission_required(User.OWNER)
+@required_role(Membership.OWNER)
 def officers_list(request):
-    officers = User.objects.filter(role=User.OFFICER)
+    club = request.user.current_club
+    officers = club.associates.filter(membership__role=Membership.OFFICER)
     return render(request, 'manage_officers.html', {'officers': officers})
 
 
-@permission_required(User.OWNER)
+@required_role(Membership.OWNER)
 def demote_officer(request, user_id):
     try:
-        officer = User.objects.get(id=user_id)
-        if officer.role == User.OFFICER:
-            officer.role = User.MEMBER
-            officer.save()
+        old_role = Membership.OFFICER
+        new_role = Membership.MEMBER
+        club = request.user.current_club
+        user = User.objects.get(id=user_id)
+        if club.exist(user) and club.is_of_role(user, old_role):
+            club.change_role(user, new_role)
     except ObjectDoesNotExist:
         return redirect('start')
     else:
         return redirect('officers_list')
 
 
-@permission_required(User.OWNER)
+@required_role(Membership.OWNER)
 def transfer_ownership(request, user_id):
     try:
+        old_owner = request.user
         new_owner = User.objects.get(id=user_id)
-        if new_owner.role == User.OFFICER:
-            old_owner = request.user
-            old_owner.role = User.OFFICER
-            old_owner.save()
-
-            new_owner.role = User.OWNER
-            new_owner.save()
+        club = old_owner.current_club
+        if club.exist(new_owner) and club.is_of_role(new_owner, Membership.OFFICER):
+            club.change_role(old_owner, Membership.OFFICER)
+            club.change_role(new_owner, Membership.OWNER)
     except ObjectDoesNotExist:
         return redirect('start')
     else:
         return redirect('start')
+
+
+@login_required
+def select_club(request):
+    user = request.user
+    Club.objects.filter()
+    all_clubs_user_in = Club.objects.filter(membership__user=user)
+    if user.current_club_not_none:
+        all_clubs_user_in = all_clubs_user_in.exclude(id=user.current_club.id)
+
+    if request.method == 'POST':
+        user = request.user
+        form = SelectClubForm(request.POST)
+        form.fields['club'].queryset = all_clubs_user_in
+        if form.is_valid():
+            user.select_club(form.cleaned_data.get('club'))
+            return redirect('start')
+    form = SelectClubForm()
+    form.fields['club'].queryset = all_clubs_user_in
+    return render(request, 'select_club.html', {'form': form})
