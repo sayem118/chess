@@ -287,6 +287,11 @@ def transfer_ownership(request, user_id):
     else:
         return redirect('start')
 
+def my_clubs(request):
+    user = request.user
+    MyClubs = Club.objects.filter(membership__user=user)
+    NotMyClubs = Club.objects.exclude(membership__user=user)
+    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs':NotMyClubs})
 
 @login_required
 def select_club(request):
