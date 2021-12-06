@@ -4,14 +4,18 @@
     {% for clubs in MyClubs %}
     <p>
       <a>{{clubs.name}}</a>
-      <button class ="btn btn-primary">Leave</button>
+      <form action="{% url 'leave_club' club_id=clubs.id %}" method="get">
+          <button class="btn btn-primary">Withdraw</button>
+      </form>
     </p>
     {%endfor%}
     <h2> Not my clubs </h2>
     {% for clubs in NotMyClubs %}
     <p>
       <a>{{clubs.name}}</a>
-      <button class ="btn btn-primary">Apply</button>
+      <form action="{% url 'apply' club_id=clubs.id %}" method="get">
+          <button class="btn btn-primary">Apply</button>
+      </form>
     </p>
     {%endfor%}
 {% endblock%}
