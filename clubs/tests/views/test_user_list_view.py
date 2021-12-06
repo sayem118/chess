@@ -2,7 +2,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from with_asserts.mixin import AssertHTMLMixin
-from clubs.models import User
+from clubs.models import User, Club, Membership
 
 
 class UserListTest(TestCase, AssertHTMLMixin):
@@ -161,5 +161,4 @@ class UserListTest(TestCase, AssertHTMLMixin):
                 bio=f'Bio {user_id}',
                 personal_statement=f'I am {user_id}',
                 experience_level='Medium',
-                role=User.MEMBER
             )

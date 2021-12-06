@@ -265,6 +265,8 @@ def demote_officer(request, user_id):
         new_role = Membership.MEMBER
         club = request.user.current_club
         user = User.objects.get(id=user_id)
+        if club == None:
+            return redirect('start')
         if club.exist(user) and club.is_of_role(user, old_role):
             club.change_role(user, new_role)
     except ObjectDoesNotExist:

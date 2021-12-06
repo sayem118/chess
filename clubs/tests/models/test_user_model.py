@@ -134,8 +134,8 @@ class UserModelTestCase(TestCase):
         self.user.personal_statement = 'x' * 521
         self._assert_user_is_invalid()
 
-    def test_default_role_is_applicant(self):
-        self.assertEqual(self.user.role, User.APPLICANT)
+    #def test_default_role_is_applicant(self):
+    #    self.assertEqual(self.user.role, User.APPLICANT)
 
     def test_create_user_with_no_email_raises_error(self):
         with self.assertRaises(ValueError):

@@ -41,17 +41,6 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     """User model used for authentication and clubs authoring."""
-    APPLICANT = 0
-    MEMBER = 1
-    OFFICER = 2
-    OWNER = 3
-
-    ROLE_CHOICES = (
-        (APPLICANT, 'Applicant'),
-        (MEMBER, 'Member'),
-        (OFFICER, 'Officer'),
-        (OWNER, 'Owner'),
-    )
 
     username = None
     email = models.EmailField(unique=True, blank=False)
@@ -60,7 +49,6 @@ class User(AbstractUser):
     bio = models.CharField(max_length=520, blank=True)
     experience_level = models.CharField(max_length=520, blank=False)
     personal_statement = models.CharField(max_length=520, blank=False)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=APPLICANT)
 
     current_club = models.ForeignKey('Club', null=True, on_delete=models.SET_NULL)
 
