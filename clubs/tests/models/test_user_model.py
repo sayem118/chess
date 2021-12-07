@@ -2,7 +2,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from clubs.models import User, Club, Membership
+from clubs.models import User
 
 
 class UserModelTestCase(TestCase):
@@ -10,25 +10,12 @@ class UserModelTestCase(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
-        'clubs/tests/fixtures/users/other_users.json',
-        'clubs/tests/fixtures/clubs/default_club.json',
-        'clubs/tests/fixtures/clubs/other_clubs.json',
-        'clubs/tests/fixtures/memberships/memberships.json'
+        'clubs/tests/fixtures/users/other_users.json'
     ]
 
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
-        self.applicant = User.objects.get(email='jamiedoe@example.org')
-        self.member = User.objects.get(email='janedoe@example.org')
-        self.officer = User.objects.get(email="jamesdoe@example.org")
-        self.owner = User.objects.get(email='jennydoe@example.org')
-        self.club = Club.objects.get(name="Chess Club")
-        self.other_club = Club.objects.get(name="The Royal Rooks")
-        self.user.select_club(self.club)
-        self.applicant.select_club(self.other_club)
-        self.member.select_club(self.other_club)
-        self.officer.select_club(self.other_club)
-        self.owner.select_club(self.other_club)
+        self.other_user = User.objects.get(email="janedoe@example.org")
 
     def test_valid_user(self):
         self._assert_user_is_valid()
@@ -38,8 +25,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_first_name_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.first_name = second_user.first_name
+        self.user.first_name = self.other_user.first_name
         self._assert_user_is_valid()
 
     def test_first_name_may_contain_50_characters(self):
@@ -55,8 +41,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_last_name_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.last_name = second_user.last_name
+        self.user.last_name = self.other_user.last_name
         self._assert_user_is_valid()
 
     def test_last_name_may_contain_50_characters(self):
@@ -72,8 +57,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_email_must_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.email = second_user.email
+        self.user.email = self.other_user.email
         self._assert_user_is_invalid()
 
     def test_email_must_contain_username(self):
@@ -101,8 +85,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_bio_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.bio = second_user.bio
+        self.user.bio = self.other_user.bio
         self._assert_user_is_valid()
 
     def test_bio_may_contain_520_characters(self):
@@ -118,8 +101,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_experience_level_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.experience_level = second_user.experience_level
+        self.user.experience_level = self.other_user.experience_level
         self._assert_user_is_valid()
 
     def test_experience_level_may_contain_520_characters(self):
@@ -135,8 +117,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_personal_statement_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.personal_statement = second_user.personal_statement
+        self.user.personal_statement = self.other_user.personal_statement
         self._assert_user_is_valid()
 
     def test_personal_statement_may_contain_520_characters(self):
