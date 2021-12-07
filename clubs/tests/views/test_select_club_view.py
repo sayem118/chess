@@ -34,9 +34,6 @@ class SelectClubTest(TestCase):
         self.member.select_club(self.other_club)
         self.officer.select_club(self.other_club)
         self.owner.select_club(self.other_club)
-        self.form_input = {
-            'club': self.club
-        }
 
     def test_select_club_url(self):
         self.assertEqual(self.url, '/select_club/')
@@ -49,18 +46,7 @@ class SelectClubTest(TestCase):
     def test_successful_get_select_club_with_get(self):
         self.client.login(email=self.member.email, password='Password123')
         response = self.client.get(self.url)
+        form = response.context['form']
+        self.assertFalse(form.is_bound)
         self.assertTemplateUsed(response, 'select_club.html')
         self.assertEqual(response.status_code, 200)
-
-    """def test_successful_get_select_club_with_post(self):
-        self.client.login(email=self.member.email, password='Password123')
-        response = self.client.post(self.url, self.form_input)
-
-        form = response.context['form']
-        self.assertTrue(isinstance(form, SelectClubForm))
-        after_selection = User.objects.get(email="janedoe@example.org")
-        print(after_selection.membership_set.all()[1].club)
-        self.assertEqual(after_selection.current_club, self.club)
-
-        #self.assertTemplateUsed(response, 'select_club.html')
-        #self.assertEqual(response.status_code, 200)"""
