@@ -2,7 +2,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from clubs.models import User
+from clubs.models import User, Club
 
 
 class UserModelTestCase(TestCase):
@@ -10,12 +10,15 @@ class UserModelTestCase(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
-        'clubs/tests/fixtures/users/other_users.json'
+        'clubs/tests/fixtures/users/other_users.json',
+        'clubs/tests/fixtures/clubs/default_club.json'
     ]
 
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
         self.other_user = User.objects.get(email="janedoe@example.org")
+        self.club = Club.objects.get(name="Chess Club")
+        self.user.select_club(self.club)
 
     def test_valid_user(self):
         self._assert_user_is_valid()
