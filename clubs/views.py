@@ -298,6 +298,7 @@ def select_club(request):
     if request.method == 'POST':
         user = request.user
         form = SelectClubForm(request.POST)
+        print(form.fields['club'])
         form.fields['club'].queryset = all_clubs_user_in
         if form.is_valid():
             user.select_club(form.cleaned_data.get('club'))

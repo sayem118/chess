@@ -30,6 +30,9 @@ class TransferOwnershipTest(TestCase):
         self.owner.select_club(self.other_club)
         self.url = reverse("transfer_ownership", kwargs={"user_id": self.officer.id})
 
+    def test_transfer_ownership_url(self):
+        self.assertEqual(self.url, '/transfer_ownership/4')
+
     def test_successfully_transfer_ownership(self):
         self.client.login(email=self.owner.email, password="Password123")
         redirect_url = reverse("start")
@@ -80,9 +83,14 @@ class TransferOwnershipTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
-    def test_redirects_for_user_id_that_is_invalid(self):
+    def test_redirects_for_user_that_is_invalid(self):
         self.client.login(email=self.owner.email, password='Password123')
         response_url = reverse('start')
         url = reverse("transfer_ownership", kwargs={"user_id": self.officer.id+9999})
         response = self.client.get(url, follow=True)
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+
+    def test_redirects_when_not_logged_in(self):
+        response_url = reverse('log_in')
+        response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
