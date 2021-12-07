@@ -23,11 +23,13 @@ class TransferOwnershipTest(TestCase):
         self.owner = User.objects.get(email='jennydoe@example.org')
         self.club = Club.objects.get(name="Chess Club")
         self.other_club = Club.objects.get(name="The Royal Rooks")
-        self.user.select_club(self.club)
         self.applicant.select_club(self.other_club)
         self.member.select_club(self.other_club)
         self.officer.select_club(self.other_club)
         self.owner.select_club(self.other_club)
+        membership = Membership.objects.get(user=self.user, club=self.club)
+        membership.role = Membership.OWNER
+        membership.save()
         self.url = reverse("transfer_ownership", kwargs={"user_id": self.officer.id})
 
     def test_transfer_ownership_url(self):
@@ -93,4 +95,10 @@ class TransferOwnershipTest(TestCase):
     def test_redirects_when_not_logged_in(self):
         response_url = reverse('log_in')
         response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+
+    def test_redirects_when_no_club_selected(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        response_url = reverse('start')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)

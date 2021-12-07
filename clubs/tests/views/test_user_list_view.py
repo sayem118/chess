@@ -26,7 +26,6 @@ class UserListTest(TestCase, AssertHTMLMixin):
         self.owner = User.objects.get(email='jennydoe@example.org')
         self.club = Club.objects.get(name="Chess Club")
         self.other_club = Club.objects.get(name="The Royal Rooks")
-        self.user.select_club(self.club)
         self.applicant.select_club(self.other_club)
         self.member.select_club(self.other_club)
         self.officer.select_club(self.other_club)
@@ -94,16 +93,14 @@ class UserListTest(TestCase, AssertHTMLMixin):
 
     def test_redirects_for_user_that_is_an_applicant(self):
         self.client.login(email=self.applicant.email, password='Password123')
-        url = reverse('user_list')
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.url, follow=True)
         response_url = reverse('start')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
 
     def test_members_are_displayed_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password='Password123')
-        url = reverse('user_list')
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_list.html')
         self.assertContains(response, "Jane Doe")
@@ -146,8 +143,7 @@ class UserListTest(TestCase, AssertHTMLMixin):
 
     def test_all_members_are_displayed_when_logged_in_as_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
-        url = reverse('user_list')
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_list.html')
         self.assertContains(response, "James Doe")
@@ -158,8 +154,7 @@ class UserListTest(TestCase, AssertHTMLMixin):
 
     def test_all_members_are_displayed_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
-        url = reverse('user_list')
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_list.html')
         self.assertContains(response, "James Doe")
@@ -167,6 +162,12 @@ class UserListTest(TestCase, AssertHTMLMixin):
         self.assertContains(response, "Jenny Doe")
         self.assertNotContains(response, "Jamie Doe")
         self.assertNotContains(response, "John Doe")
+
+    def test_redirects_when_no_club_selected(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        response_url = reverse('start')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def _create_test_users(self, user_count=10):
         for user_id in range(user_count):
