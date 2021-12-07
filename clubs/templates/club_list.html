@@ -9,6 +9,11 @@
             {% for club in clubs %}
                 <tr>
                     <td>{{ club.name }}</td>
+                    {% for owner in owners %}
+                        {% if owner.club_id == club.id%}
+                            <td>Owner email: {{ owner.user }}</td>
+                        {% endif %}
+                    {% endfor %}
                 </tr>
             {% endfor %}
         </table>
