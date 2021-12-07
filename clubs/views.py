@@ -296,8 +296,16 @@ def apply_for_club(request, club_id):
 def leave_club(request, club_id):
     clubs = Club.objects.get(id = club_id)
     user_id = request.user.id
-    membership = Membership.objects.get(user = user_id, club = clubs)
-    membership.delete()
+    if request.user.current_club == clubs:
+        membership = Membership.objects.get(user = user_id, club = clubs)
+        membership.delete()
+        MyClubs = Club.objects.filter(membership__user=request.user).first()
+        request.user.current_club = MyClubs
+        request.user.save()
+    else:
+        membership = Membership.objects.get(user = user_id, club = clubs)
+        membership.delete()
+
     return redirect('my_clubs')
 
 
