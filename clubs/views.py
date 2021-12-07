@@ -311,4 +311,5 @@ def select_club(request):
 @login_required
 def club_list(request):
     clubs = Club.objects.all()
-    return render(request, 'club_list.html' , {'clubs':clubs})
+    """owners = Membership.objects.filter(membership__role = Membership.OWNER)"""
+    return render(request, 'club_list.html' , {'clubs':clubs}) 

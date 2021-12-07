@@ -123,7 +123,6 @@ class Club(models.Model):
     def __str__(self):
         return self.name
 
-
 class Membership(models.Model):
     APPLICANT = 0
     MEMBER = 1
