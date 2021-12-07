@@ -7,8 +7,8 @@ from clubs.tests.helpers import reverse_with_next
 
 class ShowUserTest(TestCase):
     fixtures = [
-        'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/users/default_user.json',
+        'clubs/tests/fixtures/users/other_users.json'
     ]
 
     def setUp(self):

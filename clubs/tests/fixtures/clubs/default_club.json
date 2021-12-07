@@ -1,0 +1,11 @@
+[
+  {
+    "model": "clubs.club",
+    "pk": 6,
+    "fields": {
+      "name": "Chess Club",
+      "location": "London",
+      "mission_statement": "A group of people who play chess"
+    }
+  }
+]

@@ -8,16 +8,27 @@ from clubs.models import User, Club, Membership
 class UserListTest(TestCase, AssertHTMLMixin):
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/users/default_user.json',
+        'clubs/tests/fixtures/users/other_users.json',
+        'clubs/tests/fixtures/clubs/default_club.json',
+        'clubs/tests/fixtures/clubs/other_clubs.json',
+        'clubs/tests/fixtures/memberships/memberships.json'
     ]
 
     def setUp(self):
         self.url = reverse('user_list')
-        self.applicant = User.objects.get(email='johndoe@example.org')
-        self.member = User.objects.get(email='jamesdoe@example.org')
-        self.officer = User.objects.get(email="janedoe@example.org")
+        self.user = User.objects.get(email='johndoe@example.org')
+        self.applicant = User.objects.get(email='jamiedoe@example.org')
+        self.member = User.objects.get(email='janedoe@example.org')
+        self.officer = User.objects.get(email="jamesdoe@example.org")
         self.owner = User.objects.get(email='jennydoe@example.org')
+        self.club = Club.objects.get(name="Chess Club")
+        self.other_club = Club.objects.get(name="The Royal Rooks")
+        self.user.select_club(self.club)
+        self.applicant.select_club(self.other_club)
+        self.member.select_club(self.other_club)
+        self.officer.select_club(self.other_club)
+        self.owner.select_club(self.other_club)
 
     def test_user_list_url(self):
         self.assertEqual(self.url,'/user_list/')
@@ -93,9 +104,10 @@ class UserListTest(TestCase, AssertHTMLMixin):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_list.html')
-        self.assertContains(response, "James Doe")
+        self.assertContains(response, "Jane Doe")
+        self.assertNotContains(response, "Jamie Doe")
+        self.assertNotContains(response, "James Doe")
         self.assertNotContains(response, "John Doe")
-        self.assertNotContains(response, "Jane Doe")
         self.assertNotContains(response, "Jenny Doe")
 
     def test_user_list_button_in_menu_does_not_display_when_logged_in_as_applicant(self):
@@ -139,6 +151,7 @@ class UserListTest(TestCase, AssertHTMLMixin):
         self.assertContains(response, "James Doe")
         self.assertContains(response, "Jane Doe")
         self.assertContains(response, "Jenny Doe")
+        self.assertNotContains(response, "Jamie Doe")
         self.assertNotContains(response, "John Doe")
 
     def test_all_members_are_displayed_when_logged_in_as_owner(self):
@@ -150,11 +163,12 @@ class UserListTest(TestCase, AssertHTMLMixin):
         self.assertContains(response, "James Doe")
         self.assertContains(response, "Jane Doe")
         self.assertContains(response, "Jenny Doe")
+        self.assertNotContains(response, "Jamie Doe")
         self.assertNotContains(response, "John Doe")
 
     def _create_test_users(self, user_count=10):
         for user_id in range(user_count):
-            User.objects.create_user(f'user{user_id}@test.org',
+            user = User.objects.create_user(f'user{user_id}@test.org',
                 password='Password123',
                 first_name=f'First{user_id}',
                 last_name=f'Last{user_id}',
@@ -162,3 +176,5 @@ class UserListTest(TestCase, AssertHTMLMixin):
                 personal_statement=f'I am {user_id}',
                 experience_level='Medium',
             )
+            membership = Membership(user=user, club=self.other_club, role=Membership.MEMBER)
+            membership.save()

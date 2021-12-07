@@ -7,7 +7,7 @@ from clubs.tests.helpers import LogInTester
 class LogOutViewTestCase(TestCase, LogInTester):
     """Tests of the log out view."""
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = ['clubs/tests/fixtures/users/default_user.json']
 
     def setUp(self):
         self.url = reverse('log_out')

@@ -152,8 +152,7 @@ class UserListView(LoginRequiredMixin, ListView):
         club = user.current_club
         if user.current_club_role == Membership.MEMBER:
             return club.associates.filter(membership__role=Membership.MEMBER)
-        return club.associates.filter(membership__role=Membership.APPLICANT)
-
+        return club.associates.exclude(membership__role=Membership.APPLICANT)
 
 @login_required
 def start(request):

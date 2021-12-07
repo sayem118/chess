@@ -8,8 +8,8 @@ from clubs.models import User
 
 class OfficersListViewTestCase(TestCase):
     fixtures = [
-        'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/users/default_user.json',
+        'clubs/tests/fixtures/users/other_users.json'
     ]
 
     def setUp(self):

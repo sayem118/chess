@@ -9,7 +9,7 @@ from clubs.models import User
 class LogInFormTestCase(TestCase):
     """Unit tests of the log in form."""
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = ['clubs/tests/fixtures/users/default_user.json']
 
     def setUp(self):
         self.form_input = {'email': 'janedoe@example.org', 'password': 'Password123'}

@@ -10,8 +10,8 @@ class UserModelTestCase(TestCase):
     """Unit tests for the User model."""
 
     fixtures = [
-        "clubs/tests/fixtures/default_user.json",
-        "clubs/tests/fixtures/other_users.json"
+        "clubs/tests/fixtures/users/default_user.json",
+        "clubs/tests/fixtures/users/other_users.json"
     ]
 
     def setUp(self):
@@ -133,9 +133,6 @@ class UserModelTestCase(TestCase):
     def test_personal_statement_must_not_contain_more_than_520_characters(self):
         self.user.personal_statement = 'x' * 521
         self._assert_user_is_invalid()
-
-    #def test_default_role_is_applicant(self):
-    #    self.assertEqual(self.user.role, User.APPLICANT)
 
     def test_create_user_with_no_email_raises_error(self):
         with self.assertRaises(ValueError):
