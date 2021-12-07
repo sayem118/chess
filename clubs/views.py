@@ -306,3 +306,8 @@ def select_club(request):
     form = SelectClubForm()
     form.fields['club'].queryset = all_clubs_user_in
     return render(request, 'select_club.html', {'form': form})
+
+
+@login_required
+def club_list(request):
+    return render(request, 'club_list.html')
