@@ -1,3 +1,5 @@
+"""Test of the user list view"""
+
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse

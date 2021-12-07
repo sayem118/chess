@@ -16,7 +16,7 @@ class MembersListViewTestCase(TestCase):
     ]
 
     def setUp(self):
-        self.url = reverse('user_list')
+        self.url = reverse('members_list')
         self.user = User.objects.get(email='johndoe@example.org')
         self.applicant = User.objects.get(email='jamiedoe@example.org')
         self.member = User.objects.get(email='janedoe@example.org')
@@ -29,38 +29,37 @@ class MembersListViewTestCase(TestCase):
         self.member.select_club(self.other_club)
         self.officer.select_club(self.other_club)
         self.owner.select_club(self.other_club)
-        self.members_list_url = reverse('members_list')
 
     def test_cant_access_members_list_as_applicant(self):
         response_url = reverse('start')
         self.client.login(email=self.applicant.email, password='Password123')
-        response = self.client.get(self.members_list_url)
+        response = self.client.get(self.url)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def test_cant_access_members_list_as_member(self):
         response_url = reverse('start')
         self.client.login(email=self.member.email, password='Password123')
-        response = self.client.get(self.members_list_url)
+        response = self.client.get(self.url)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def test_cant_access_members_list_as_officer(self):
         response_url = reverse('start')
         self.client.login(email=self.officer.email, password='Password123')
-        response = self.client.get(self.members_list_url)
+        response = self.client.get(self.url)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def test_cant_access_members_list_logged_out(self):
         response_url = reverse('log_in')
 
-        response = self.client.get(self.members_list_url)
+        response = self.client.get(self.url)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
-        response = self.client.get(self.members_list_url, follow=True)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed('log_in.html')
 
     def test_can_access_members_list_as_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
-        self.client.get(self.members_list_url)
+        self.client.get(self.url)
         self.assertTemplateUsed('promote_members.html')
 
     def test_succesfully_promote_a_member(self):
@@ -73,8 +72,8 @@ class MembersListViewTestCase(TestCase):
         check_if_promoted = User.objects.get(email="janedoe@example.org")
 
         self.assertEqual(check_if_promoted.current_club_role, Membership.OFFICER)
-        members_list_url = reverse('members_list')
-        self.assertRedirects(response, members_list_url, status_code=302, target_status_code=200)
+        url = reverse('members_list')
+        self.assertRedirects(response, url, status_code=302, target_status_code=200)
 
     def test_cant_promote_a_member_when_not_logged_in(self):
         promote_view_url = reverse('promote_member', kwargs={'user_id': self.member.id})
@@ -158,7 +157,7 @@ class MembersListViewTestCase(TestCase):
 
         member = self._create_new_user_with_email("memberdoe@example.org")
 
-        response = self.client.get(self.members_list_url)
+        response = self.client.get(self.url)
 
         users_shown = response.context['members']
 
