@@ -63,26 +63,26 @@ class TransferOwnershipTest(TestCase):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_redirects_for_user_that_is_an_applicant(self):
-        response_url = reverse('start')
         self.client.login(email=self.applicant.email, password='Password123')
-        response = self.client.get(self.url)
+        response_url = reverse('start')
+        response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def test_redirects_for_user_that_is_a_member(self):
-        response_url = reverse('start')
         self.client.login(email=self.member.email, password='Password123')
-        response = self.client.get(self.url)
+        response_url = reverse('start')
+        response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def test_redirects_for_user_that_is_a_officer(self):
-        response_url = reverse('start')
         self.client.login(email=self.officer.email, password='Password123')
-        response = self.client.get(self.url)
+        response_url = reverse('start')
+        response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def test_redirects_for_user_id_that_is_invalid(self):
+        self.client.login(email=self.owner.email, password='Password123')
         response_url = reverse('start')
-        self.client.login(email=self.officer.email, password='Password123')
-        url = reverse("transfer_ownership", kwargs={"user_id": self.officer.id})
-        response = self.client.get(url)
+        url = reverse("transfer_ownership", kwargs={"user_id": self.officer.id+9999})
+        response = self.client.get(url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
