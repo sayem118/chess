@@ -62,17 +62,16 @@ class ShowUserView(DetailView):
         """Generate content to be displayed in the template"""
 
         context = super().get_context_data(*args, **kwargs)
-        context['user'] = self.request.user
+        context['user'] = self.get_object()
         context['is_staff'] = self.request.user.current_club_not_none and self.request.user.current_club_role in {
             Membership.OFFICER, Membership.OWNER}
         return context
 
     def get(self, request, *args, **kwargs):
         """handle get request, and redirect to user_list if user_id invalid"""
-
         try:
-            if self.request.user.role == User.MEMBER:
-                if self.get_object().role in {User.OFFICER, User.OWNER}:
+            if self.request.user.current_club_role == Membership.MEMBER:
+                if self.request.user.current_club.membership_set.get(user=self.get_object()).role in {Membership.OFFICER, Membership.OWNER}:
                     return redirect('user_list')
             return super().get(request, *args, **kwargs)
         except Http404:
@@ -292,7 +291,6 @@ def transfer_ownership(request, user_id):
 @login_required
 def select_club(request):
     user = request.user
-    Club.objects.filter()
     all_clubs_user_in = Club.objects.filter(membership__user=user)
     if user.current_club_not_none:
         all_clubs_user_in = all_clubs_user_in.exclude(id=user.current_club.id)

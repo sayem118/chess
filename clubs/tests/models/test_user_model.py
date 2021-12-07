@@ -2,20 +2,33 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from clubs.models import User
+from clubs.models import User, Club, Membership
 
 
-# Create your tests here.
 class UserModelTestCase(TestCase):
     """Unit tests for the User model."""
 
     fixtures = [
-        "clubs/tests/fixtures/users/default_user.json",
-        "clubs/tests/fixtures/users/other_users.json"
+        'clubs/tests/fixtures/users/default_user.json',
+        'clubs/tests/fixtures/users/other_users.json',
+        'clubs/tests/fixtures/clubs/default_club.json',
+        'clubs/tests/fixtures/clubs/other_clubs.json',
+        'clubs/tests/fixtures/memberships/memberships.json'
     ]
 
     def setUp(self):
-        self.user = User.objects.get(email="johndoe@example.org")
+        self.user = User.objects.get(email='johndoe@example.org')
+        self.applicant = User.objects.get(email='jamiedoe@example.org')
+        self.member = User.objects.get(email='janedoe@example.org')
+        self.officer = User.objects.get(email="jamesdoe@example.org")
+        self.owner = User.objects.get(email='jennydoe@example.org')
+        self.club = Club.objects.get(name="Chess Club")
+        self.other_club = Club.objects.get(name="The Royal Rooks")
+        self.user.select_club(self.club)
+        self.applicant.select_club(self.other_club)
+        self.member.select_club(self.other_club)
+        self.officer.select_club(self.other_club)
+        self.owner.select_club(self.other_club)
 
     def test_valid_user(self):
         self._assert_user_is_valid()

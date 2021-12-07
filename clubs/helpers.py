@@ -21,7 +21,7 @@ def required_role(role):
             if user.is_anonymous:
                 return redirect('log_in')
             club = user.current_club
-            if club == None:
+            if user.current_club_not_none == False:
                 return redirect('start')
             if not club.is_of_role(user, role):
                 return redirect('start')
@@ -40,7 +40,7 @@ def prohibited_role(role):
             if user.is_anonymous:
                 return redirect('log_in')
             club = user.current_club
-            if club == None:
+            if user.current_club_not_none == False:
                 return redirect('start')
             elif club.is_of_role(user, role):
                 return redirect('start')
