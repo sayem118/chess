@@ -310,4 +310,5 @@ def select_club(request):
 
 @login_required
 def club_list(request):
-    return render(request, 'club_list.html')
+    clubs = Club.objects.all()
+    return render(request, 'club_list.html' , {'clubs':clubs})
