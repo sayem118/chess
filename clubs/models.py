@@ -41,6 +41,17 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     """User model used for authentication and clubs authoring."""
+    APPLICANT = 0
+    MEMBER = 1
+    OFFICER = 2
+    OWNER = 3
+
+    ROLE_CHOICES = (
+        (APPLICANT, 'Applicant'),
+        (MEMBER, 'Member'),
+        (OFFICER, 'Officer'),
+        (OWNER, 'Owner'),
+    )
 
     username = None
     email = models.EmailField(unique=True, blank=False)
