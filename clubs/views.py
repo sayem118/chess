@@ -287,6 +287,33 @@ def transfer_ownership(request, user_id):
     else:
         return redirect('start')
 
+def apply_for_club(request, club_id):
+    clubs = Club.objects.get(id = club_id)
+    membership = Membership.objects.create(user = request.user, club = clubs)
+    membership.save()
+    return redirect('my_clubs')
+
+def leave_club(request, club_id):
+    clubs = Club.objects.get(id = club_id)
+    user_id = request.user.id
+    if request.user.current_club == clubs:
+        membership = Membership.objects.get(user = user_id, club = clubs)
+        membership.delete()
+        MyClubs = Club.objects.filter(membership__user=request.user).first()
+        request.user.current_club = MyClubs
+        request.user.save()
+    else:
+        membership = Membership.objects.get(user = user_id, club = clubs)
+        membership.delete()
+
+    return redirect('my_clubs')
+
+
+def my_clubs(request):
+    user = request.user
+    MyClubs = Club.objects.filter(membership__user=user)
+    NotMyClubs = Club.objects.exclude(membership__user=user)
+    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs':NotMyClubs})
 
 @login_required
 def select_club(request):
