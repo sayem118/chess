@@ -15,7 +15,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm
-from .helpers import login_prohibited, required_role, prohibited_role
+from .helpers import login_prohibited, required_role, prohibited_role, user_has_to_be_apart_of_a_club
 from .models import User, Membership, Club
 
 
@@ -153,24 +153,10 @@ class UserListView(LoginRequiredMixin, ListView):
             return club.associates.filter(membership__role=Membership.MEMBER)
         return club.associates.exclude(membership__role=Membership.APPLICANT)
 
+
 @login_required
 def start(request):
     return render(request, 'start.html')
-
-
-@login_required
-def member_status(request):
-    current_user = request.user
-    if current_user.current_club_not_none:
-        if current_user.current_club_role == Membership.APPLICANT:
-            return render(request, 'applicant_status.html')
-        elif current_user.current_club_role == Membership.MEMBER:
-            return render(request, 'member_status.html')
-        elif current_user.current_club_role == Membership.OFFICER:
-            return render(request, 'officer_status.html')
-        elif current_user.current_club_role == Membership.OWNER:
-            return render(request, 'owner_status.html')
-    return render(request, 'applicant_status.html')
 
 
 @login_required
@@ -303,3 +289,29 @@ def select_club(request):
     form = SelectClubForm()
     form.fields['club'].queryset = all_clubs_user_in
     return render(request, 'select_club.html', {'form': form})
+
+class MemberStatusView(LoginRequiredMixin, ListView):
+    """View that shows the memberships of all the clubs the user is apart of"""
+
+    model = Club
+    template_name = "member_status.html"
+    context_object_name = "clubs"
+
+    @method_decorator(user_has_to_be_apart_of_a_club)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        user = self.request.user
+        memberships = user.membership_set.all()
+        clubs = []
+        for membership in memberships:
+            role = "Applicant"
+            if membership.role == Membership.OWNER:
+                role = "Owner"
+            elif membership.role == Membership.OFFICER:
+                role = "Officer"
+            elif membership.role == Membership.MEMBER:
+                role = "Member"
+            clubs.append([membership.club, role])
+        return clubs

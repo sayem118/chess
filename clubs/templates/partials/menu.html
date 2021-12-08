@@ -8,9 +8,11 @@
         <li class="nav-item">
             <a class="nav-link" href="{% url 'start' %}">Home</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'member_status' %}">Member status</a>
-        </li>
+        {% if user.membership_set.count != 0 %}
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'member_status' %}">Member status</a>
+            </li>
+        {% endif %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'select_club' %}">Select club</a>
         </li>

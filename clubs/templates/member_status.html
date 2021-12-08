@@ -1,1 +1,17 @@
-UNDER CONSTURCTION
+{% extends 'base_content.html' %}
+{% block content %}
+    <div class="container">
+    <div class="row">
+    <div class="col-6">
+        <h2>Club Memberships</h2>
+        <br>
+        <table class="table">
+            {% for club, role in clubs %}
+                <tr>
+                    <td>{{ club.name }}</td>
+                    <td>{{role}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
