@@ -263,8 +263,6 @@ def demote_officer(request, user_id):
         new_role = Membership.MEMBER
         club = request.user.current_club
         user = User.objects.get(id=user_id)
-        if club == None:
-            return redirect('start')
         if club.exist(user) and club.is_of_role(user, old_role):
             club.change_role(user, new_role)
     except ObjectDoesNotExist:
@@ -298,7 +296,6 @@ def select_club(request):
     if request.method == 'POST':
         user = request.user
         form = SelectClubForm(request.POST)
-        print(form.fields['club'])
         form.fields['club'].queryset = all_clubs_user_in
         if form.is_valid():
             user.select_club(form.cleaned_data.get('club'))

@@ -28,7 +28,6 @@ class SelectClubTest(TestCase):
         self.other_club = Club.objects.get(name="The Royal Rooks")
         membership = Membership(user=self.member, club=self.club, role=Membership.MEMBER)
         membership.save()
-        self.user.select_club(self.club)
         self.applicant.select_club(self.other_club)
         self.member.select_club(self.club)
         self.member.select_club(self.other_club)
@@ -43,8 +42,16 @@ class SelectClubTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
-    def test_successful_get_select_club_with_get(self):
+    def test_successful_get_select_club_when_club_selected_with_get(self):
         self.client.login(email=self.member.email, password='Password123')
+        response = self.client.get(self.url)
+        form = response.context['form']
+        self.assertFalse(form.is_bound)
+        self.assertTemplateUsed(response, 'select_club.html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_successful_get_select_club_when_no_club_selected_with_get(self):
+        self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         form = response.context['form']
         self.assertFalse(form.is_bound)

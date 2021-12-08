@@ -25,11 +25,13 @@ class OfficersListViewTestCase(TestCase):
         self.owner = User.objects.get(email='jennydoe@example.org')
         self.club = Club.objects.get(name="Chess Club")
         self.other_club = Club.objects.get(name="The Royal Rooks")
-        self.user.select_club(self.club)
         self.applicant.select_club(self.other_club)
         self.member.select_club(self.other_club)
         self.officer.select_club(self.other_club)
         self.owner.select_club(self.other_club)
+        membership = self.club.membership_set.get(user=self.user)
+        membership.role = Membership.OWNER
+        membership.save()
 
     def test_cant_access_officers_list_as_applicant(self):
         start_url = reverse('start')
@@ -142,6 +144,13 @@ class OfficersListViewTestCase(TestCase):
         users_shown = response.context['officers']
         for user in users_shown:
             self.assertEqual(user.current_club_role, Membership.OFFICER)
+
+    def test_redirects_when_no_club_selected(self):
+        self.client.login(email=self.user.email, password='Password123')
+        demote_view_url = reverse('demote_officer', kwargs={'user_id': self.officer.id})
+        response = self.client.get(self.url, follow=True)
+        response_url = reverse('start')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
 
     def _create_new_user_with_email(self, email="somedoe@example.org"):
         user = User.objects.create_user(
