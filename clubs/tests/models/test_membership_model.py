@@ -1,5 +1,5 @@
 """Unit tests for the Membership model."""
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import IntegrityError
 from django.test import TestCase
 
@@ -33,11 +33,15 @@ class MembershipModelTestCase(TestCase):
         with self.assertRaises(IntegrityError):
             membership.save()
 
-    def test_siccessful_membership_creation(self):
+    def test_successful_membership_creation(self):
         membership = Membership(user=self.user, club=self.club, role=Membership.OWNER)
         try:
             membership.save()
         except ValidationError:
             self.fail('Test membership should be valid')
         except IntegrityError:
+            self.fail('Test membership should be valid')
+        try:
+            Membership.objects.get(user=self.user, club=self.club, role=Membership.OWNER)
+        except ObjectDoesNotExist:
             self.fail('Test membership should be valid')
