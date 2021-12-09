@@ -41,5 +41,5 @@ urlpatterns = [
     path('club_list/', views.club_list, name='club_list'),
     path('my_clubs/', views.my_clubs, name = 'my_clubs'),
     path('apply/<int:club_id>', views.apply_for_club, name = 'apply'),
-    path('leave_club<int:club_id>', views.leave_club, name = 'leave_club')
+    path('leave_club<int:club_id>', views.leave_club, name = 'leave_club'),
 ]

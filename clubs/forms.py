@@ -73,7 +73,7 @@ class UserForm(forms.ModelForm):
         """Form options."""
 
         model = User
-        fields = ['first_name', 'last_name', 'email', 'bio']
+        fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
         widgets = {'bio': forms.Textarea()}
 
 

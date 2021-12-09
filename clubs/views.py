@@ -321,7 +321,7 @@ def club_list(request):
     clubs = Club.objects.all()
     owners = Membership.objects.filter(role = Membership.OWNER)
     return render(request, 'club_list.html' , {'clubs':clubs, 'owners': owners})
-    
+
 class MemberStatusView(LoginRequiredMixin, ListView):
     """View that shows the memberships of all the clubs the user is apart of"""
 
