@@ -62,17 +62,16 @@ class ShowUserView(DetailView):
         """Generate content to be displayed in the template"""
 
         context = super().get_context_data(*args, **kwargs)
-        context['user'] = self.request.user
+        context['user'] = self.get_object()
         context['is_staff'] = self.request.user.current_club_not_none and self.request.user.current_club_role in {
             Membership.OFFICER, Membership.OWNER}
         return context
 
     def get(self, request, *args, **kwargs):
         """handle get request, and redirect to user_list if user_id invalid"""
-
         try:
-            if self.request.user.role == User.MEMBER:
-                if self.get_object().role in {User.OFFICER, User.OWNER}:
+            if self.request.user.current_club_role == Membership.MEMBER:
+                if self.request.user.current_club.membership_set.get(user=self.get_object()).role in {Membership.OFFICER, Membership.OWNER}:
                     return redirect('user_list')
             return super().get(request, *args, **kwargs)
         except Http404:
@@ -152,39 +151,12 @@ class UserListView(LoginRequiredMixin, ListView):
         club = user.current_club
         if user.current_club_role == Membership.MEMBER:
             return club.associates.filter(membership__role=Membership.MEMBER)
-        return club.associates.filter(membership__role=Membership.APPLICANT)
+        return club.associates.exclude(membership__role=Membership.APPLICANT)
 
 
 @login_required
 def start(request):
     return render(request, 'start.html')
-
-
-class MemberStatusView(LoginRequiredMixin, ListView):
-    """View that shows the memberships of all the clubs the user is apart of"""
-
-    model = Club
-    template_name = "member_status.html"
-    context_object_name = "clubs"
-
-    @method_decorator(user_has_to_be_apart_of_a_club)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        user = self.request.user
-        memberships = user.membership_set.all()
-        clubs = []
-        for membership in memberships:
-            role = "Applicant"
-            if membership.role == Membership.OWNER:
-                role = "Owner"
-            elif membership.role == Membership.OFFICER:
-                role = "Officer"
-            elif membership.role == Membership.MEMBER:
-                role = "Member"
-            clubs.append([membership.club, role])
-        return clubs
 
 
 @login_required
@@ -330,7 +302,6 @@ def my_clubs(request):
 @login_required
 def select_club(request):
     user = request.user
-    Club.objects.filter()
     all_clubs_user_in = Club.objects.filter(membership__user=user)
     if user.current_club_not_none:
         all_clubs_user_in = all_clubs_user_in.exclude(id=user.current_club.id)
@@ -346,9 +317,33 @@ def select_club(request):
     form.fields['club'].queryset = all_clubs_user_in
     return render(request, 'select_club.html', {'form': form})
 
-
-@login_required
 def club_list(request):
     clubs = Club.objects.all()
     owners = Membership.objects.filter(role = Membership.OWNER)
     return render(request, 'club_list.html' , {'clubs':clubs, 'owners': owners})
+    
+class MemberStatusView(LoginRequiredMixin, ListView):
+    """View that shows the memberships of all the clubs the user is apart of"""
+
+    model = Club
+    template_name = "member_status.html"
+    context_object_name = "clubs"
+
+    @method_decorator(user_has_to_be_apart_of_a_club)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        user = self.request.user
+        memberships = user.membership_set.all()
+        clubs = []
+        for membership in memberships:
+            role = "Applicant"
+            if membership.role == Membership.OWNER:
+                role = "Owner"
+            elif membership.role == Membership.OFFICER:
+                role = "Officer"
+            elif membership.role == Membership.MEMBER:
+                role = "Member"
+            clubs.append([membership.club, role])
+        return clubs

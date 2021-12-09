@@ -10,7 +10,7 @@ class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
-        'first_name', 'last_name', 'email', 'experience_level', 'role'
+        'first_name', 'last_name', 'email', 'experience_level'
     ]
 
 @admin.register(Club)

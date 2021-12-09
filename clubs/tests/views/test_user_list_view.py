@@ -180,3 +180,4 @@ class UserListTest(TestCase, AssertHTMLMixin):
                 experience_level='Medium',
             )
             membership = Membership(user=user, club=self.other_club, role=Membership.MEMBER)
+            membership.save()

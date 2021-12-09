@@ -18,10 +18,12 @@ def required_role(role):
     def actual_decorator(view_function):
         def modified_view_function(request, *args, **kwargs):
             user = request.user
-            club = user.current_club
             if user.is_anonymous:
-                return redirect('home')
-            elif not club.is_of_role(user, role):
+                return redirect('log_in')
+            club = user.current_club
+            if user.current_club_not_none == False:
+                return redirect('start')
+            if not club.is_of_role(user, role):
                 return redirect('start')
             else:
                 return view_function(request, *args, **kwargs)
@@ -44,9 +46,11 @@ def prohibited_role(role):
     def actual_decorator(view_function):
         def modified_view_function(request, *args, **kwargs):
             user = request.user
-            club = user.current_club
             if user.is_anonymous:
-                return redirect('home')
+                return redirect('log_in')
+            club = user.current_club
+            if user.current_club_not_none == False:
+                return redirect('start')
             elif club.is_of_role(user, role):
                 return redirect('start')
             else:
@@ -56,14 +60,13 @@ def prohibited_role(role):
 
     return actual_decorator
 
-
-def applicant_prohibited(view_function):
-    def modified_view_function(request, *args, **kwargs):
+def user_has_to_be_apart_of_a_club(view_function):
+    def modified_view_function(request):
         if request.user.is_anonymous:
             return redirect('log_in')
-        elif request.user.role == User.APPLICANT:
+        if request.user.membership_set.count() == 0:
             return redirect('start')
         else:
-            return view_function(request, *args, **kwargs)
+            return view_function(request)
 
     return modified_view_function

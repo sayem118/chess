@@ -56,6 +56,7 @@ class MembershipModelTestCase(TestCase):
         fail_membership = Membership(user=self.user, club=self.other_club, role=Membership.MEMBER)
         with self.assertRaises(IntegrityError):
             fail_membership.save()
+
     def test_cannot_have_more_than_one_owner_for_a_club(self):
         membership = Membership(user=self.user, club=self.club, role=Membership.OWNER)
         membership.save()
