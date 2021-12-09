@@ -1,6 +1,6 @@
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        {% if user.current_club_not_none and user.current_club_role != 0 %}
+        {% if user.current_club_not_none and user.current_club_role %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'user_list' %}">Users</a>
             </li>
@@ -8,7 +8,7 @@
         <li class="nav-item">
             <a class="nav-link" href="{% url 'start' %}">Home</a>
         </li>
-        {% if user.membership_set.count != 0 %}
+        {% if user.membership_set.count %}
           <li class="nav-item">
               <a class="nav-link" href="{% url 'member_status' %}">Member status</a>
             </li>
@@ -20,7 +20,7 @@
             <a class="nav-link" href="{% url 'my_clubs' %}">My clubs</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'club_list' %}">clubs list</a>
+            <a class="nav-link" href="{% url 'club_list' %}">Clubs List</a>
         </li>
         {% include 'partials/officer_menu_items.html' %}
         {% include 'partials/owner_menu_items.html' %}

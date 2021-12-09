@@ -11,6 +11,7 @@ from clubs.tests.helpers import reverse_with_next
 class ClubListTest(TestCase,AssertHTMLMixin):
 
     fixtures = [
+        'clubs/tests/fixtures/users/default_user.json',
         'clubs/tests/fixtures/users/other_users.json',
         'clubs/tests/fixtures/clubs/default_club.json',
         'clubs/tests/fixtures/clubs/other_clubs.json',
@@ -19,9 +20,12 @@ class ClubListTest(TestCase,AssertHTMLMixin):
 
     def setUp(self):
         self.url = reverse('club_list')
+        self.user = User.objects.get(email='johndoe@example.org')
         self.member = User.objects.get(email='janedoe@example.org')
+        self.owner = User.objects.get(email='jennydoe@example.org')
         self.club = Club.objects.get(name="Chess Club")
         self.other_club = Club.objects.get(name="The Royal Rooks")
+        self.user.select_club(self.club)
         self.member.select_club(self.other_club)
 
     def test_club_list_url(self):
@@ -37,5 +41,7 @@ class ClubListTest(TestCase,AssertHTMLMixin):
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'club_list.html')
-        self.assertContains(response, self.club)
-        self.assertContains(response, self.other_club)
+        self.assertContains(response, self.club.name)
+        self.assertContains(response, self.other_club.name)
+        self.assertContains(response, "Owner: " + self.user.first_name + " " + self.user.last_name)
+        self.assertContains(response, "Owner: " + self.owner.first_name + " " + self.owner.last_name)

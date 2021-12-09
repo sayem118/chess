@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, IntegrityError
 from django.db.models import Q
 from libgravatar import Gravatar
@@ -109,7 +110,7 @@ class Club(models.Model):
             membership = self.membership_set.get(user=user)
             membership.role = new_role
             membership.save()
-        except IntegrityError:
+        except ObjectDoesNotExist:
             pass
 
     def __str__(self):

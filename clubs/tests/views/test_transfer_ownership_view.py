@@ -33,7 +33,7 @@ class TransferOwnershipTest(TestCase):
         self.url = reverse("transfer_ownership", kwargs={"user_id": self.officer.id})
 
     def test_transfer_ownership_url(self):
-        self.assertEqual(self.url, '/transfer_ownership/4')
+        self.assertEqual(self.url,f'/transfer_ownership/{self.officer.id}')
 
     def test_successfully_transfer_ownership(self):
         self.client.login(email=self.owner.email, password="Password123")

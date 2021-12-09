@@ -26,7 +26,7 @@ class ApplyForClubTest(TestCase):
         self.member.select_club(self.other_club)
         self.url = reverse('leave_club', kwargs={'club_id': self.other_club.id})
 
-    def test_apply_url(self):
+    def test_leave_club_url(self):
         self.assertEqual(self.url,f'/leave_club/{self.other_club.id}')
 
     def test_successful_leave_club(self):

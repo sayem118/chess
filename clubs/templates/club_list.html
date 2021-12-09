@@ -11,7 +11,7 @@
                     <td>{{ club.name }}</td>
                     {% for owner in owners %}
                         {% if owner.club_id == club.id%}
-                            <td>Owner: {{ owner.user.first_name }} {{ owner.user.last_name }}</td>
+                            <td>Owner: {{ owner.user.full_name }}</td>
                         {% endif %}
                     {% endfor %}
                 </tr>

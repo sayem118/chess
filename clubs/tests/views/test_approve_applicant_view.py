@@ -32,6 +32,9 @@ class ApproveApplicantViewTestCase(TestCase):
         self.owner.select_club(self.other_club)
         self.url = reverse("approve_applicant", kwargs={"user_id": self.applicant.id})
 
+    def test_approve_applicant_url(self):
+        self.assertEqual(self.url,f'/approve_applicant/{self.applicant.id}')
+
     def test_successfully_approve_applicant(self):
         self.client.login(email=self.officer.email, password="Password123")
         self.client.get(self.url)
