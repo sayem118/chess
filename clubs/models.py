@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.db import models, IntegrityError
+from django.db.models import Q
 from libgravatar import Gravatar
 
 
@@ -116,12 +117,16 @@ class Club(models.Model):
         return self.membership_set.get(user=user).role == role
 
     def change_role(self, user, new_role):
-        membership = self.membership_set.get(user=user)
-        membership.role = new_role
-        membership.save()
+        try:
+            membership = self.membership_set.get(user=user)
+            membership.role = new_role
+            membership.save()
+        except IntegrityError:
+            pass
 
     def __str__(self):
         return self.name
+
 
 class Membership(models.Model):
     APPLICANT = 0
@@ -139,3 +144,11 @@ class Membership(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=APPLICANT)
+
+    class Meta:
+        db_table = 'membership'
+        constraints = [
+            models.UniqueConstraint(name='unique_role', fields=['user', 'club']),
+            models.UniqueConstraint(name='one_owner_per_club', fields=['club', 'role'], condition=Q(role=3)),
+            models.CheckConstraint(name='role_upperbound', check=models.Q(role__lte=3))
+        ]

@@ -15,7 +15,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm
-from .helpers import login_prohibited, required_role, prohibited_role
+from .helpers import login_prohibited, required_role, prohibited_role, user_has_to_be_apart_of_a_club
 from .models import User, Membership, Club
 
 
@@ -160,19 +160,31 @@ def start(request):
     return render(request, 'start.html')
 
 
-@login_required
-def member_status(request):
-    current_user = request.user
-    if current_user.current_club_not_none:
-        if current_user.current_club_role == Membership.APPLICANT:
-            return render(request, 'applicant_status.html')
-        elif current_user.current_club_role == Membership.MEMBER:
-            return render(request, 'member_status.html')
-        elif current_user.current_club_role == Membership.OFFICER:
-            return render(request, 'officer_status.html')
-        elif current_user.current_club_role == Membership.OWNER:
-            return render(request, 'owner_status.html')
-    return render(request, 'applicant_status.html')
+class MemberStatusView(LoginRequiredMixin, ListView):
+    """View that shows the memberships of all the clubs the user is apart of"""
+
+    model = Club
+    template_name = "member_status.html"
+    context_object_name = "clubs"
+
+    @method_decorator(user_has_to_be_apart_of_a_club)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        user = self.request.user
+        memberships = user.membership_set.all()
+        clubs = []
+        for membership in memberships:
+            role = "Applicant"
+            if membership.role == Membership.OWNER:
+                role = "Owner"
+            elif membership.role == Membership.OFFICER:
+                role = "Officer"
+            elif membership.role == Membership.MEMBER:
+                role = "Member"
+            clubs.append([membership.club, role])
+        return clubs
 
 
 @login_required
@@ -287,6 +299,33 @@ def transfer_ownership(request, user_id):
     else:
         return redirect('start')
 
+def apply_for_club(request, club_id):
+    clubs = Club.objects.get(id = club_id)
+    membership = Membership.objects.create(user = request.user, club = clubs)
+    membership.save()
+    return redirect('my_clubs')
+
+def leave_club(request, club_id):
+    clubs = Club.objects.get(id = club_id)
+    user_id = request.user.id
+    if request.user.current_club == clubs:
+        membership = Membership.objects.get(user = user_id, club = clubs)
+        membership.delete()
+        MyClubs = Club.objects.filter(membership__user=request.user).first()
+        request.user.current_club = MyClubs
+        request.user.save()
+    else:
+        membership = Membership.objects.get(user = user_id, club = clubs)
+        membership.delete()
+
+    return redirect('my_clubs')
+
+
+def my_clubs(request):
+    user = request.user
+    MyClubs = Club.objects.filter(membership__user=user)
+    NotMyClubs = Club.objects.exclude(membership__user=user)
+    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs':NotMyClubs})
 
 @login_required
 def select_club(request):
@@ -312,4 +351,4 @@ def select_club(request):
 def club_list(request):
     clubs = Club.objects.all()
     owners = Membership.objects.filter(role = Membership.OWNER)
-    return render(request, 'club_list.html' , {'clubs':clubs, 'owners': owners}) 
+    return render(request, 'club_list.html' , {'clubs':clubs, 'owners': owners})

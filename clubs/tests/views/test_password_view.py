@@ -12,7 +12,7 @@ class PasswordViewTest(TestCase):
     """Test suite for the password view."""
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json'
+        'clubs/tests/fixtures/users/default_user.json'
     ]
 
     def setUp(self):

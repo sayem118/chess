@@ -12,8 +12,8 @@ class ProfileViewTest(TestCase):
     """Test suite for the profile view."""
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/users/default_user.json',
+        'clubs/tests/fixtures/users/other_users.json'
     ]
 
     def setUp(self):

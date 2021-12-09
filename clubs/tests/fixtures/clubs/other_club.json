@@ -1,0 +1,11 @@
+[
+  {
+    "model": "clubs.club",
+    "pk": 7,
+    "fields": {
+      "name": "The Royal Rooks",
+      "location": "Manchester",
+      "mission_statement": "All the king's horses' and all the king's men"
+    }
+  }
+]

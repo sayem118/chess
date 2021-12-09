@@ -1,0 +1,43 @@
+{% extends "base_content.html" %}
+{% block content%}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>My Clubs</h1>
+            <table class="table">
+                {% for clubs in MyClubs %}
+                    <tr>
+
+                        <td>
+                          <a>{{clubs.name}}</a>
+                            <form action="{% url 'leave_club' club_id=clubs.id %}" method="get">
+                                <button class="btn btn-primary">Withdraw</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+<div class="container">
+<div class="row">
+    <div class="col-12">
+        <h1>Not My Clubs</h1>
+        <table class="table">
+            {% for clubs in NotMyClubs %}
+                <tr>
+
+                    <td>
+                      <a>{{clubs.name}}</a>
+                        <form action="{% url 'apply' club_id=clubs.id %}" method="get">
+                            <button class="btn btn-primary">Apply</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+</div>
+{% endblock%}

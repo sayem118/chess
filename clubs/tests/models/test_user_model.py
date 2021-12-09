@@ -2,20 +2,23 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from clubs.models import User
+from clubs.models import User, Club
 
 
-# Create your tests here.
 class UserModelTestCase(TestCase):
     """Unit tests for the User model."""
 
     fixtures = [
-        "clubs/tests/fixtures/default_user.json",
-        "clubs/tests/fixtures/other_users.json"
+        'clubs/tests/fixtures/users/default_user.json',
+        'clubs/tests/fixtures/users/other_users.json',
+        'clubs/tests/fixtures/clubs/default_club.json'
     ]
 
     def setUp(self):
-        self.user = User.objects.get(email="johndoe@example.org")
+        self.user = User.objects.get(email='johndoe@example.org')
+        self.other_user = User.objects.get(email="janedoe@example.org")
+        self.club = Club.objects.get(name="Chess Club")
+        self.user.select_club(self.club)
 
     def test_valid_user(self):
         self._assert_user_is_valid()
@@ -25,8 +28,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_first_name_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.first_name = second_user.first_name
+        self.user.first_name = self.other_user.first_name
         self._assert_user_is_valid()
 
     def test_first_name_may_contain_50_characters(self):
@@ -42,8 +44,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_last_name_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.last_name = second_user.last_name
+        self.user.last_name = self.other_user.last_name
         self._assert_user_is_valid()
 
     def test_last_name_may_contain_50_characters(self):
@@ -59,8 +60,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_email_must_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.email = second_user.email
+        self.user.email = self.other_user.email
         self._assert_user_is_invalid()
 
     def test_email_must_contain_username(self):
@@ -88,8 +88,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_bio_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.bio = second_user.bio
+        self.user.bio = self.other_user.bio
         self._assert_user_is_valid()
 
     def test_bio_may_contain_520_characters(self):
@@ -105,8 +104,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_experience_level_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.experience_level = second_user.experience_level
+        self.user.experience_level = self.other_user.experience_level
         self._assert_user_is_valid()
 
     def test_experience_level_may_contain_520_characters(self):
@@ -122,8 +120,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
     def test_personal_statement_need_not_be_unique(self):
-        second_user = User.objects.get(email="janedoe@example.org")
-        self.user.personal_statement = second_user.personal_statement
+        self.user.personal_statement = self.other_user.personal_statement
         self._assert_user_is_valid()
 
     def test_personal_statement_may_contain_520_characters(self):
@@ -133,9 +130,6 @@ class UserModelTestCase(TestCase):
     def test_personal_statement_must_not_contain_more_than_520_characters(self):
         self.user.personal_statement = 'x' * 521
         self._assert_user_is_invalid()
-
-    def test_default_role_is_applicant(self):
-        self.assertEqual(self.user.role, User.APPLICANT)
 
     def test_create_user_with_no_email_raises_error(self):
         with self.assertRaises(ValueError):

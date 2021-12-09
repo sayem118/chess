@@ -30,6 +30,15 @@ def required_role(role):
 
     return actual_decorator
 
+def user_has_to_be_apart_of_a_club(view_function):
+    def modified_view_function(request):
+        if request.user.is_anonymous:
+            return redirect('log_in')
+        if request.user.membership_set.count() == 0:
+            return redirect('start')
+        else:
+            return view_function(request)
+    return modified_view_function
 
 def prohibited_role(role):
     def actual_decorator(view_function):
