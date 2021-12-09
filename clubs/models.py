@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.db import models, IntegrityError
+from django.db.models import Q
 from libgravatar import Gravatar
 
 
@@ -60,6 +61,7 @@ class User(AbstractUser):
     bio = models.CharField(max_length=520, blank=True)
     experience_level = models.CharField(max_length=520, blank=False)
     personal_statement = models.CharField(max_length=520, blank=False)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=APPLICANT)
 
     current_club = models.ForeignKey('Club', null=True, on_delete=models.SET_NULL)
 
@@ -115,9 +117,12 @@ class Club(models.Model):
         return self.membership_set.get(user=user).role == role
 
     def change_role(self, user, new_role):
-        membership = self.membership_set.get(user=user)
-        membership.role = new_role
-        membership.save()
+        try:
+            membership = self.membership_set.get(user=user)
+            membership.role = new_role
+            membership.save()
+        except IntegrityError:
+            pass
 
     def __str__(self):
         return self.name
