@@ -300,7 +300,7 @@ def leave_club(request, club_id):
 
     return redirect('my_clubs')
 
-
+@login_required
 def my_clubs(request):
     user = request.user
     MyClubs = Club.objects.filter(membership__user=user)
@@ -325,6 +325,7 @@ def select_club(request):
     form.fields['club'].queryset = all_clubs_user_in
     return render(request, 'select_club.html', {'form': form})
 
+@login_required
 def club_list(request):
     clubs = Club.objects.all()
     owners = Membership.objects.filter(role = Membership.OWNER)
