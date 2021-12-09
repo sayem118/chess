@@ -19,6 +19,8 @@ class UserFormTestCase(TestCase):
             'last_name': 'Doe',
             'email': 'janedoe@example.org',
             'bio': 'My bio',
+            'personal_statement': 'My statement to the world',
+            'experience_level': 'I am not very good'
         }
 
     def test_form_has_necessary_fields(self):

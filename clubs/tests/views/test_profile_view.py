@@ -24,6 +24,8 @@ class ProfileViewTest(TestCase):
             'last_name': 'Doe2',
             'email': 'johndoe2@example.org',
             'bio': 'New bio',
+            'personal_statement': 'This is my personal account',
+            'experience_level': 'I am experienced'
         }
 
     def test_profile_url(self):
