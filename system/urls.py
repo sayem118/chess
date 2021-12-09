@@ -39,7 +39,8 @@ urlpatterns = [
     path('transfer_ownership/<int:user_id>', views.transfer_ownership, name='transfer_ownership'),
     path('select_club/', views.select_club, name='select_club'),
     path('club_list/', views.club_list, name='club_list'),
-    path('my_clubs/', views.my_clubs, name = 'my_clubs'),
-    path('apply/<int:club_id>', views.apply_for_club, name = 'apply'),
-    path('leave_club/<int:club_id>', views.leave_club, name = 'leave_club')
+    path('my_clubs/', views.my_clubs, name='my_clubs'),
+    path('apply/<int:club_id>', views.apply_for_club, name='apply'),
+    path('leave_club/<int:club_id>', views.leave_club, name='leave_club'),
+    path('create_club/', views.CreateClubView.as_view(), name='create_club')
 ]

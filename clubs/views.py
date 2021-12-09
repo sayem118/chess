@@ -14,7 +14,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm, CreateClubForm
 from .helpers import login_prohibited, required_role, prohibited_role, user_has_to_be_apart_of_a_club
 from .models import User, Membership, Club
 
@@ -328,8 +328,36 @@ def select_club(request):
 @login_required
 def club_list(request):
     clubs = Club.objects.all()
-    owners = Membership.objects.filter(role = Membership.OWNER)
-    return render(request, 'club_list.html' , {'clubs':clubs, 'owners': owners})
+    owners = []
+    for club in clubs:
+        try:
+            owners.append((club, club.membership_set.get(role=Membership.OWNER).user.full_name))
+        except ObjectDoesNotExist:
+            owners.append((club, ""))
+    return render(request, 'club_list.html' , {'owners': owners})
+
+
+class CreateClubView(FormView):
+    """View that creates a club."""
+
+    form_class = CreateClubForm
+    template_name = "create_club.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save()
+        user = self.request.user
+        membership = Membership(user=user, club=self.object, role=Membership.OWNER)
+        membership.save()
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('my_clubs')
+
 
 class MemberStatusView(LoginRequiredMixin, ListView):
     """View that shows the memberships of all the clubs the user is apart of"""

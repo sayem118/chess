@@ -22,6 +22,11 @@
         <li class="nav-item">
             <a class="nav-link" href="{% url 'club_list' %}">Clubs List</a>
         </li>
+        <tr>
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'create_club' %}">Create Club</a>
+          </li>
+        </tr>
         {% include 'partials/officer_menu_items.html' %}
         {% include 'partials/owner_menu_items.html' %}
 
