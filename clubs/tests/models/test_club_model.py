@@ -1,5 +1,5 @@
 """Unit tests for the Club model."""
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import IntegrityError
 from django.test import TestCase
 
@@ -104,6 +104,12 @@ class ClubModelTestCase(TestCase):
         self.club.add_user(self.user)
         self.club.change_role(self.user, Membership.MEMBER)
         self.assertTrue(self.club.is_of_role(self.user, Membership.MEMBER))
+
+    def test_cannot_change_role_for_user_not_in_club(self):
+        self.other_club.change_role(self.user, Membership.MEMBER)
+        check_club_has_not_changed = Club.objects.get(name="The Royal Rooks")
+        with self.assertRaises(ObjectDoesNotExist):
+            check_club_has_not_changed.membership_set.get(user=self.user)
 
     def test_str_returns_club_name(self):
         self.assertEqual(self.club.__str__(), self.club.name)

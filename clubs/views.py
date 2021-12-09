@@ -271,28 +271,36 @@ def transfer_ownership(request, user_id):
     else:
         return redirect('start')
 
+@login_required
 def apply_for_club(request, club_id):
-    clubs = Club.objects.get(id = club_id)
-    membership = Membership.objects.create(user = request.user, club = clubs)
-    membership.save()
+    try:
+        clubs = Club.objects.get(id = club_id)
+        membership = Membership.objects.create(user = request.user, club = clubs)
+        membership.save()
+    except ObjectDoesNotExist:
+        return redirect('my_clubs')
     return redirect('my_clubs')
 
+@login_required
 def leave_club(request, club_id):
-    clubs = Club.objects.get(id = club_id)
-    user_id = request.user.id
-    if request.user.current_club == clubs:
-        membership = Membership.objects.get(user = user_id, club = clubs)
-        membership.delete()
-        MyClubs = Club.objects.filter(membership__user=request.user).first()
-        request.user.current_club = MyClubs
-        request.user.save()
-    else:
-        membership = Membership.objects.get(user = user_id, club = clubs)
-        membership.delete()
+    try:
+        clubs = Club.objects.get(id = club_id)
+        user_id = request.user.id
+        if request.user.current_club == clubs:
+            membership = Membership.objects.get(user = user_id, club = clubs)
+            membership.delete()
+            MyClubs = Club.objects.filter(membership__user=request.user).first()
+            request.user.current_club = MyClubs
+            request.user.save()
+        else:
+            membership = Membership.objects.get(user = user_id, club = clubs)
+            membership.delete()
+    except ObjectDoesNotExist:
+        pass
 
     return redirect('my_clubs')
 
-
+@login_required
 def my_clubs(request):
     user = request.user
     MyClubs = Club.objects.filter(membership__user=user)
@@ -317,6 +325,7 @@ def select_club(request):
     form.fields['club'].queryset = all_clubs_user_in
     return render(request, 'select_club.html', {'form': form})
 
+@login_required
 def club_list(request):
     clubs = Club.objects.all()
     owners = Membership.objects.filter(role = Membership.OWNER)

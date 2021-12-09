@@ -50,16 +50,15 @@ class MembershipModelTestCase(TestCase):
         except ObjectDoesNotExist:
             self.fail('Test membership should be valid')
 
-    """def test_user_cannot_have_more_than_one_role_in_a_club(self):
+    def test_user_cannot_have_more_than_one_role_in_a_club(self):
         membership = Membership(user=self.user, club=self.club, role=Membership.OWNER)
         membership.save()
-        fail_membership = Membership(user=self.user, club=self.other_club, role=Membership.MEMBER)
+        fail_membership = Membership(user=self.user, club=self.club, role=Membership.MEMBER)
         with self.assertRaises(IntegrityError):
             fail_membership.save()
 
-    def test_cannot_have_more_than_one_owner_for_a_club(self):
+    """def test_cannot_have_more_than_one_owner_for_a_club(self):
         membership = Membership(user=self.user, club=self.club, role=Membership.OWNER)
-        membership.save()
         fail_membership = Membership(user=self.other_user, club=self.club, role=Membership.OWNER)
         with self.assertRaises(IntegrityError):
             fail_membership.save()"""

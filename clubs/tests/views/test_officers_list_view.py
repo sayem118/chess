@@ -33,6 +33,9 @@ class OfficersListViewTestCase(TestCase):
         membership.role = Membership.OWNER
         membership.save()
 
+    def test_officers_list_url(self):
+        self.assertEqual(self.url,'/officers_list/')
+
     def test_cant_access_officers_list_as_applicant(self):
         start_url = reverse('start')
         self.client.login(email=self.applicant.email, password="Password123")
