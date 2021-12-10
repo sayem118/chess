@@ -14,7 +14,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm, CreateClubForm
 from .helpers import login_prohibited, required_role, prohibited_role, user_has_to_be_apart_of_a_club
 from .models import User, Membership, Club
 
@@ -325,11 +325,48 @@ def select_club(request):
     form.fields['club'].queryset = all_clubs_user_in
     return render(request, 'select_club.html', {'form': form})
 
-@login_required
-def club_list(request):
-    clubs = Club.objects.all()
-    owners = Membership.objects.filter(role = Membership.OWNER)
-    return render(request, 'club_list.html' , {'clubs':clubs, 'owners': owners})
+
+class ClubListView(LoginRequiredMixin, ListView):
+    """View that shows a list of all clubs and their owner"""
+
+    model = Club
+    template_name = "club_list.html"
+    context_object_name = "owners"
+
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        clubs = Club.objects.all()
+        owners = []
+        for club in clubs:
+            try:
+                owners.append((club, club.membership_set.get(role=Membership.OWNER).user.full_name))
+            except ObjectDoesNotExist:
+                owners.append((club, ""))
+        return owners
+
+
+class CreateClubView(LoginRequiredMixin, FormView):
+    """View that creates a club."""
+
+    form_class = CreateClubForm
+    template_name = "create_club.html"
+
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save()
+        user = self.request.user
+        membership = Membership(user=user, club=self.object, role=Membership.OWNER)
+        membership.save()
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('my_clubs')
+
 
 class MemberStatusView(LoginRequiredMixin, ListView):
     """View that shows the memberships of all the clubs the user is apart of"""
