@@ -8,7 +8,6 @@ The members of the team are:
 - *Berke Muftuoglu*
 - *Alexandru Matei*
 
-## Any reused code
 The following describes any code which has been reused
 - The majority of the code has taken inspiration from the lectures and source code provided from the module 5CCS2SEG
 
@@ -54,4 +53,5 @@ $ python3 manage.py test
 ## Sources
 The packages used by this application are specified in `requirements.txt`
 
-*Declare are other sources here.*
+The following describes any code which has been reused
+- The majority of the code has taken inspiration from the lectures and source code provided from the module 5CCS2SEG
