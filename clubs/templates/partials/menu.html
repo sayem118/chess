@@ -9,42 +9,25 @@
             <a class="nav-link" href="{% url 'start' %}">Home</a>
         </li>
         {% if user.membership_set.count %}
-          <li class="nav-item">
-              <a class="nav-link" href="{% url 'member_status' %}">Member status</a>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'member_status' %}">Member status</a>
             </li>
         {% endif %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'select_club' %}">Select club</a>
-        </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'my_clubs' %}">My clubs</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'club_list' %}">Clubs List</a>
         </li>
-        <tr>
-          <li class="nav-item">
-              <a class="nav-link" href="{% url 'create_club' %}">Create Club</a>
-          </li>
-        </tr>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'create_club' %}">Create Club</a>
+        </li>
         {% include 'partials/officer_menu_items.html' %}
         {% include 'partials/owner_menu_items.html' %}
-
     </ul>
+
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="#" id="user-account-dropdown" role="button" data-bs-toggle="dropdown"
-               aria-expanded="false">
-                <span class="bi-person-circle"></span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
-                <li><a class="dropdown-item" href="{% url 'profile' %}">Change profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'password' %}">Change password</a></li>
-                <li>
-                    <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="{% url 'log_out' %}">Log out</a></li>
-            </ul>
-        </li>
+        {% include 'partials/select_club_dropdown.html' %}
+        {% include 'partials/user_account_dropdown.html' %}
     </ul>
 </div>

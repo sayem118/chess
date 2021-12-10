@@ -68,7 +68,7 @@ class Command(BaseCommand):
         return clubs
 
     def create_club(self):
-        name = self.faker.word()
+        name = f"{self.faker.word().capitalize()} Chess Club"
         location = self.faker.city()
         mission_statement = self.faker.text(max_nb_chars=520)
         club = Club.objects.create(
@@ -115,32 +115,46 @@ class Command(BaseCommand):
             mission_statement='How much wood would a woodchuck chuck if a woodchuck could chuck wood.'
         )
 
+    def add_user_to_club_as_role(self, user, club, role):
+        club.add_user(user)
+        club.change_role(user, role)
+
     def add_example_users_to_default_club(self, users):
         default_club = Club.objects.get(name='Kerbal Chess Club')
 
-        for i in range(len(users)):
+        users_count = len(users)
+        for i in range(users_count):
             user = users[i]
-            default_club.add_user(user)
+            role = Membership.APPLICANT
 
-            if i == len(users) - 1:
-                default_club.change_role(user, Membership.OWNER)
-            elif i > 2 * len(users) // 3:
-                default_club.change_role(user, Membership.OFFICER)
-            elif i > len(users) // 3:
-                default_club.change_role(user, Membership.MEMBER)
+            if i == 0:
+                role = Membership.OWNER
+            elif i < users_count // 3:
+                role = Membership.OFFICER
+            elif i < 2 * users_count // 3:
+                role = Membership.MEMBER
+
+            self.add_user_to_club_as_role(user, default_club, role)
 
     def add_default_users_to_example_clubs(self, clubs):
+
         user1 = User.objects.get(email='jeb@example.org')
         club1 = clubs[0]
-        club1.add_user(user1)
-        club1.change_role(user1, Membership.OFFICER)
+        self.add_user_to_club_as_role(user1, club1, Membership.OFFICER)
+        self.add_user_to_club_as_role(self.create_user(), club1, Membership.OWNER)
+        self.add_user_to_club_as_role(self.create_user(), club1, Membership.MEMBER)
+        self.add_user_to_club_as_role(self.create_user(), club1, Membership.APPLICANT)
 
         user2 = User.objects.get(email='val@example.org')
         club2 = clubs[1]
-        club2.add_user(user2)
-        club2.change_role(user2, Membership.OWNER)
+        self.add_user_to_club_as_role(user2, club2, Membership.OWNER)
+        self.add_user_to_club_as_role(self.create_user(), club2, Membership.OFFICER)
+        self.add_user_to_club_as_role(self.create_user(), club2, Membership.MEMBER)
+        self.add_user_to_club_as_role(self.create_user(), club2, Membership.APPLICANT)
 
         user3 = User.objects.get(email='billie@example.org')
         club3 = clubs[2]
-        club3.add_user(user3)
-        club3.change_role(user3, Membership.MEMBER)
+        self.add_user_to_club_as_role(user3, club3, Membership.MEMBER)
+        self.add_user_to_club_as_role(self.create_user(), club3, Membership.OWNER)
+        self.add_user_to_club_as_role(self.create_user(), club3, Membership.OFFICER)
+        self.add_user_to_club_as_role(self.create_user(), club3, Membership.APPLICANT)

@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'chicken';
+  font-family: 'chess';
   src:  url('fonts/chess.eot?lgzsjg');
   src:  url('fonts/chess.eot?lgzsjg#iefix') format('embedded-opentype'),
     url('fonts/chess.ttf?lgzsjg') format('truetype'),
@@ -12,7 +12,7 @@
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'chicken' !important;
+  font-family: 'chess' !important;
   speak: never;
   font-style: normal;
   font-weight: normal;
@@ -25,12 +25,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-chicken3:before {
+.icon-chess3:before {
   content: "\e901";
 }
-.icon-chicken2:before {
+.icon-chess2:before {
   content: "\e902";
 }
-.icon-chicken1:before {
+.icon-chess1:before {
   content: "\e900";
 }

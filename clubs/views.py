@@ -14,7 +14,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, SelectClubForm, CreateClubForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, CreateClubForm
 from .helpers import login_prohibited, required_role, prohibited_role, user_has_to_be_apart_of_a_club
 from .models import User, Membership, Club
 
@@ -71,7 +71,8 @@ class ShowUserView(DetailView):
         """handle get request, and redirect to user_list if user_id invalid"""
         try:
             if self.request.user.current_club_role == Membership.MEMBER:
-                if self.request.user.current_club.membership_set.get(user=self.get_object()).role in {Membership.OFFICER, Membership.OWNER}:
+                if self.request.user.current_club.membership_set.get(user=self.get_object()).role in {
+                    Membership.OFFICER, Membership.OWNER}:
                     return redirect('user_list')
             return super().get(request, *args, **kwargs)
         except Http404:
@@ -271,59 +272,57 @@ def transfer_ownership(request, user_id):
     else:
         return redirect('start')
 
+
 @login_required
 def apply_for_club(request, club_id):
     try:
-        clubs = Club.objects.get(id = club_id)
-        membership = Membership.objects.create(user = request.user, club = clubs)
+        clubs = Club.objects.get(id=club_id)
+        membership = Membership.objects.create(user=request.user, club=clubs)
         membership.save()
     except ObjectDoesNotExist:
         return redirect('my_clubs')
     return redirect('my_clubs')
 
+
 @login_required
 def leave_club(request, club_id):
     try:
-        clubs = Club.objects.get(id = club_id)
+        clubs = Club.objects.get(id=club_id)
         user_id = request.user.id
         if request.user.current_club == clubs:
-            membership = Membership.objects.get(user = user_id, club = clubs)
+            membership = Membership.objects.get(user=user_id, club=clubs)
             membership.delete()
             MyClubs = Club.objects.filter(membership__user=request.user).first()
             request.user.current_club = MyClubs
             request.user.save()
         else:
-            membership = Membership.objects.get(user = user_id, club = clubs)
+            membership = Membership.objects.get(user=user_id, club=clubs)
             membership.delete()
     except ObjectDoesNotExist:
         pass
 
     return redirect('my_clubs')
 
+
 @login_required
 def my_clubs(request):
     user = request.user
     MyClubs = Club.objects.filter(membership__user=user)
     NotMyClubs = Club.objects.exclude(membership__user=user)
-    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs':NotMyClubs})
+    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs': NotMyClubs})
+
 
 @login_required
-def select_club(request):
+def select_club(request, club_id):
     user = request.user
-    all_clubs_user_in = Club.objects.filter(membership__user=user)
-    if user.current_club_not_none:
-        all_clubs_user_in = all_clubs_user_in.exclude(id=user.current_club.id)
+    try:
+        club = Club.objects.get(id=club_id)
+        if club.exist(user):
+            user.select_club(club)
+    except ObjectDoesNotExist:
+        pass
 
-    if request.method == 'POST':
-        user = request.user
-        form = SelectClubForm(request.POST)
-        form.fields['club'].queryset = all_clubs_user_in
-        if form.is_valid():
-            user.select_club(form.cleaned_data.get('club'))
-            return redirect('start')
-    form = SelectClubForm()
-    form.fields['club'].queryset = all_clubs_user_in
-    return render(request, 'select_club.html', {'form': form})
+    return redirect('start')
 
 
 class ClubListView(LoginRequiredMixin, ListView):

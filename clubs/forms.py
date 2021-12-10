@@ -105,6 +105,7 @@ class PasswordForm(forms.Form):
 class SelectClubForm(forms.Form):
     club = forms.ModelChoiceField(queryset=Club.objects.none())
 
+
 class CreateClubForm(forms.ModelForm):
     """Form to create a club."""
 
