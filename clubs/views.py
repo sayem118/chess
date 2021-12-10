@@ -326,7 +326,7 @@ def select_club(request, club_id):
 
 
 class ClubListView(LoginRequiredMixin, ListView):
-    """View that shows a list of all clubs and their owner"""
+    """View that shows a list of all clubs, their details and their owner"""
 
     model = Club
     template_name = "club_list.html"
@@ -339,10 +339,7 @@ class ClubListView(LoginRequiredMixin, ListView):
         clubs = Club.objects.all()
         owners = []
         for club in clubs:
-            try:
-                owners.append((club, club.membership_set.get(role=Membership.OWNER).user.full_name))
-            except ObjectDoesNotExist:
-                owners.append((club, ""))
+            owners.append((club, club.membership_set.get(role=Membership.OWNER).user))
         return owners
 
 

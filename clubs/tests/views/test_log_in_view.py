@@ -1,10 +1,12 @@
 """Tests of the log in view."""
+from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 
 from clubs.forms import LogInForm
 from clubs.models import User
+from clubs.views import LoginProhibitedMixin
 from clubs.tests.helpers import LogInTester, reverse_with_next
 
 
@@ -141,3 +143,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
+
+    def test_login_prohibited_view_needs_redirect_url(self):
+        with self.assertRaises(ImproperlyConfigured):
+            LoginProhibitedMixin().get_redirect_when_logged_in_url()

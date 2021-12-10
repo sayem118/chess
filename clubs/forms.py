@@ -102,10 +102,6 @@ class PasswordForm(forms.Form):
             self.add_error('password_confirmation', 'Confirmation does not match password.')
 
 
-class SelectClubForm(forms.Form):
-    club = forms.ModelChoiceField(queryset=Club.objects.none())
-
-
 class CreateClubForm(forms.ModelForm):
     """Form to create a club."""
 

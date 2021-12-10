@@ -51,7 +51,7 @@ class MemberStatusTest(TestCase, AssertHTMLMixin):
         self.assertTemplateUsed(response, 'member_status.html')
         self.assertContains(response, self.other_club.name, html=True)
         self.assertContains(response, "Member", html=True)
-        self.assertContains(response, """<a class="nav-link" href="/member_status/">Member status</a>""", html=True)
+        self.assertContains(response, """<a class="nav-link" href="/member_status/">Member Status</a>""", html=True)
 
     def test_user_with_no_club_redirects_to_start(self):
         test_user = User.objects.create_user(email='test@example.org', password='Password123')
@@ -60,14 +60,14 @@ class MemberStatusTest(TestCase, AssertHTMLMixin):
         redirect_url = reverse('start')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
-        self.assertNotContains(response, """<a class="nav-link" href="/member_status/">Member status</a>""", html=True)
+        self.assertNotContains(response, """<a class="nav-link" href="/member_status/">Member Status</a>""", html=True)
 
     def test_user_who_is_apart_of_multiple_clubs_displays_all_clubs(self):
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'member_status.html')
-        self.assertContains(response, """<a class="nav-link" href="/member_status/">Member status</a>""", html=True)
+        self.assertContains(response, """<a class="nav-link" href="/member_status/">Member Status</a>""""", html=True)
         self.assertContains(response, self.club.name, html=True)
         self.assertContains(response, "Applicant", html=True)
         self.assertContains(response, self.other_club.name, html=True)

@@ -5,20 +5,18 @@
     <div class="row">
     <div class="col-9">
         <h1>Clubs</h1>
+        <br>
         <table class="table">
             {% for club, owner in owners %}
                 <tr>
                     <td>{{ club.name }}</td>
-                    {% for owner in owners %}
-                        {% if owner.club_id == club.id%}
-                            <td>Owner: {{ owner.user.first_name }} {{ owner.user.last_name }}</td>
-                            <td>Bio: {{owner.user.bio}}</td>
-                            <td>location: {{club.location}}</td>
-                            <td>mission: {{club.mission_statement}}</td>
-                        {% endif %}
-                    {% endfor %}
+                    <td>Owner: {{ owner.full_name }}</td>
+                    <td>Bio: {{owner.bio}}</td>
+                    <td>location: {{club.location}}</td>
+                    <td>mission: {{club.mission_statement}}</td>
                 </tr>
             {% endfor %}
         </table>
+        <br>
     </div>
 {% endblock %}
