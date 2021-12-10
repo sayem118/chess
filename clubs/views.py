@@ -325,25 +325,34 @@ def select_club(request):
     form.fields['club'].queryset = all_clubs_user_in
     return render(request, 'select_club.html', {'form': form})
 
-@login_required
-def club_list(request):
-    clubs = Club.objects.all()
-    owners = []
-    for club in clubs:
-        try:
-            owners.append((club, club.membership_set.get(role=Membership.OWNER).user.full_name))
-        except ObjectDoesNotExist:
-            owners.append((club, ""))
-    return render(request, 'club_list.html' , {'owners': owners})
+
+class ClubListView(LoginRequiredMixin, ListView):
+    """View that shows a list of all clubs and their owner"""
+
+    model = Club
+    template_name = "club_list.html"
+    context_object_name = "owners"
+
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        clubs = Club.objects.all()
+        owners = []
+        for club in clubs:
+            try:
+                owners.append((club, club.membership_set.get(role=Membership.OWNER).user.full_name))
+            except ObjectDoesNotExist:
+                owners.append((club, ""))
+        return owners
 
 
-class CreateClubView(FormView):
+class CreateClubView(LoginRequiredMixin, FormView):
     """View that creates a club."""
 
     form_class = CreateClubForm
     template_name = "create_club.html"
 
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
