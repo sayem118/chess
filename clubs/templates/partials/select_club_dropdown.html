@@ -1,9 +1,13 @@
 <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="select-club-dropdown" role="button" data-bs-toggle="dropdown"
-       aria-expanded="false">
-        Current club
-    </a>
     {% if user.membership_set.count %}
+        <a class="nav-link dropdown-toggle" href="#" id="select-club-dropdown" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            {% if user.current_club_not_none %}
+                {{ user.current_club.name }}
+            {% else %}
+                Select club
+            {% endif %}
+        </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-club-dropdown">
             {% if clubs_user_belongs_to %}
                 {% for club in clubs_user_belongs_to %}
