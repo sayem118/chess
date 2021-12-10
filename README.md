@@ -2,11 +2,15 @@
 
 ## Team members
 The members of the team are:
-- *Enter member 1*
-- *Enter member 2*
-- *Enter member 3*
-- *Enter member 4*
-*Add any further information about the team here, such as absent team members.*
+- *Sayem Ahmed*
+- *Cheung Fung Wilson Mak*
+- *Aaron Gomes*
+- *Berke Muftuoglu*
+- *Alexandru Matei*
+
+## Any reused code
+The following describes any code which has been reused
+- The majority of the code has taken inspiration from the lectures and source code provided from the module 5CCS2SEG
 
 ## Project structure
 The project is called `system`.  It currently consists of a single app `clubs`.
