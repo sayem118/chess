@@ -44,6 +44,15 @@ class SignUpViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
+    def test_post_create_club_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        before_count = User.objects.count()
+        response = self.client.post(self.url, self.form_input, follow=True)
+        after_count = User.objects.count()
+        self.assertEqual(after_count, before_count)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
     def test_successful_create_club_if_apart_of_no_other_clubs(self):
         self.client.login(email=self.user.email, password="Password123")
         before_count = Club.objects.count()

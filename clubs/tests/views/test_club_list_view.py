@@ -43,5 +43,3 @@ class ClubListTest(TestCase,AssertHTMLMixin):
         self.assertTemplateUsed(response, 'club_list.html')
         self.assertContains(response, self.club.name)
         self.assertContains(response, self.other_club.name)
-        self.assertContains(response, "Owner: " + self.user.first_name + " " + self.user.last_name)
-        self.assertContains(response, "Owner: " + self.owner.first_name + " " + self.owner.last_name)
