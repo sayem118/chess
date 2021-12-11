@@ -90,6 +90,9 @@ class Command(BaseCommand):
             password=self.DEFAULT_PASSWORD,
             first_name='Jebediah',
             last_name='Kerman',
+            bio='My name is Jebediah',
+            experience_level='Novice',
+            personal_statement='I am a student'
         )
 
         User.objects.create_user(
@@ -97,6 +100,9 @@ class Command(BaseCommand):
             password=self.DEFAULT_PASSWORD,
             first_name='Valentina',
             last_name='Kerman',
+            bio='My name is Valentina',
+            experience_level='Amateur',
+            personal_statement='I am a 2nd student'
         )
 
         User.objects.create_user(
@@ -104,6 +110,9 @@ class Command(BaseCommand):
             password=self.DEFAULT_PASSWORD,
             first_name='Billie',
             last_name='Kerman',
+            bio='My name is Billie',
+            experience_level='Medium',
+            personal_statement='I am a 3rd student'
         )
 
     def create_default_club(self):
