@@ -80,14 +80,7 @@ class MemberStatusView(LoginRequiredMixin, ListView):
                 role = "Member"
             clubs.append([membership.club, role])
         return clubs
-
-
-@required_role(Membership.OFFICER)
-def applicants_list(request):
-    club = request.user.current_club
-    applicants = club.associates.filter(membership__role=Membership.APPLICANT)
-    return render(request, 'approve_applicants.html', {'applicants': applicants})
-
+        
 
 @login_required
 def apply_for_club(request, club_id):

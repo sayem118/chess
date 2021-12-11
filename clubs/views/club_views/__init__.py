@@ -1,2 +1,2 @@
 from .club_views import *
-from .club_owner_views import *
+from .club_owner_officer_views import *

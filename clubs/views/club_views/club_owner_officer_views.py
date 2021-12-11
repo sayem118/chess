@@ -83,3 +83,10 @@ def transfer_ownership(request, user_id):
         return redirect('start')
     else:
         return redirect('start')
+
+
+@required_role(Membership.OFFICER)
+def applicants_list(request):
+    club = request.user.current_club
+    applicants = club.associates.filter(membership__role=Membership.APPLICANT)
+    return render(request, 'approve_applicants.html', {'applicants': applicants})
