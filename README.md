@@ -15,7 +15,7 @@ The following describes any code which has been reused
 The project is called `system`.  It currently consists of a single app `clubs`.
 
 ## Deployed version of the application
-The deployed version of the application can be found at [URL](URL).
+The deployed version of the application can be found at [https://sleepy-bayou-75745.herokuapp.com/](URL).
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
