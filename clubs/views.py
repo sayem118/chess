@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import check_password
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.http import Http404
@@ -178,16 +177,12 @@ def profile(request):
 def password(request):
     current_user = request.user
     if request.method == 'POST':
-        form = PasswordForm(data=request.POST)
+        form = PasswordForm(user=current_user, data=request.POST)
         if form.is_valid():
-            password = form.cleaned_data.get('password')
-            if check_password(password, current_user.password):
-                new_password = form.cleaned_data.get('new_password')
-                current_user.set_password(new_password)
-                current_user.save()
-                login(request, current_user)
-                messages.add_message(request, messages.SUCCESS, "Password updated!")
-                return redirect('start')
+            form.save()
+            login(request, current_user)
+            messages.add_message(request, messages.SUCCESS, "Password updated!")
+            return redirect('start')
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
