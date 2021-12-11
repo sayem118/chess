@@ -56,6 +56,7 @@ class PasswordFormTestCase(TestCase):
     def test_form_must_contain_user(self):
         form = PasswordForm(data=self.form_input)
         self.assertFalse(form.is_valid())
+        form.save()
 
     def test_save_form_changes_password(self):
         form = PasswordForm(user=self.user, data=self.form_input)
