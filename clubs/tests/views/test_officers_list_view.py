@@ -86,8 +86,8 @@ class OfficersListViewTestCase(TestCase):
         # Getting the user again from the db is needed because the instance officer_to_demote points to does not get
         # updated automatically.
 
-        check_if_not_demoted = User.objects.get(email="jamesdoe@example.org")
-        self.assertEqual(check_if_not_demoted.current_club_role, Membership.OFFICER)
+        self.officer.refresh_from_db()
+        self.assertEqual(self.officer.current_club_role, Membership.OFFICER)
 
     def test_cant_demote_an_officer_when_not_owner(self):
         self.client.login(email=self.officer.email, password="Password123")
@@ -99,8 +99,8 @@ class OfficersListViewTestCase(TestCase):
         # Getting the user again from the db is needed because the instance officer_to_demote points to does not get
         # updated automatically.
 
-        check_if_not_demoted = User.objects.get(email="jamesdoe@example.org")
-        self.assertEqual(check_if_not_demoted.current_club_role, Membership.OFFICER)
+        self.officer.refresh_from_db()
+        self.assertEqual(self.officer.current_club_role, Membership.OFFICER)
 
     def test_cant_demote_an_member(self):
         self.client.login(email=self.owner.email, password="Password123")
@@ -112,8 +112,8 @@ class OfficersListViewTestCase(TestCase):
         # Getting the user again from the db is needed because the instance officer_to_demote points to does not get
         # updated automatically.
 
-        check_if_not_demoted = User.objects.get(email="janedoe@example.org")
-        self.assertEqual(check_if_not_demoted.current_club_role, Membership.MEMBER)
+        self.member.refresh_from_db()
+        self.assertEqual(self.member.current_club_role, Membership.MEMBER)
 
     def test_cant_demote_an_applicant(self):
         self.client.login(email=self.owner.email, password="Password123")
@@ -125,8 +125,8 @@ class OfficersListViewTestCase(TestCase):
         # Getting the user again from the db is needed because the instance officer_to_demote points to does not get
         # updated automatically.
 
-        check_if_not_demoted = User.objects.get(email="jamiedoe@example.org")
-        self.assertEqual(check_if_not_demoted.current_club_role, Membership.APPLICANT)
+        self.applicant.refresh_from_db()
+        self.assertEqual(self.applicant.current_club_role, Membership.APPLICANT)
 
     def test_redirects_for_invalid_id(self):
         self.client.login(email=self.owner.email, password="Password123")
@@ -138,8 +138,8 @@ class OfficersListViewTestCase(TestCase):
         # Getting the user again from the db is needed because the instance officer_to_demote points to does not get
         # updated automatically.
 
-        check_if_not_demoted = User.objects.get(email="jamesdoe@example.org")
-        self.assertEqual(check_if_not_demoted.current_club_role, Membership.OFFICER)
+        self.officer.refresh_from_db()
+        self.assertEqual(self.officer.current_club_role, Membership.OFFICER)
 
     def test_only_officers_show_on_officers_list_page(self):
         self.client.login(email=self.owner.email, password='Password123')

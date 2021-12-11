@@ -39,10 +39,10 @@ class TransferOwnershipTest(TestCase):
         self.client.login(email=self.owner.email, password="Password123")
         redirect_url = reverse("start")
         response = self.client.get(self.url, follow=True)
-        owner_to_check = User.objects.get(email="jamesdoe@example.org")
-        officer_to_check = User.objects.get(email="jennydoe@example.org")
-        self.assertEqual(owner_to_check.current_club_role, Membership.OWNER)
-        self.assertEqual(officer_to_check.current_club_role, Membership.OFFICER)
+        self.owner.refresh_from_db()
+        self.officer.refresh_from_db()
+        self.assertEqual(self.officer.current_club_role, Membership.OWNER)
+        self.assertEqual(self.owner.current_club_role, Membership.OFFICER)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_cannot_transfer_ownership_to_member(self):
@@ -50,10 +50,10 @@ class TransferOwnershipTest(TestCase):
         redirect_url = reverse("start")
         url = reverse("transfer_ownership", kwargs={"user_id": self.member.id})
         response = self.client.get(url, follow=True)
-        owner_to_check = User.objects.get(email="jennydoe@example.org")
-        officer_to_check = User.objects.get(email="jamesdoe@example.org")
-        self.assertEqual(owner_to_check.current_club_role, Membership.OWNER)
-        self.assertEqual(officer_to_check.current_club_role, Membership.OFFICER)
+        self.owner.refresh_from_db()
+        self.member.refresh_from_db()
+        self.assertEqual(self.owner.current_club_role, Membership.OWNER)
+        self.assertEqual(self.member.current_club_role, Membership.MEMBER)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_cannot_transfer_ownership_to_applicant(self):
@@ -61,10 +61,10 @@ class TransferOwnershipTest(TestCase):
         redirect_url = reverse("start")
         url = reverse("transfer_ownership", kwargs={"user_id": self.applicant.id})
         response = self.client.get(url, follow=True)
-        owner_to_check = User.objects.get(email="jennydoe@example.org")
-        officer_to_check = User.objects.get(email="jamesdoe@example.org")
-        self.assertEqual(owner_to_check.current_club_role, Membership.OWNER)
-        self.assertEqual(officer_to_check.current_club_role, Membership.OFFICER)
+        self.owner.refresh_from_db()
+        self.applicant.refresh_from_db()
+        self.assertEqual(self.owner.current_club_role, Membership.OWNER)
+        self.assertEqual(self.applicant.current_club_role, Membership.APPLICANT)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_redirects_for_user_that_is_an_applicant(self):

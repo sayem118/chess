@@ -29,9 +29,9 @@ class ApplyForClubTest(TestCase):
         response_url = reverse('my_clubs')
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        is_user_applicant = User.objects.get(email='johndoe@example.org')
+        self.user.refresh_from_db()
         try:
-            self.assertEqual(is_user_applicant.membership_set.get(club=self.club).role, Membership.APPLICANT)
+            self.assertEqual(self.user.membership_set.get(club=self.club).role, Membership.APPLICANT)
         except ObjectDoesNotExist:
             self.fail("User should be an applicant")
 
@@ -43,9 +43,9 @@ class ApplyForClubTest(TestCase):
         with self.assertRaises(IntegrityError):
             response = self.client.get(self.url, follow=True)
             self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-            is_user_applicant = User.objects.get(email='johndoe@example.org')
+            self.user.refresh_from_db()
             try:
-                self.assertEqual(is_user_applicant.membership_set.get(club=self.club).role, Membership.OWNER)
+                self.assertEqual(self.user.membership_set.get(club=self.club).role, Membership.OWNER)
             except ObjectDoesNotExist:
                 self.fail("User should be an owner")
 

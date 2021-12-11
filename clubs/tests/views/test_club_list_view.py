@@ -20,12 +20,9 @@ class ClubListTest(TestCase,AssertHTMLMixin):
 
     def setUp(self):
         self.url = reverse('club_list')
-        self.user = User.objects.get(email='johndoe@example.org')
         self.member = User.objects.get(email='janedoe@example.org')
-        self.owner = User.objects.get(email='jennydoe@example.org')
         self.club = Club.objects.get(name="Chess Club")
         self.other_club = Club.objects.get(name="The Royal Rooks")
-        self.user.select_club(self.club)
         self.member.select_club(self.other_club)
 
     def test_club_list_url(self):

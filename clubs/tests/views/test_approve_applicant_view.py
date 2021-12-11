@@ -38,8 +38,8 @@ class ApproveApplicantViewTestCase(TestCase):
     def test_successfully_approve_applicant(self):
         self.client.login(email=self.officer.email, password="Password123")
         self.client.get(self.url)
-        applicant_to_check = User.objects.get(email="jamiedoe@example.org")
-        self.assertEqual(applicant_to_check.current_club_role, Membership.MEMBER)
+        self.applicant.refresh_from_db()
+        self.assertEqual(self.applicant.current_club_role, Membership.MEMBER)
 
     def test_approve_applicant_redirects_when_not_logged_in(self):
         redirect_url = reverse("log_in")

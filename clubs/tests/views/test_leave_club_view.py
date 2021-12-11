@@ -50,9 +50,9 @@ class ApplyForClubTest(TestCase):
         response = self.client.get(self.url, follow=True)
         response_url = reverse('my_clubs')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        club_after_leaving = Club.objects.get(name="The Royal Rooks")
+        self.other_club.refresh_from_db()
         with self.assertRaises(ObjectDoesNotExist):
-            club_after_leaving.membership_set.get(user=self.user)
+            self.other_club.membership_set.get(user=self.user)
 
     def test_user_leaves_current_club(self):
         self.club.add_user(self.member)
@@ -62,15 +62,15 @@ class ApplyForClubTest(TestCase):
         response = self.client.get(self.url, follow=True)
         response_url = reverse('my_clubs')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        club_after_leaving = Club.objects.get(name='Chess Club')
-        user_after_leaving = User.objects.get(email='janedoe@example.org')
-        self.assertTrue(user_after_leaving.current_club, self.other_club)
+        self.club.refresh_from_db()
+        self.member.refresh_from_db()
+        self.assertTrue(self.member.current_club, self.other_club)
         try:
             self.other_club.membership_set.get(user=self.member)
         except ObjectDoesNotExist:
             self.fail("User should be in Chess Club")
         with self.assertRaises(ObjectDoesNotExist):
-            club_after_leaving.membership_set.get(user=self.member)
+            self.club.membership_set.get(user=self.member)
 
     def test_user_leaves_club_which_is_not_current(self):
         self.club.add_user(self.member)
@@ -79,15 +79,15 @@ class ApplyForClubTest(TestCase):
         response = self.client.get(self.url, follow=True)
         response_url = reverse('my_clubs')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        club_after_leaving = Club.objects.get(name='The Royal Rooks')
-        user_after_leaving = User.objects.get(email='janedoe@example.org')
-        self.assertTrue(user_after_leaving.current_club, self.club)
+        self.other_club.refresh_from_db()
+        self.member.refresh_from_db()
+        self.assertTrue(self.member.current_club, self.club)
         try:
             self.club.membership_set.get(user=self.member)
         except ObjectDoesNotExist:
             self.fail("User should be in Chess Club")
         with self.assertRaises(ObjectDoesNotExist):
-            club_after_leaving.membership_set.get(user=self.member)
+            self.other_club.membership_set.get(user=self.member)
 
     def test_get_apply_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)

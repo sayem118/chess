@@ -40,8 +40,8 @@ class SelectClubTest(TestCase):
         response_url = reverse('start')
         current_club_before = self.member.current_club
         response = self.client.get(self.url, follow=True)
-        member_after_selection = User.objects.get(email='janedoe@example.org')
-        current_club_after = member_after_selection.current_club
+        self.member.refresh_from_db()
+        current_club_after = self.member.current_club
         self.assertNotEqual(current_club_before, current_club_after)
         self.assertTemplateUsed(response, 'start.html')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
@@ -51,8 +51,8 @@ class SelectClubTest(TestCase):
         response_url = reverse('start')
         current_club_before = self.user.current_club
         response = self.client.get(self.url, follow=True)
-        member_after_selection = User.objects.get(email='johndoe@example.org')
-        current_club_after = member_after_selection.current_club
+        self.user.refresh_from_db()
+        current_club_after = self.user.current_club
         self.assertNotEqual(current_club_before, current_club_after)
         self.assertTemplateUsed(response, 'start.html')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
@@ -63,8 +63,8 @@ class SelectClubTest(TestCase):
         self.user.select_club(self.club)
         current_club_before = self.user.current_club
         response = self.client.get(self.url, follow=True)
-        member_after_selection = User.objects.get(email='johndoe@example.org')
-        current_club_after = member_after_selection.current_club
+        self.user.refresh_from_db()
+        current_club_after = self.user.current_club
         self.assertEqual(current_club_before, current_club_after)
         self.assertTemplateUsed(response, 'start.html')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
@@ -75,8 +75,8 @@ class SelectClubTest(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         current_club_before = self.user.current_club
         response = self.client.get(url, follow=True)
-        member_after_selection = User.objects.get(email='johndoe@example.org')
-        current_club_after = member_after_selection.current_club
+        self.user.refresh_from_db()
+        current_club_after = self.user.current_club
         self.assertEqual(current_club_before, current_club_after)
         self.assertTemplateUsed(response, 'start.html')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
@@ -87,8 +87,8 @@ class SelectClubTest(TestCase):
         self.client.login(email=self.member.email, password='Password123')
         current_club_before = self.member.current_club
         response = self.client.get(url, follow=True)
-        member_after_selection = User.objects.get(email='janedoe@example.org')
-        current_club_after = member_after_selection.current_club
+        self.member.refresh_from_db()
+        current_club_after = self.member.current_club
         self.assertEqual(current_club_before, current_club_after)
         self.assertTemplateUsed(response, 'start.html')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
