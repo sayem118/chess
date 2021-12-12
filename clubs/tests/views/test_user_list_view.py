@@ -170,4 +170,4 @@ class UserListTest(TestCase, AssertHTMLMixin):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'start.html')
-            self.assertContains(response, """<a class='nav-link' href='/user_list/'>Users</a>""", html=True)
+        self.assertContains(response, """<a class='nav-link' href='/user_list/'>Users</a>""", html=True)

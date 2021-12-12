@@ -74,7 +74,7 @@ class MembersListViewTestCase(TestCase):
     def test_cannot_promote_user_who_is_not_member(self):
         self.assert_cannot_promote_role(self.applicant, Membership.APPLICANT)
         self.assert_cannot_promote_role(self.officer, Membership.OFFICER)
-        self.assert_cannot_promote_role(self.owner, Membership.OWNER)
+        self.assert_cannot_promote_role(self.owner, Membership.OWNER, 'members_list')
 
     def test_cannot_promote_a_member_when_not_owner(self):
         self.assert_redirects(self.applicant)
@@ -112,11 +112,11 @@ class MembersListViewTestCase(TestCase):
         start_url = reverse('start')
         self.assertRedirects(response, start_url, status_code=302, target_status_code=200)
 
-    def assert_cannot_promote_role(self, test_user, role):
+    def assert_cannot_promote_role(self, test_user, role, url='start'):
         self.client.login(email=test_user.email, password='Password123')
         promote_view_url = reverse('promote_member', kwargs={'user_id': test_user.id})
         response = self.client.get(promote_view_url)
-        start_url = reverse('members_list')
+        start_url = reverse(url)
         self.assertRedirects(response, start_url, status_code=302, target_status_code=200)
         self.check_user_role(test_user, role)
 

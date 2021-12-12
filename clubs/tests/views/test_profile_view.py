@@ -61,7 +61,7 @@ class ProfileViewTest(TestCase):
         self.assertEqual(self.user.first_name, 'John')
         self.assertEqual(self.user.last_name, 'Doe')
         self.assertEqual(self.user.email, 'johndoe@example.org')
-        self.assertEqual(self.user.bio, 'Hello, I'm John Doe.'')
+        self.assertEqual(self.user.bio, "Hello, I'm John Doe.")
 
     def test_unsuccessful_profile_update_due_to_duplicate_email(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -79,7 +79,7 @@ class ProfileViewTest(TestCase):
         self.assertEqual(self.user.first_name, 'John')
         self.assertEqual(self.user.last_name, 'Doe')
         self.assertEqual(self.user.email, 'johndoe@example.org')
-        self.assertEqual(self.user.bio, 'Hello, I'm John Doe.'')
+        self.assertEqual(self.user.bio, "Hello, I'm John Doe.")
 
     def test_succesful_profile_update(self):
         self.client.login(email=self.user.email, password='Password123')
