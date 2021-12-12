@@ -7,6 +7,7 @@ from clubs.models import User, Club, Membership
 from clubs.tests.helpers import reverse_with_next
 
 class SelectClubTest(TestCase):
+    """Test of the select club view"""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -19,8 +20,8 @@ class SelectClubTest(TestCase):
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
         self.member = User.objects.get(email='janedoe@example.org')
-        self.club = Club.objects.get(name="Chess Club")
-        self.other_club = Club.objects.get(name="The Royal Rooks")
+        self.club = Club.objects.get(name='Chess Club')
+        self.other_club = Club.objects.get(name='The Royal Rooks')
         membership = Membership(user=self.member, club=self.club, role=Membership.MEMBER)
         membership.save()
         self.member.select_club(self.club)

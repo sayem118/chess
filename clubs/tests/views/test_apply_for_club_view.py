@@ -10,6 +10,7 @@ from clubs.tests.helpers import reverse_with_next
 
 
 class ApplyForClubTest(TestCase):
+    """Test of the apply for club view"""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -18,7 +19,7 @@ class ApplyForClubTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
-        self.club = Club.objects.get(name="Chess Club")
+        self.club = Club.objects.get(name='Chess Club')
         self.url = reverse('apply', kwargs={'club_id': self.club.id})
 
     def test_apply_url(self):
@@ -33,7 +34,7 @@ class ApplyForClubTest(TestCase):
         try:
             self.assertEqual(self.user.membership_set.get(club=self.club).role, Membership.APPLICANT)
         except ObjectDoesNotExist:
-            self.fail("User should be an applicant")
+            self.fail('User should be an applicant')
 
     def test_member_of_club_cannot_apply_for_the_same_club(self):
         membership = Membership(user=self.user, club=self.club, role=Membership.OWNER)
@@ -47,7 +48,7 @@ class ApplyForClubTest(TestCase):
             try:
                 self.assertEqual(self.user.membership_set.get(club=self.club).role, Membership.OWNER)
             except ObjectDoesNotExist:
-                self.fail("User should be an owner")
+                self.fail('User should be an owner')
 
     def test_cannot_apply_for_a_club_that_does_not_exist(self):
         self.client.login(email=self.user.email, password='Password123')

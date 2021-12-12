@@ -16,8 +16,8 @@ class UserModelTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
-        self.other_user = User.objects.get(email="janedoe@example.org")
-        self.club = Club.objects.get(name="Chess Club")
+        self.other_user = User.objects.get(email='janedoe@example.org')
+        self.club = Club.objects.get(name='Chess Club')
         self.user.select_club(self.club)
 
     def test_valid_user(self):
@@ -133,22 +133,22 @@ class UserModelTestCase(TestCase):
 
     def test_create_user_with_no_email_raises_error(self):
         with self.assertRaises(ValueError):
-            User.objects._create_user(None, "Password123")
+            User.objects._create_user(None, 'Password123')
 
     def test_successful_create_super_user(self):
-        user = User.objects.create_superuser(email="super@example.org", password="Password123")
+        user = User.objects.create_superuser(email='super@example.org', password='Password123')
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
 
     def test_is_staff_attribute_false_in_superuser(self):
         with self.assertRaises(ValueError):
-            user = User.objects.create_superuser(email="super@example.org", password="Password123", is_staff=False)
+            user = User.objects.create_superuser(email='super@example.org', password='Password123', is_staff=False)
             self.assertFalse(user.is_staff)
             self.assertTrue(user.is_superuser)
 
     def test_is_superuser_attribute_false_in_superuser(self):
         with self.assertRaises(ValueError):
-            user = User.objects.create_superuser(email="super@example.org", password="Password123", is_superuser=False)
+            user = User.objects.create_superuser(email='super@example.org', password='Password123', is_superuser=False)
             self.assertTrue(user.is_staff)
             self.assertFalse(user.is_superuser)
 

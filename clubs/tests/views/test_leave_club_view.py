@@ -1,4 +1,4 @@
-"""Test of the leave club view"""
+"""Test of the apply for club view"""
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
@@ -9,6 +9,7 @@ from clubs.tests.helpers import reverse_with_next
 
 
 class ApplyForClubTest(TestCase):
+    """Test of the apply for club view"""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -21,8 +22,8 @@ class ApplyForClubTest(TestCase):
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
         self.member = User.objects.get(email='janedoe@example.org')
-        self.club = Club.objects.get(name="Chess Club")
-        self.other_club = Club.objects.get(name="The Royal Rooks")
+        self.club = Club.objects.get(name='Chess Club')
+        self.other_club = Club.objects.get(name='The Royal Rooks')
         self.member.select_club(self.other_club)
         self.url = reverse('leave_club', kwargs={'club_id': self.other_club.id})
 
@@ -34,7 +35,7 @@ class ApplyForClubTest(TestCase):
         response = self.client.get(self.url, follow=True)
         response_url = reverse('my_clubs')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        club_after_member_leave = Club.objects.get(name="The Royal Rooks")
+        club_after_member_leave = Club.objects.get(name='The Royal Rooks')
         with self.assertRaises(ObjectDoesNotExist):
             club_after_member_leave.membership_set.get(user=self.member)
 
@@ -68,7 +69,7 @@ class ApplyForClubTest(TestCase):
         try:
             self.other_club.membership_set.get(user=self.member)
         except ObjectDoesNotExist:
-            self.fail("User should be in Chess Club")
+            self.fail('User should be in Chess Club')
         with self.assertRaises(ObjectDoesNotExist):
             self.club.membership_set.get(user=self.member)
 
@@ -85,7 +86,7 @@ class ApplyForClubTest(TestCase):
         try:
             self.club.membership_set.get(user=self.member)
         except ObjectDoesNotExist:
-            self.fail("User should be in Chess Club")
+            self.fail('User should be in Chess Club')
         with self.assertRaises(ObjectDoesNotExist):
             self.other_club.membership_set.get(user=self.member)
 

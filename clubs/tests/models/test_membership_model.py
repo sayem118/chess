@@ -19,8 +19,8 @@ class MembershipModelTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
         self.other_user = User.objects.get(email='janedoe@example.org')
-        self.club = Club.objects.get(name="Chess Club")
-        self.other_club = Club.objects.get(name="The Royal Rooks")
+        self.club = Club.objects.get(name='Chess Club')
+        self.other_club = Club.objects.get(name='The Royal Rooks')
 
     def test_user_cannot_be_blank(self):
         membership = Membership(user=None, club=self.club, role=Membership.OWNER)
