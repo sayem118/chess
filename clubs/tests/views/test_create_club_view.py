@@ -19,7 +19,7 @@ class SignUpViewTestCase(TestCase):
     def setUp(self):
         self.url = reverse('create_club')
         self.user = User.objects.get(email='johndoe@example.org')
-        self.club = Club.objects.get(name="Chess Club")
+        self.club = Club.objects.get(name='Chess Club')
         self.form_input = {
             'name': 'Test Club',
             'location': 'Westminster',
@@ -31,7 +31,7 @@ class SignUpViewTestCase(TestCase):
         self.assertEqual(self.url, '/create_club/')
 
     def test_get_create_club(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'create_club.html')
@@ -54,7 +54,7 @@ class SignUpViewTestCase(TestCase):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_successful_create_club_if_apart_of_no_other_clubs(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         before_count = Club.objects.count()
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Club.objects.count()
@@ -69,13 +69,13 @@ class SignUpViewTestCase(TestCase):
             membership_of_owner = club_to_check.membership_set.get(role=Membership.OWNER)
             self.assertTrue(membership_of_owner.user, self.user)
         except ObjectDoesNotExist:
-            self.fail("The owner of the club should be the user that created it")
+            self.fail('The owner of the club should be the user that created it')
 
     def test_successful_create_club_if_apart_of_other_clubs(self):
         membership = Membership(user=self.user, club=self.club, role=Membership.OWNER)
         membership.save()
         self.user.select_club(self.club)
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         before_count = Club.objects.count()
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Club.objects.count()
@@ -90,11 +90,10 @@ class SignUpViewTestCase(TestCase):
             membership_of_owner = club_to_check.membership_set.get(role=Membership.OWNER)
             self.assertTrue(membership_of_owner.user, self.user)
         except ObjectDoesNotExist:
-            self.fail("The owner of the club should be the user that created it")
-
+            self.fail('The owner of the club should be the user that created it')
 
     def test_cannot_create_a_club_with_same_name(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         self.form_input['name'] = 'Chess Club'
         before_count = Club.objects.count()
         response = self.client.post(self.url, self.form_input, follow=True)

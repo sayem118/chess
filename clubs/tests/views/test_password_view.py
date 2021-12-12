@@ -11,9 +11,7 @@ from clubs.tests.helpers import reverse_with_next
 class PasswordViewTest(TestCase):
     """Test suite for the password view."""
 
-    fixtures = [
-        'clubs/tests/fixtures/users/default_user.json'
-    ]
+    fixtures = ['clubs/tests/fixtures/users/default_user.json']
 
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
