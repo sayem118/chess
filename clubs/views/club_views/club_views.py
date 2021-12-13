@@ -11,9 +11,8 @@ from django.urls import reverse
 from django.contrib import messages
 from django.db.models import F
 
-from clubs.helpers import required_role, user_has_to_be_apart_of_a_club
-from clubs.models import User, Club, Membership, Tournament, Tournament_entry, Match
-from clubs.forms import CreateClubForm,CreateTournamentForm
+from clubs.forms import CreateClubForm
+from clubs.models import Club, Membership
 
 
 class ClubListView(LoginRequiredMixin, ListView):

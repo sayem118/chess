@@ -48,15 +48,3 @@ def prohibited_role(role):
         return modified_view_function
 
     return actual_decorator
-
-
-def user_has_to_be_apart_of_a_club(view_function):
-    def modified_view_function(request, *args, **kwargs):
-        if request.user.is_anonymous:
-            return redirect('log_in')
-        if not request.user.membership_set.count():
-            return redirect('start')
-        else:
-            return view_function(request, *args, **kwargs)
-
-    return modified_view_function

@@ -1,4 +1,4 @@
-"""Test of the apply for club view"""
+"""Test of the leave club view"""
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
@@ -8,8 +8,8 @@ from clubs.models import User, Club, Membership
 from clubs.tests.helpers import reverse_with_next
 
 
-class ApplyForClubTest(TestCase):
-    """Test of the apply for club view"""
+class LeaveClubTest(TestCase):
+    """Test of the leave club view"""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -89,6 +89,19 @@ class ApplyForClubTest(TestCase):
             self.fail('User should be in Chess Club')
         with self.assertRaises(ObjectDoesNotExist):
             self.other_club.membership_set.get(user=self.member)
+
+    def test_user_cannot_leave_club_if_owner(self):
+        self.user.select_club(self.club)
+        self.url = reverse('leave_club', kwargs={'club_id': self.club.id})
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        response_url = reverse('my_clubs')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.club.refresh_from_db()
+        try:
+            self.club.membership_set.get(user=self.user)
+        except ObjectDoesNotExist:
+            self.fail('User should be in Chess Club')
 
     def test_get_apply_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
