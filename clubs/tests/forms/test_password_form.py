@@ -1,9 +1,11 @@
+"""Tests of the password form"""
 from django.test import TestCase
 from django.contrib.auth.hashers import check_password
 from clubs.models import User
 from clubs.forms import PasswordForm
 
 class PasswordFormTestCase(TestCase):
+    """Tests of the password form"""
 
     fixtures = ['clubs/tests/fixtures/users/default_user.json']
 

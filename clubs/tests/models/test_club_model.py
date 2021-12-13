@@ -16,9 +16,9 @@ class ClubModelTestCase(TestCase):
     ]
 
     def setUp(self):
-        self.user = User.objects.get(email="johndoe@example.org")
-        self.club = Club.objects.get(name="Chess Club")
-        self.other_club = Club.objects.get(name="The Royal Rooks")
+        self.user = User.objects.get(email='johndoe@example.org')
+        self.club = Club.objects.get(name='Chess Club')
+        self.other_club = Club.objects.get(name='The Royal Rooks')
 
     def test_valid_club(self):
         self._assert_club_is_valid()
@@ -73,14 +73,14 @@ class ClubModelTestCase(TestCase):
 
     def test_create_club_with_no_name_raises_error(self):
         with self.assertRaises(IntegrityError):
-            Club(name=None, location="London", mission_statement="To play chess").save()
+            Club(name=None, location='London', mission_statement='To play chess').save()
 
     def test_create_club_with_no_location_raises_error(self):
         with self.assertRaises(IntegrityError):
-            Club(name="Chess", location=None, mission_statement="To play chess").save()
+            Club(name='Chess', location=None, mission_statement='To play chess').save()
 
     def test_successful_create_club(self):
-        club = Club(name="Chess", location="London", mission_statement="To play chess")
+        club = Club(name='Chess', location='London', mission_statement='To play chess')
         club.save()
         self.assertEqual(Club.objects.get(name=club.name), club)
 
@@ -107,7 +107,7 @@ class ClubModelTestCase(TestCase):
 
     def test_cannot_change_role_for_user_not_in_club(self):
         self.other_club.change_role(self.user, Membership.MEMBER)
-        check_club_has_not_changed = Club.objects.get(name="The Royal Rooks")
+        check_club_has_not_changed = Club.objects.get(name='The Royal Rooks')
         with self.assertRaises(ObjectDoesNotExist):
             check_club_has_not_changed.membership_set.get(user=self.user)
 

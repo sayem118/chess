@@ -13,11 +13,11 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 class LogInViewTestCase(TestCase, LogInTester):
     """Tests of the log in view."""
 
-    fixtures = ["clubs/tests/fixtures/users/default_user.json"]
+    fixtures = ['clubs/tests/fixtures/users/default_user.json']
 
     def setUp(self):
         self.url = reverse('log_in')
-        self.user = User.objects.get(email="johndoe@example.org")
+        self.user = User.objects.get(email='johndoe@example.org')
 
     def test_log_in_url(self):
         self.assertEqual(self.url, '/log_in/')
@@ -108,14 +108,14 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_log_in_redirects_when_logged_in(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('start')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
 
     def test_post_log_in_redirects_when_logged_in(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         form_input = {'email': 'johndoe@example.org', 'password': 'WrongPassword123'}
         response = self.client.post(self.url, form_input, follow=True)
         redirect_url = reverse('start')

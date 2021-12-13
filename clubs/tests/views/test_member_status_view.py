@@ -7,6 +7,7 @@ from clubs.models import User, Club, Membership
 
 
 class MemberStatusTest(TestCase, AssertHTMLMixin):
+    """Test of the member status view"""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',

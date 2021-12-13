@@ -11,7 +11,7 @@ from clubs.tests.helpers import LogInTester
 class SignUpViewTestCase(TestCase, LogInTester):
     """Tests of the sign up view."""
 
-    fixtures = ["clubs/tests/fixtures/users/default_user.json"]
+    fixtures = ['clubs/tests/fixtures/users/default_user.json']
 
     def setUp(self):
         self.url = reverse('sign_up')
@@ -25,7 +25,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
             'new_password': 'Password123',
             'password_confirmation': 'Password123'
         }
-        self.user = User.objects.get(email="johndoe@example.org")
+        self.user = User.objects.get(email='johndoe@example.org')
 
     def test_sign_up_url(self):
         self.assertEqual(self.url, '/sign_up/')
@@ -39,7 +39,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertFalse(form.is_bound)
 
     def test_get_sign_up_redirects_when_logged_in(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('start')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -66,7 +66,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         response_url = reverse('start')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
-        user = User.objects.get(email="janedoe@example.org")
+        user = User.objects.get(email='janedoe@example.org')
         self.assertEqual(user.first_name, 'Jane')
         self.assertEqual(user.last_name, 'Doe')
         self.assertEqual(user.bio, 'My bio')
@@ -75,7 +75,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
 
     def test_post_sign_up_redirects_when_logged_in(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password='Password123')
         before_count = User.objects.count()
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = User.objects.count()
