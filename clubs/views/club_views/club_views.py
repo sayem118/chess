@@ -12,7 +12,6 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 
 from clubs.forms import CreateClubForm
-from clubs.helpers import user_has_to_be_apart_of_a_club
 from clubs.models import Club, Membership
 
 

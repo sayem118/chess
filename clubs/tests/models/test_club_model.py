@@ -111,6 +111,15 @@ class ClubModelTestCase(TestCase):
         with self.assertRaises(ObjectDoesNotExist):
             check_club_has_not_changed.membership_set.get(user=self.user)
 
+    def test_club_owner_is_correct(self):
+        membership = Membership(user=self.user, club=self.club, role=Membership.OWNER)
+        membership.save()
+        self.user.select_club(self.club)
+        self.assertEqual(self.club.owner, self.user)
+
+    def test_club_owner_property_raises_error_when_no_owner(self):
+        self.assertEqual(self.club.owner, None)
+
     def test_str_returns_club_name(self):
         self.assertEqual(self.club.__str__(), self.club.name)
 
