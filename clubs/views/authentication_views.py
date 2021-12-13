@@ -1,11 +1,10 @@
 """Authenticated related views."""
 
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render
-from django.contrib import messages
-from django.conf import settings
 from django.views import View
-from django.urls import reverse
 
 from clubs.forms import LogInForm
 from .mixins import LoginProhibitedMixin

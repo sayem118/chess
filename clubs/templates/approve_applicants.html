@@ -3,11 +3,12 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>Approve applicants</h1>
+                <h2>Approve applicants</h2>
+                <br>
                 <table class="table">
                     {% for applicant in applicants %}
                         <tr>
-                            {% include 'partials/user_row.html' with user=applicant %}
+                            {% include 'partials/user_as_table_row.html' with user=applicant %}
                             <td>
                                 <form action="{% url 'approve_applicant' user_id=applicant.id %}" method="get">
                                     <button class="btn btn-primary">Approve</button>

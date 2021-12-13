@@ -3,12 +3,14 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>Sign Up</h1>
+                <h2>Sign Up</h2>
+                <br>
                 <form action="{% url 'sign_up' %}" method="post">
                     {% csrf_token %}
                     {% include 'partials/bootstrap_form.html' with form=form %}
                     <input type="submit" value="Sign up" class="btn btn-primary">
                 </form>
+                <br>
             </div>
         </div>
     </div>

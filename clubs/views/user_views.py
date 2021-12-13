@@ -1,16 +1,16 @@
 """User related views."""
 
-from django.http import Http404
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.utils.decorators import method_decorator
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 
-from clubs.models import User, Club, Membership
 from clubs.helpers import prohibited_role
+from clubs.models import User, Membership
 
 
 class ShowUserView(DetailView):
@@ -18,7 +18,7 @@ class ShowUserView(DetailView):
 
     model = User
     template_name = 'show_user.html'
-    context_object_name = "user"
+    context_object_name = 'user'
     pk_url_kwarg = 'user_id'
 
     @method_decorator(login_required)
@@ -40,7 +40,7 @@ class ShowUserView(DetailView):
         try:
             if self.request.user.current_club_role == Membership.MEMBER:
                 if self.request.user.current_club.membership_set.get(user=self.get_object()).role in {
-                    Membership.OFFICER, Membership.OWNER}:
+                        Membership.OFFICER, Membership.OWNER}:
                     return redirect('user_list')
             return super().get(request, *args, **kwargs)
         except Http404:

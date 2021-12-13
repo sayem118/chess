@@ -3,6 +3,31 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-lg-6 col-xl-4">
+                <h2>Create Club</h2>
+                <br>
+                <form action="{% url 'create_club' %}" method="post">
+                    {% csrf_token %}
+                    {% include 'partials/bootstrap_form.html' with form=form %}
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </form>
+                <br>
+            </div>
+            <div class="col-xs-12 col-lg-6 col-xl-8">
+                <h2>Clubs</h2>
+                <br>
+                <table class="table">
+                    {% for club in clubs %}
+                        <tr>
+                            {% include 'partials/club_as_table_row.html' with club=club %}
+                            <td style="text-align:right">
+                                <a class="btn btn-primary" href="{% url 'show_club' club.id %}" role="button">
+                                    View Club
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br>
             </div>
         </div>
     </div>

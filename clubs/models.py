@@ -71,6 +71,7 @@ class User(AbstractUser):
 
         ordering = ['last_name', 'first_name']
 
+    @property
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
@@ -112,6 +113,13 @@ class Club(models.Model):
             membership.save()
         except ObjectDoesNotExist:
             pass
+
+    @property
+    def owner(self):
+        try:
+            return self.associates.get(membership__role=Membership.OWNER)
+        except ObjectDoesNotExist:
+            return None
 
     def __str__(self):
         return self.name

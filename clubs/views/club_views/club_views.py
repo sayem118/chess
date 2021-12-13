@@ -1,19 +1,19 @@
 """Club related views."""
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.views.generic.edit import FormView
-from django.views.generic import ListView
 from django.http import Http404
-from django.shortcuts import redirect, render
 from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormView
 
-from clubs.helpers import required_role, user_has_to_be_apart_of_a_club
-from clubs.models import User, Club, Membership
 from clubs.forms import CreateClubForm
+from clubs.helpers import user_has_to_be_apart_of_a_club
+from clubs.models import Club, Membership
 
 
 class ClubListView(LoginRequiredMixin, ListView):
@@ -80,7 +80,31 @@ class MemberStatusView(LoginRequiredMixin, ListView):
                 role = "Member"
             clubs.append([membership.club, role])
         return clubs
-        
+
+
+class ShowClubView(DetailView):
+    """View that show individual club details"""
+
+    model = Club
+    template_name = 'show_club.html'
+    context_object_name = 'club'
+    pk_url_kwarg = 'club_id'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['user'] = self.request.user
+        return context
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            return redirect('start')
+
 
 @login_required
 def apply_for_club(request, club_id):
@@ -96,17 +120,15 @@ def apply_for_club(request, club_id):
 @login_required
 def leave_club(request, club_id):
     try:
-        clubs = Club.objects.get(id=club_id)
-        user_id = request.user.id
-        if request.user.current_club == clubs:
-            membership = Membership.objects.get(user=user_id, club=clubs)
+        club = Club.objects.get(id=club_id)
+        user = request.user
+        if not club.is_of_role(user, Membership.OWNER):
+            membership = Membership.objects.get(user=user, club=club)
             membership.delete()
-            MyClubs = Club.objects.filter(membership__user=request.user).first()
-            request.user.current_club = MyClubs
-            request.user.save()
-        else:
-            membership = Membership.objects.get(user=user_id, club=clubs)
-            membership.delete()
+            if request.user.current_club == club:
+                new_current_club = Club.objects.filter(membership__user=request.user).first()
+                request.user.current_club = new_current_club
+                request.user.save()
     except ObjectDoesNotExist:
         pass
 
@@ -116,9 +138,19 @@ def leave_club(request, club_id):
 @login_required
 def my_clubs(request):
     user = request.user
-    MyClubs = Club.objects.filter(membership__user=user)
-    NotMyClubs = Club.objects.exclude(membership__user=user)
-    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs': NotMyClubs})
+    memberships = user.membership_set.all()
+    clubs_user_in = []
+    for membership in memberships:
+        role = "Applicant"
+        if membership.role == Membership.OWNER:
+            role = "Owner"
+        elif membership.role == Membership.OFFICER:
+            role = "Officer"
+        elif membership.role == Membership.MEMBER:
+            role = "Member"
+        clubs_user_in.append([membership.club, role])
+    clubs_user_not_in = Club.objects.exclude(membership__user=user)
+    return render(request, 'my_clubs.html', {'clubs_user_in': clubs_user_in, 'clubs_user_not_in': clubs_user_not_in})
 
 
 @login_required

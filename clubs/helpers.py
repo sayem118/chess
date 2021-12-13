@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.shortcuts import redirect
 
-from clubs.models import User
-
 
 def login_prohibited(view_function):
     def modified_view_function(request):
@@ -32,6 +30,7 @@ def required_role(role):
 
     return actual_decorator
 
+
 def prohibited_role(role):
     def actual_decorator(view_function):
         def modified_view_function(request, *args, **kwargs):
@@ -49,6 +48,7 @@ def prohibited_role(role):
         return modified_view_function
 
     return actual_decorator
+
 
 def user_has_to_be_apart_of_a_club(view_function):
     def modified_view_function(request, *args, **kwargs):

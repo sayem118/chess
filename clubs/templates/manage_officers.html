@@ -3,22 +3,46 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>Manage officers</h1>
+                <h2>Manage officers</h2>
+                <br>
                 <table class="table">
                     {% for officer in officers %}
                         <tr>
-                            {% include 'partials/user_row.html' with user=officer %}
-                            <td>
+                            {% include 'partials/user_as_table_row.html' with user=officer %}
+                            <td style="text-align:right">
                                 <form action="{% url 'demote_officer' user_id=officer.id %}" method="get">
                                     <button class="btn btn-primary">Demote</button>
                                 </form>
                             </td>
-                            <td>
-                                <form action="{% url 'transfer_ownership' user_id=officer.id %}" method="get">
-                                    <button class="btn btn-primary">Transfer ownership</button>
-                                </form>
+                            <td style="text-align:right">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#transferOwnershipModal">Transfer ownership
+                                </button>
                             </td>
                         </tr>
+                        <!-- Modal -->
+                        <div class="modal fade" id="transferOwnershipModal" tabindex="-1" role="dialog"
+                             aria-labelledby="transferOwnershipModal" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="transferOwnershipModalLabel">
+                                            Transfer Ownership
+                                        </h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to transfer ownership to this user?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Cancel
+                                        </button>
+                                        <a href="{% url 'transfer_ownership' user_id=officer.id %}" type="button"
+                                           class="btn btn-primary">Confirm</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     {% endfor %}
                 </table>
             </div>
