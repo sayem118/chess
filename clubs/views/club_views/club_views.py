@@ -55,33 +55,6 @@ class CreateClubView(LoginRequiredMixin, FormView):
         return reverse('my_clubs')
 
 
-class MemberStatusView(LoginRequiredMixin, ListView):
-    """View that shows the memberships of all the clubs the user is apart of"""
-
-    model = Club
-    template_name = "member_status.html"
-    context_object_name = "clubs"
-
-    @method_decorator(user_has_to_be_apart_of_a_club)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        user = self.request.user
-        memberships = user.membership_set.all()
-        clubs = []
-        for membership in memberships:
-            role = "Applicant"
-            if membership.role == Membership.OWNER:
-                role = "Owner"
-            elif membership.role == Membership.OFFICER:
-                role = "Officer"
-            elif membership.role == Membership.MEMBER:
-                role = "Member"
-            clubs.append([membership.club, role])
-        return clubs
-
-
 class ShowClubView(DetailView):
     """View that show individual club details"""
 
