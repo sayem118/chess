@@ -125,18 +125,18 @@ h3.profile-title {
 }
 
 /*
- * Post
+ * Club
  */
-.post-author {
+.club {
   margin-bottom: 0px;
 
 }
 
-.post-author-fullname {
+.club-name {
   font-weight: bold;
 }
 
-.post-author-user-details {
+.club-subtext {
   margin-left: 10px;
   color: #777777;
 }

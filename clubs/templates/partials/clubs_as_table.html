@@ -1,0 +1,7 @@
+<table class="table">
+    {% for club in clubs %}
+        <tr>
+            {% include 'partials/club_as_table_row.html' with club=club %}
+        </tr>
+    {% endfor %}
+</table>

@@ -1,5 +1,5 @@
-<td>
+<td style="width:20%">
     <img src="{{ user.mini_gravatar }}"
          alt="Gravatar of {{ user.full_name }}" class="rounded-circle">
 </td>
-<td>{{ user.full_name }}</td>
+<td style="width:50%"><a href="{% url 'show_user' user.id %}">{{ user.full_name }}</a></td>

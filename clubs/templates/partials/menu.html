@@ -5,26 +5,23 @@
                 <a class="nav-link" href="{% url 'user_list' %}">Users</a>
             </li>
         {% endif %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'start' %}">Home</a>
-        </li>
-        {% if user.membership_set.count %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'member_status' %}">Member Status</a>
-            </li>
-        {% endif %}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" href="{% url 'start' %}">Home</a>#}
+{#        </li>#}
+{#        {% if user.membership_set.count %}#}
+{#            <li class="nav-item">#}
+{#                <a class="nav-link" href="{% url 'member_status' %}">Member Status</a>#}
+{#            </li>#}
+{#        {% endif %}#}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'my_clubs' %}">My Clubs</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'club_list' %}">Clubs List</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'create_club' %}">Create Club</a>
-        </li>
-        <li>
-            <a class="nav-link" href={% url 'tournaments_list_view' %}>Tournaments</a>
-        </li>
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" href="{% url 'club_list' %}">Clubs List</a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" href="{% url 'create_club' %}">Create Club</a>#}
+{#        </li>#}
         {% include 'partials/officer_menu_items.html' %}
         {% include 'partials/owner_menu_items.html' %}
     </ul>

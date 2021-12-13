@@ -1,15 +1,11 @@
 """Club owner related views."""
 
-from django.http import Http404
-from django.shortcuts import redirect
-from django.utils.decorators import method_decorator
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
-from django.urls import reverse
 
-from clubs.models import User, Club, Membership
-from clubs.forms import CreateClubForm
 from clubs.helpers import required_role
+from clubs.models import User, Membership
+
 
 @required_role(Membership.OFFICER)
 def approve_applicant(request, user_id):

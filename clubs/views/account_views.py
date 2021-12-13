@@ -1,14 +1,15 @@
 """Account related views."""
 
-from django.views.generic.edit import FormView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import login
-from django.contrib import messages
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
+from django.views.generic.edit import FormView, UpdateView
 
 from clubs.forms import PasswordForm, UserForm, SignUpForm
 from .mixins import LoginProhibitedMixin
+
 
 class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""

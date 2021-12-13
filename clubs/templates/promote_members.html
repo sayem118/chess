@@ -3,12 +3,13 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>Promote members</h1>
+                <h2>Promote members</h2>
+                <br>
                 <table class="table">
                     {% for member in members %}
                         <tr>
-                            {% include 'partials/user_row.html' with user=member %}
-                            <td>
+                            {% include 'partials/user_as_table_row.html' with user=member %}
+                            <td style="text-align:right">
                                 <form action="{% url 'promote_member' user_id=member.id %}" method="get">
                                     <button class="btn btn-primary">Promote</button>
                                 </form>

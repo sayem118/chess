@@ -21,6 +21,7 @@ class LogInForm(forms.Form):
             user = authenticate(email=email, password=password)
         return user
 
+
 class NewPasswordMixin(forms.Form):
     """Form mixing for new_password and password_confirmation fields."""
 
@@ -31,7 +32,7 @@ class NewPasswordMixin(forms.Form):
             regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
             message='Password must contain an uppercase character, a lowercase '
                     'character and a number'
-            )]
+        )]
     )
     password_confirmation = forms.CharField(label='Password confirmation', widget=forms.PasswordInput())
 
@@ -132,6 +133,8 @@ class CreateClubForm(forms.ModelForm):
 
         model = Club
         fields = ['name', 'location', 'mission_statement']
+        widgets = {'mission_statement': forms.Textarea()}
+
 
 class CreateTournamentForm(forms.ModelForm):
     """Form to create a tournament"""
