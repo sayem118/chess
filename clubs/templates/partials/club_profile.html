@@ -1,18 +1,21 @@
 <div class="row content">
     <div class="col-12">
+      <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.email }}" class="rounded-circle profile-image">
         <div class="profile-text">
+
             <h3 class="profile-title">{{ club.name }}</h3>
             <br>
             <p class="profile-email">Location: {{ club.location }}</p>
             <p class="profile-email">Owned by:
                 {% if club.owner %}
-                    <a href="{% url 'show_user' user.id %}">{{ club.owner.full_name }}</a>
+                    <a>{{ club.owner.full_name }}</a>
                 {% else %}
                     N/A
                 {% endif %}
             </p>
+            <p class="profile-bio">Owner Bio: {{ club.owner.bio }}</p>
             <br>
-            <p class="profile-bio">{{ club.mission_statement }}</p>
+            <p class="profile-bio">Mission statement: {{ club.mission_statement }}</p>
         </div>
     </div>
 </div>
