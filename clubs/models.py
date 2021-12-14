@@ -78,7 +78,7 @@ class User(AbstractUser):
     def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""
         gravatar_object = Gravatar(self.email)
-        gravatar_url = gravatar_object.get_image(size=size, default='mp')
+        gravatar_url = gravatar_object.get_image(size=size, default='identicon')
         return gravatar_url
 
     def mini_gravatar(self):
@@ -113,6 +113,10 @@ class Club(models.Model):
             membership.save()
         except ObjectDoesNotExist:
             pass
+
+    @property
+    def members_count(self):
+        return self.associates.count()
 
     @property
     def owner(self):

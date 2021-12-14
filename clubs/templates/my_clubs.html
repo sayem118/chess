@@ -11,6 +11,7 @@
                     {% for club, role in clubs_user_in %}
                         <tr>
                             <td><a href="{% url 'show_club' club.id %}">{{ club.name }}</a></td>
+                            <td>{{ club.members_count }} Members</td>
                             <td>{{ role }}</td>
                             <td style="text-align:right">
                                 <form action="{% url 'leave_club' club_id=club.id %}" method="get">
@@ -34,6 +35,7 @@
                     {% for club in clubs_user_not_in %}
                         <tr>
                             <td><a href="{% url 'show_club' club.id %}">{{ club.name }}</a></td>
+                            <td>{{ club.members_count }} Members</td>
                             <td style="text-align:right">
                                 <form action="{% url 'apply' club_id=club.id %}" method="get">
                                     <button class="btn btn-primary">Apply</button>

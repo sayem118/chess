@@ -18,7 +18,9 @@
                 <table class="table">
                     {% for club in clubs %}
                         <tr>
-                            {% include 'partials/club_as_table_row.html' with club=club %}
+                            <td>{{ club.name }}</td>
+                            <td>{{ club.members_count }} Members</td>
+                            <td>{{ club.location }}</td>
                             <td style="text-align:right">
                                 <a class="btn btn-primary" href="{% url 'show_club' club.id %}" role="button">
                                     View Club
