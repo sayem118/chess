@@ -15,6 +15,13 @@ from clubs.forms import CreateClubForm
 from clubs.models import Club, Membership
 
 
+from django.views.generic.edit import CreateView
+from django.contrib import messages
+from django.db.models import F
+from clubs.models import User, Tournament, Tournament_entry, Match
+from clubs.forms import CreateTournamentForm
+from clubs.helpers import required_role,user_has_to_be_apart_of_a_club
+
 class ClubListView(LoginRequiredMixin, ListView):
     """View that shows a list of all clubs, their details and their owner"""
 
