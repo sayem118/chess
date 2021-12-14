@@ -43,4 +43,12 @@ urlpatterns = [
     path('apply/<int:club_id>', views.apply_for_club, name='apply'),
     path('leave_club/<int:club_id>', views.leave_club, name='leave_club'),
     path('create_club/', views.CreateClubView.as_view(), name='create_club'),
+    path('tournaments_list_view/', views.tournaments_list_view, name = "tournaments_list_view"),
+    path('create_tournament/', views.CreateTournamentView.as_view(), name="create_tournament"),
+    path('join_tournament/<int:tournament_id>',views.join_tournament, name='join_tournament'),
+    path('leave_tournament/<int:tournament_id>',views.leave_tournament, name='leave_tournament'),
+    path('manage_tournament/<int:tournament_id>',views.manage_tournament, name='manage_tournament'),
+    path('schedule_matches/<int:tournament_id>', views.schedule_matches, name='schedule_matches'),
+    path('win_contender_one/<int:match_id>', views.win_contender_one, name='win_contender_one'),
+    path('win_contender_two/<int:match_id>', views.win_contender_two, name='win_contender_two'),
 ]

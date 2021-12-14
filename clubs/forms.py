@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 
-from .models import User, Club
+from .models import User, Club, Tournament
 
 
 class LogInForm(forms.Form):
@@ -132,3 +132,15 @@ class CreateClubForm(forms.ModelForm):
 
         model = Club
         fields = ['name', 'location', 'mission_statement']
+
+class CreateTournamentForm(forms.ModelForm):
+    """Form to create a tournament"""
+
+    class Meta:
+        model = Tournament
+        fields = ['name','description','deadline','capacity']
+        widgets = {
+            'description':forms.Textarea(),
+            'deadline':forms.DateTimeInput(format=["%d/%m/%Y %H:%M"]),
+            'capacity':forms.NumberInput(),
+        }

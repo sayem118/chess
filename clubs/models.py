@@ -141,3 +141,26 @@ class Membership(models.Model):
             models.UniqueConstraint(name='one_owner_per_club', fields=['club', 'role'], condition=Q(role=3)),
             models.CheckConstraint(name='role_upperbound', check=models.Q(role__lte=3))
         ]
+
+
+class Tournament(models.Model):
+    name = models.CharField(unique=True, blank=False, max_length=100)
+    description = models.CharField(blank=True, max_length = 500)
+    deadline = models.DateTimeField()
+    capacity = models.IntegerField()
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, through = 'Tournament_entry')
+    club = models.ForeignKey(Club, on_delete = models.CASCADE)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = "tournaments_created")
+    winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.DO_NOTHING, related_name = "tournaments_won", null = True)
+
+class Match(models.Model):
+    contender_one = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = "matches_where_first")
+    contender_two = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = "matches_where_second")
+    tournament = models.ForeignKey(Tournament, on_delete = models.CASCADE)
+    group = models.IntegerField()
+    stage = models.IntegerField()
+    winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = "matches_won", null = True )
+
+class Tournament_entry(models.Model):
+    participant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
+    tournament = models.ForeignKey(Tournament, on_delete = models.CASCADE)
