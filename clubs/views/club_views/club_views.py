@@ -117,6 +117,7 @@ def leave_club(request, club_id):
 @login_required
 def my_clubs(request):
     user = request.user
+<<<<<<< HEAD
     memberships = user.membership_set.all()
     clubs_user_in = []
     for membership in memberships:
@@ -130,6 +131,11 @@ def my_clubs(request):
         clubs_user_in.append([membership.club, role])
     clubs_user_not_in = Club.objects.exclude(membership__user=user)
     return render(request, 'my_clubs.html', {'clubs_user_in': clubs_user_in, 'clubs_user_not_in': clubs_user_not_in})
+=======
+    MyClubs = Club.objects.filter(membership__user=user)
+    NotMyClubs = Club.objects.exclude(membership__user =user)
+    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs': NotMyClubs})
+>>>>>>> Create bare bones tournament functionality
 
 
 @login_required
