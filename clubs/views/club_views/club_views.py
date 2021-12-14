@@ -3,6 +3,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+<<<<<<< HEAD
 from django.views.generic.edit import FormView, CreateView
 from django.views.generic import ListView
 from django.http import Http404
@@ -13,6 +14,19 @@ from django.db.models import F
 
 from clubs.forms import CreateClubForm
 from clubs.models import Club, Membership
+=======
+from django.http import Http404
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormView
+
+from clubs.forms import CreateClubForm
+from clubs.models import Club, Membership
+
+>>>>>>> Conflict resolutions tidbits
 
 
 from django.views.generic.edit import CreateView
@@ -20,7 +34,7 @@ from django.contrib import messages
 from django.db.models import F
 from clubs.models import User, Tournament, Tournament_entry, Match
 from clubs.forms import CreateTournamentForm
-from clubs.helpers import required_role,user_has_to_be_apart_of_a_club
+from clubs.helpers import required_role
 
 class ClubListView(LoginRequiredMixin, ListView):
     """View that shows a list of all clubs, their details and their owner"""
@@ -117,7 +131,6 @@ def leave_club(request, club_id):
 @login_required
 def my_clubs(request):
     user = request.user
-<<<<<<< HEAD
     memberships = user.membership_set.all()
     clubs_user_in = []
     for membership in memberships:
@@ -131,11 +144,6 @@ def my_clubs(request):
         clubs_user_in.append([membership.club, role])
     clubs_user_not_in = Club.objects.exclude(membership__user=user)
     return render(request, 'my_clubs.html', {'clubs_user_in': clubs_user_in, 'clubs_user_not_in': clubs_user_not_in})
-=======
-    MyClubs = Club.objects.filter(membership__user=user)
-    NotMyClubs = Club.objects.exclude(membership__user =user)
-    return render(request, 'my_clubs.html', {'MyClubs': MyClubs, 'NotMyClubs': NotMyClubs})
->>>>>>> Create bare bones tournament functionality
 
 
 @login_required
