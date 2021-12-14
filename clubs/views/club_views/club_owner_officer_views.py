@@ -1,10 +1,61 @@
 """Club owner related views."""
-
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView
 
 from clubs.helpers import required_role
 from clubs.models import User, Membership
+
+
+class ApplicantListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = "approve_applicants.html"
+    context_object_name = "applicant"
+    paginate_by = settings.USERS_PER_PAGE
+
+    @method_decorator(required_role(Membership.OFFICER))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        club = self.request.user.current_club
+        applicants = club.associates.filter(membership__role=Membership.APPLICANT)
+        return applicants
+
+
+class MemberListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = "promote_members.html"
+    context_object_name = "members"
+    paginate_by = settings.USERS_PER_PAGE
+
+    @method_decorator(required_role(Membership.OWNER))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        club = self.request.user.current_club
+        members = club.associates.filter(membership__role=Membership.MEMBER)
+        return members
+
+
+class OfficerListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = "manage_officers.html"
+    context_object_name = "officers"
+    paginate_by = settings.USERS_PER_PAGE
+
+    @method_decorator(required_role(Membership.OWNER))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        club = self.request.user.current_club
+        officers = club.associates.filter(membership__role=Membership.OFFICER)
+        return officers
 
 
 @required_role(Membership.OFFICER)
@@ -22,11 +73,11 @@ def approve_applicant(request, user_id):
         return redirect('applicants_list')
 
 
-@required_role(Membership.OWNER)
-def members_list(request):
-    club = request.user.current_club
-    members = club.associates.filter(membership__role=Membership.MEMBER)
-    return render(request, 'promote_members.html', {'members': members})
+# @required_role(Membership.OWNER)
+# def members_list(request):
+#     club = request.user.current_club
+#     members = club.associates.filter(membership__role=Membership.MEMBER)
+#     return render(request, 'promote_members.html', {'members': members})
 
 
 @required_role(Membership.OWNER)
@@ -44,11 +95,11 @@ def promote_member(request, user_id):
         return redirect('members_list')
 
 
-@required_role(Membership.OWNER)
-def officers_list(request):
-    club = request.user.current_club
-    officers = club.associates.filter(membership__role=Membership.OFFICER)
-    return render(request, 'manage_officers.html', {'officers': officers})
+# @required_role(Membership.OWNER)
+# def officers_list(request):
+#     club = request.user.current_club
+#     officers = club.associates.filter(membership__role=Membership.OFFICER)
+#     return render(request, 'manage_officers.html', {'officers': officers})
 
 
 @required_role(Membership.OWNER)
@@ -80,9 +131,8 @@ def transfer_ownership(request, user_id):
     else:
         return redirect('start')
 
-
-@required_role(Membership.OFFICER)
-def applicants_list(request):
-    club = request.user.current_club
-    applicants = club.associates.filter(membership__role=Membership.APPLICANT)
-    return render(request, 'approve_applicants.html', {'applicants': applicants})
+# @required_role(Membership.OFFICER)
+# def applicants_list(request):
+#     club = request.user.current_club
+#     applicants = club.associates.filter(membership__role=Membership.APPLICANT)
+#     return render(request, 'approve_applicants.html', {'applicants': applicants})

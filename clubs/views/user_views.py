@@ -30,7 +30,8 @@ class ShowUserView(DetailView):
         """Generate content to be displayed in the template"""
 
         context = super().get_context_data(*args, **kwargs)
-        context['user'] = self.get_object()
+        context['user'] = self.request.user
+        context['user_to_view'] = self.get_object()
         context['is_staff'] = self.request.user.current_club_not_none and self.request.user.current_club_role in {
             Membership.OFFICER, Membership.OWNER}
         return context

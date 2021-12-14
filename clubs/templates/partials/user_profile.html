@@ -1,13 +1,14 @@
 <div class="row content">
     <div class="col-12">
-        <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.email }}" class="rounded-circle profile-image">
+        <img style="float:right" src="{{ user_to_view.gravatar }}" alt="Gravatar of {{ user_to_view.email }}"
+             class="rounded-circle profile-image">
         <div class="profile-text">
-            <h3 class="profile-title">{{ user.full_name }}</h3>
+            <h3 class="profile-title">{{ user_to_view.full_name }}</h3>
             {% if not is_staff %}
                 <br>
-                <p class="profile-bio">{{ user.bio }}</p>
+                <p class="profile-bio">{{ user_to_view.bio }}</p>
             {% else %}
-                <p class="profile-email">{{ user.email }}</p>
+                <p class="profile-email">{{ user_to_view.email }}</p>
             {% endif %}
         </div>
     </div>
@@ -15,20 +16,32 @@
 <div class="row content">
     <div class="col-12">
         {% if is_staff %}
-            {% if user.bio %}
-                <h6>Bio</h6>
-                <p class="profile-bio">{{ user.bio }}</p>
-                <br>
-            {% endif %}
-            {% if user.experience_level %}
-                <h6>Experience Level</h6>
-                <p class="profile-experience_level">{{ user.experience_level }}</p>
-                <br>
-            {% endif %}
-            {% if user.personal_statement %}
-                <h6>Personal Statement</h6>
-                <p class="profile-personal-statement">{{ user.personal_statement }}</p>
-            {% endif %}
+            <h6>Bio</h6>
+            <p class="profile-bio">
+                {% if user_to_view.bio %}
+                    {{ user_to_view.bio }}
+                {% else %}
+                    This user did not include a bio.
+                {% endif %}
+            </p>
+            <br>
+            <h6>Experience Level</h6>
+            <p class="profile-experience_level">
+                {% if user_to_view.experience_level %}
+                    {{ user_to_view.experience_level }}
+                {% else %}
+                    This user did not include their experience level.
+                {% endif %}
+            </p>
+            <br>
+            <h6>Personal Statement</h6>
+            <p class="profile-personal-statement">
+                {% if user_to_view.personal_statement %}
+                    {{ user_to_view.personal_statement }}
+                {% else %}
+                    This user did not include a personal statement.
+                {% endif %}
+            </p>
         {% endif %}
     </div>
 </div>
