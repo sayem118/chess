@@ -3,18 +3,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-<<<<<<< HEAD
-from django.views.generic.edit import FormView, CreateView
-from django.views.generic import ListView
-from django.http import Http404
-from django.shortcuts import redirect, render
-from django.urls import reverse
-from django.contrib import messages
-from django.db.models import F
-
-from clubs.forms import CreateClubForm
-from clubs.models import Club, Membership
-=======
 from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -26,7 +14,6 @@ from django.views.generic.edit import FormView
 from clubs.forms import CreateClubForm
 from clubs.models import Club, Membership
 
->>>>>>> Conflict resolutions tidbits
 
 
 from django.views.generic.edit import CreateView
