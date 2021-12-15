@@ -22,7 +22,11 @@
                    <button class="btn btn-primary">Set winner</button>
                  </form>
               </td>
-              <td> vs. </td>
+              <td> vs.
+                <form action="{% url 'draw_match' match_id=match.id %}" method="get">
+                  <button class="btn btn-primary">Draw</button>
+                </form>
+              </td>
               <td>
                 {{ match.contender_two.full_name }}
                 <form action="{% url 'win_contender_two' match_id=match.id %}" method="get">
