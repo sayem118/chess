@@ -66,17 +66,16 @@ def leave_tournament(request, tournament_id):
 @required_role(Membership.OFFICER)
 def manage_tournament(request, tournament_id):
 
-    tournament_in = Tournament.objects.get( id = tournament_id )
-
     try:
+        tournament_in = Tournament.objects.get( id = tournament_id )
         participants = set()
         for entry in Tournament_entry.objects.filter( tournament = tournament_in ).select_related('participant'):
             participants.add(entry.participant)
-    except:
+    except ObjectDoesNotExist:
         participants = None
     try:
         matches = Match.objects.filter( tournament = tournament_in ).filter(winner = None)
-    except:
+    except ObjectDoesNotExist:
         matches = None
     return render(request, "manage_tournament.html", {'tournament':tournament_in, "participants":participants,"matches":matches})
 
@@ -84,11 +83,9 @@ def manage_tournament(request, tournament_id):
 @required_role(Membership.OFFICER)
 def schedule_matches(request, tournament_id):
 
-    tournament = Tournament.objects.get( id = tournament_id )
-
     try :
+        tournament = Tournament.objects.get( id = tournament_id )
         matches_check = Match.objects.filter( tournament = tournament )
-        print(matches_check)
     except ObjectDoesNotExist:
         matches_check = None
 
