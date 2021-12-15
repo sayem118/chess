@@ -37,6 +37,7 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('tournaments_list_view')
 
+
 @prohibited_role(Membership.APPLICANT)
 def tournaments_list_view(request):
     created = Tournament.objects.filter( creator = request.user )
@@ -51,11 +52,7 @@ def join_tournament(request, tournament_id):
     try:
         tournament = Tournament.objects.get(id = tournament_id )
         if tournament.creator != request.user:
-            if Membership.objects.filter( club = tournament.club, user = request.user, role__in = [Membership.MEMBER, Membership.OFFICER, Membership.OWNER] ).count() == 1:
-                newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
-            else:
-                messages.error(request, "You cannot take part in a tournament from a club you're not a full member of")
-                return redirect('tournaments_list_view')
+            newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
         else:
             messages.error(request, "You cannot take part in a tournament you created")
             return redirect('tournaments_list_view')

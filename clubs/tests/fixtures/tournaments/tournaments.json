@@ -7,9 +7,9 @@
       "description": "This is a chess tournament",
       "deadline": "2023-01-01 00:00:00.0000",
       "capacity": 96,
-      "club": 7,
-      "participants": [4, 6],
-      "creator": 4,
+      "club": 8,
+      "participants": [3, 4],
+      "creator": 5,
       "winner": 3
     }
   },
@@ -22,9 +22,9 @@
       "deadline": "2023-01-02 00:00:00.0000",
       "capacity": 96,
       "club": 7,
-      "participants": [4, 6],
-      "creator": 4,
-      "winner": 5
+      "participants": [3, 4],
+      "creator": 5,
+      "winner": 4
     }
   }
 ]
