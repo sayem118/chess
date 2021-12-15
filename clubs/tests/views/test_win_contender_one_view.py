@@ -36,7 +36,7 @@ class WinContenderOneViewTestCase(TestCase):
         self.owner.select_club(self.other_club)
         self.tournament = Tournament.objects.get(name='Chess Tournament')
         self.other_tournament = Tournament.objects.get(name='Battle of the Titans')
-        self.match = Match(contender_one=self.member, contender_two=self.other_member, tournament=self.tournament, group=1, stage=1)
+        self.match = Match(contender_one=self.member, contender_two=self.other_member, tournament=self.tournament, group=1, stage=2)
         self.match.save()
         self.url = reverse('win_contender_one', kwargs={'match_id': self.match.id})
 

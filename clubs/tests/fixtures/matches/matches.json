@@ -1,0 +1,15 @@
+[
+  {
+    "model": "clubs.match",
+    "pk": 17,
+    "fields": {
+      "contender_one": 4,
+      "contender_two": 3,
+      "tournament": 15,
+      "group": 2,
+      "stage": 1,
+      "winner": 4,
+      "played": 0
+    }
+  }
+]
