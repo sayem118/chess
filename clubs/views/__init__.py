@@ -4,3 +4,4 @@ from .club_views import *
 from .static_views import *
 from .user_views import *
 from .start_views import *
+from .tournament_views import *
