@@ -1,8 +1,9 @@
 """Tournament methods"""
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect
 
-from clubs.models import Match
+from clubs.models import Match, Tournament_entry, Tournament, User
 
 
 def generate_matches(participants, group_size, stage, tournament):
@@ -54,3 +55,44 @@ def setup_next_stage(tournament, last_stage):
 
     # to modify thing in generate matches to be like this lmao
     generate_matches(winners, 2, last_stage-1, tournament)
+
+
+def initialize_matches(request, tournament_id):
+    valid_entries_nos = [2,4,8,16,32]
+
+    tournament = Tournament.objects.get( id = tournament_id )
+
+    no_of_entries = Tournament_entry.objects.filter( tournament = tournament).count()
+    if no_of_entries in valid_entries_nos:
+        if no_of_entries == 32:
+            participants = tournament.participants.all()
+            generate_matches(participants, group_size = 4, stage = 5, tournament = tournament)
+            return redirect('manage_tournament', tournament_id = tournament_id)
+        else:
+            participants = tournament.participants.all()
+            n = participants.count()
+            powtwo = 0
+            while n>1:
+                n/=2
+                powtwo += 1
+            generate_matches(participants, group_size = 2, stage = powtwo, tournament = tournament )
+            return redirect('manage_tournament', tournament_id = tournament_id)
+    else:
+        messages.error(request, "The number of participants does not allow for a properly structured contest.")
+        return redirect('manage_tournament', tournament_id  = tournament_id)
+
+
+def generate_draw_rematch( match_id ):
+    match = Match.objects.get( id = match_id )
+    Match.objects.create( contender_one = match.contender_one, contender_two = match.contender_two, tournament = match.tournament, group = match.group, stage = match.stage )
+
+def go_to_next_stage_or_end_tournament(match_id):
+    match = Match.objects.get( id = match_id )
+    if check_stage_is_done(match_id):
+        if match.stage>1:
+            setup_next_stage(match.tournament, match.stage)
+        else:
+            match.tournament.winner = match.winner
+            match.tournament.save()
+
+    return redirect('manage_tournament', match.tournament.id)

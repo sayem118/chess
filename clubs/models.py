@@ -174,6 +174,7 @@ class Match(models.Model):
     group = models.IntegerField()
     stage = models.IntegerField()
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = "matches_won", null = True )
+    played = models.BooleanField(default = False, null = False)
 
 class Tournament_entry(models.Model):
     participant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)

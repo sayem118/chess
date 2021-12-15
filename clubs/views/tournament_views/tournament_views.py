@@ -99,43 +99,15 @@ def schedule_matches(request, tournament_id):
         return redirect('manage_tournament', tournament_id = tournament_id)
 
 
-def initialize_matches(request, tournament_id):
-    valid_entries_nos = [2,4,8,16,32]
-
-    tournament = Tournament.objects.get( id = tournament_id )
-
-    no_of_entries = Tournament_entry.objects.filter( tournament = tournament).count()
-    if no_of_entries in valid_entries_nos:
-        if no_of_entries == 32:
-            participants = tournament.participants.all()
-            generate_matches(participants, group_size = 4, stage = 5, tournament = tournament)
-            return redirect('manage_tournament', tournament_id = tournament_id)
-        else:
-            participants = tournament.participants.all()
-            n = participants.count()
-            powtwo = 0
-            while n>1:
-                n/=2
-                powtwo += 1
-            generate_matches(participants, group_size = 2, stage = powtwo, tournament = tournament )
-            return redirect('manage_tournament', tournament_id = tournament_id)
-    else:
-        messages.error(request, "The number of participants does not allow for a properly structured contest.")
-        return redirect('manage_tournament', tournament_id  = tournament_id)
-
 
 @login_required
 def win_contender_one(request, match_id):
     match = Match.objects.get( id = match_id )
     match.winner = match.contender_one
+    match.played = True
     match.save()
 
-    if check_stage_is_done(match_id):
-        if match.stage>1:
-            setup_next_stage(match.tournament, match.stage)
-        else:
-            match.tournament.winner = match.winner
-            match.tournament.save()
+    go_to_next_stage_or_end_tournament(match_id)
 
     return redirect('manage_tournament', match.tournament.id)
 
@@ -144,13 +116,19 @@ def win_contender_one(request, match_id):
 def win_contender_two(request,match_id):
     match = Match.objects.get( id = match_id )
     match.winner = match.contender_two
+    match.played = True
     match.save()
 
-    if check_stage_is_done(match_id):
-        if match.stage>1:
-            setup_next_stage(match.tournament, match.stage)
-        else:
-            match.tournament.winner = match.winner
-            match.tournament.save()
+    go_to_next_stage_or_end_tournament(match_id)
 
     return redirect('manage_tournament', match.tournament.id)
+
+def draw_match(request, match_id):
+    match = Match.objects.get(id = match_id)
+    match.played = True
+    match.save()
+
+    if (match.stage < 5): # if the stage is smaller than 5, this was a knckout round, and another match is needed to establish who goes on to the next stage
+        generate_draw_rematch(match_id)
+    else:
+        go_to_next_stage_or_end_tournament(match_id)
