@@ -1,47 +1,21 @@
+"Tournament related views"
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.urls import reverse
-from django.views.generic.edit import FormView
-
-from django.views.generic.edit import CreateView
 from django.contrib import messages
+from django.urls import reverse
 from django.db.models import F
-from clubs.models import User, Membership, Tournament, Tournament_entry, Match
+
+from clubs.models import User, Tournament, Tournament_entry, Match, Membership
 from clubs.forms import CreateTournamentForm
 from clubs.helpers import required_role
 
-"""to add try"""
-def tournaments_list_view(request):
-    created = Tournament.objects.filter( creator = request.user )
-    entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
-    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user )
-    return render(request, 'tournaments_list_view.html', {'created':created,'entered':entered, 'not_entered':not_entered})
-
-@login_required
-def join_tournament(request, tournament_id):
-    if Tournament.objects.get( id = tournament_id).creator == request.user:
-        redirect('tournaments_list_view')
-    else:
-        try:
-            tournament = Tournament.objects.get(id = tournament_id )
-            newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
-        except ObjectDoesNotExist:
-            pass
-    return redirect('tournaments_list_view')
-
-@login_required
-def leave_tournament(request, tournament_id):
-    try:
-        tournament = Tournament.objects.get( id = tournament_id )
-        entry_to_delete = Tournament_entry.objects.filter( tournament = tournament ).get( participant = request.user )
-        if entry_to_delete:
-            entry_to_delete.delete()
-    except ObjectDoesNotExist:
-        pass
-    return redirect('tournaments_list_view')
+from .tournament_methods import *
 
 
 class CreateTournamentView(LoginRequiredMixin, FormView):
@@ -58,6 +32,37 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse('tournaments_list_view')
+
+
+def tournaments_list_view(request):
+    created = Tournament.objects.filter( creator = request.user )
+    entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
+    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user )
+    return render(request, 'tournaments_list_view.html', {'created':created,'entered':entered, 'not_entered':not_entered})
+
+
+@login_required
+def join_tournament(request, tournament_id):
+    if Tournament.objects.get( id = tournament_id).creator != request.user:
+        try:
+            tournament = Tournament.objects.get(id = tournament_id )
+            newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
+        except ObjectDoesNotExist:
+            pass
+    return redirect('tournaments_list_view')
+
+
+@login_required
+def leave_tournament(request, tournament_id):
+    try:
+        tournament = Tournament.objects.get( id = tournament_id )
+        entry_to_delete = Tournament_entry.objects.filter( tournament = tournament ).get( participant = request.user )
+        if entry_to_delete:
+            entry_to_delete.delete()
+    except ObjectDoesNotExist:
+        pass
+    return redirect('tournaments_list_view')
+
 
 @required_role(Membership.OFFICER)
 def manage_tournament(request, tournament_id):
@@ -94,7 +99,6 @@ def schedule_matches(request, tournament_id):
         return redirect('manage_tournament', tournament_id = tournament_id)
 
 
-
 def initialize_matches(request, tournament_id):
     valid_entries_nos = [2,4,8,16,32]
 
@@ -119,29 +123,6 @@ def initialize_matches(request, tournament_id):
         messages.error(request, "The number of participants does not allow for a properly structured contest.")
         return redirect('manage_tournament', tournament_id  = tournament_id)
 
-
-def generate_matches(participants, group_size, stage, tournament):
-    # to add functionality that randomizes who ends up in which group
-    count = 0
-    group_count = 0
-    group_list = []
-    for p in participants:
-        group_list.append(p)
-        count += 1
-        if count == group_size:
-            generate_matches_for_group( group_list, group_count, stage, tournament)
-            group_count += 1
-            group_list = []
-            count = 0
-
-def generate_matches_for_group( group_list, group_no, stage, tournament ):
-    i = 0
-    while i < len(group_list):
-        j = i+1
-        while j < len(group_list):
-            Match.objects.create( contender_one = group_list[i], contender_two = group_list[j], tournament = tournament, group = group_no, stage = stage )
-            j += 1
-        i += 1
 
 def win_contender_one(request, match_id):
     match = Match.objects.get( id = match_id )
@@ -170,28 +151,3 @@ def win_contender_two(request,match_id):
             match.tournament.save()
 
     return redirect('manage_tournament', match.tournament.id)
-
-def check_stage_is_done(match_id):
-    match = Match.objects.get( id = match_id )
-    try:
-        matches_in_stage = Match.objects.filter(tournament = match.tournament).filter(stage = match.stage).filter(winner__isnull=True )
-    except ObjectDoesNotExist:
-        matches_in_stage = None
-
-    if matches_in_stage == None or matches_in_stage.count()==0:
-        return True
-    else:
-        return False
-
-def setup_next_stage(tournament, last_stage):
-
-    #winners = User.objects.filter(matches_won__tournament = tournament).filter(matches_won__stage = last_stage)
-    matches_last_stage = Match.objects.filter(tournament = tournament).filter(stage = last_stage)
-    winner_id_list = []
-    for m in matches_last_stage:
-        winner_id_list.append(m.winner.id)
-    winners = User.objects.filter(id__in=winner_id_list)
-
-    print(winners)
-    # to modify thing in generate matches to be like this lmao
-    generate_matches(winners, 2, last_stage-1, tournament)
