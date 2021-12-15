@@ -44,19 +44,36 @@ class TournamentListTest(TestCase,AssertHTMLMixin):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_is_accessible_to_all_roles(self):
-        self.assert_accessible(self.applicant)
+    def test_is_accessible_to_all_member_roles(self):
         self.assert_accessible(self.member)
         self.assert_accessible(self.officer)
         self.assert_accessible(self.owner)
 
-    def test_is_accessable_with_no_club_selected(self):
-        self.assert_accessible(self.user)
+    def test_not_accessible_to_applicant(self):
+        self.client.login(email=self.applicant.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        self.assertNotContains(response, self.tournament.name)
+        self.assertNotContains(response, self.other_tournament.name)
 
-    def test_is_accessable_for_user_who_is_not_in_any_club(self):
+    def test_not_accessable_with_no_club_selected(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        self.assertNotContains(response, self.tournament.name)
+        self.assertNotContains(response, self.other_tournament.name)
+
+    def test_not_accessable_for_user_who_is_not_in_any_club(self):
         User.objects.create_user(email='test@example.org', password='Password123')
         test_user = User.objects.get(email='test@example.org')
-        self.assert_accessible(test_user)
+        self.client.login(email=test_user.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        self.assertNotContains(response, self.tournament.name)
+        self.assertNotContains(response, self.other_tournament.name)
 
     def assert_accessible(self, test_user):
         self.client.login(email=test_user.email, password='Password123')
@@ -64,4 +81,4 @@ class TournamentListTest(TestCase,AssertHTMLMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
         self.assertContains(response, self.tournament.name)
-        self.assertContains(response, self.other_tournament.name)
+        self.assertNotContains(response, self.other_tournament.name)

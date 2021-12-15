@@ -48,7 +48,7 @@ class CreateTournamentViewTestCase(TestCase):
         self.assertEqual(self.url, '/create_tournament/')
 
     def test_get_create_tournament(self):
-        self.client.login(email=self.user.email, password='Password123')
+        self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'create_tournament.html')
@@ -57,12 +57,12 @@ class CreateTournamentViewTestCase(TestCase):
         self.assertFalse(form.is_bound)
 
     def test_get_create_tournament_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
+        redirect_url = reverse('log_in')
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_post_create_tournaments_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
+        redirect_url = reverse('log_in')
         response = self.client.get(self.url)
         before_count = Tournament.objects.count()
         response = self.client.post(self.url, self.form_input, follow=True)

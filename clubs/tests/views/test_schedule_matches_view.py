@@ -38,6 +38,9 @@ class ScheduleMatchesViewTestCase(TestCase):
         self.other_tournament = Tournament.objects.get(name='Battle of the Titans')
         self.url = reverse('schedule_matches', kwargs={'tournament_id': self.tournament.id})
 
+    def test_get_schedule_matches_url(self):
+        self.assertEqual(self.url, f'/schedule_matches/{self.tournament.id}')
+
     def test_get_schedule_matches_redirects_when_not_logged_in(self):
         redirect_url = reverse('log_in')
         response = self.client.get(self.url)
