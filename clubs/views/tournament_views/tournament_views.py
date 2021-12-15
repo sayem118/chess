@@ -142,7 +142,7 @@ def win_contender_two(request, match_id):
     except ObjectDoesNotExist:
         return redirect('start')
 
-
+@login_required
 def draw_match(request, match_id):
     try:
         match = Match.objects.get(id = match_id)
