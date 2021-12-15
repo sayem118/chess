@@ -119,33 +119,39 @@ def schedule_matches(request, tournament_id):
 
 @login_required
 def win_contender_one(request, match_id):
-    match = Match.objects.get( id = match_id )
-    match.winner = match.contender_one
-    match.played = True
-    match.save()
-
-    go_to_next_stage_or_end_tournament(match_id)
-
-    return redirect('manage_tournament', match.tournament.id)
+    try:
+        match = Match.objects.get( id = match_id )
+        match.winner = match.contender_one
+        match.played = True
+        match.save()
+        go_to_next_stage_or_end_tournament(match_id)
+        return redirect('manage_tournament', match.tournament.id)
+    except ObjectDoesNotExist:
+        return redirect('start')
 
 
 @login_required
-def win_contender_two(request,match_id):
-    match = Match.objects.get( id = match_id )
-    match.winner = match.contender_two
-    match.played = True
-    match.save()
+def win_contender_two(request, match_id):
+    try:
+        match = Match.objects.get( id = match_id )
+        match.winner = match.contender_two
+        match.played = True
+        match.save()
+        go_to_next_stage_or_end_tournament(match_id)
+        return redirect('manage_tournament', match.tournament.id)
+    except ObjectDoesNotExist:
+        return redirect('start')
 
-    go_to_next_stage_or_end_tournament(match_id)
-
-    return redirect('manage_tournament', match.tournament.id)
 
 def draw_match(request, match_id):
-    match = Match.objects.get(id = match_id)
-    match.played = True
-    match.save()
-
-    if (match.stage < 5): # if the stage is smaller than 5, this was a knckout round, and another match is needed to establish who goes on to the next stage
-        generate_draw_rematch(match_id)
-    else:
-        go_to_next_stage_or_end_tournament(match_id)
+    try:
+        match = Match.objects.get(id = match_id)
+        match.played = True
+        match.save()
+        if (match.stage < 5): # if the stage is smaller than 5, this was a knckout round, and another match is needed to establish who goes on to the next stage
+            generate_draw_rematch(match_id)
+        else:
+            go_to_next_stage_or_end_tournament(match_id)
+        return redirect('manage_tournament', match.tournament.id)
+    except ObjectDoesNotExist:
+        return redirect('start')
