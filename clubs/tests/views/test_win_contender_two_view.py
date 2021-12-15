@@ -1,4 +1,4 @@
-"""Tests of the win contender one view."""
+"""Tests of the win contender two view."""
 
 from django.test import TestCase
 from django.urls import reverse
@@ -8,8 +8,8 @@ from clubs.models import User, Club, Membership, Tournament, Match
 from clubs.tests.helpers import reverse_with_next
 
 
-class WinContenderOneViewTestCase(TestCase):
-    """Tests of thewin contender one view."""
+class WinContenderTwoViewTestCase(TestCase):
+    """Tests of thewin contender two view."""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -38,28 +38,28 @@ class WinContenderOneViewTestCase(TestCase):
         self.other_tournament = Tournament.objects.get(name='Battle of the Titans')
         self.match = Match(contender_one=self.member, contender_two=self.other_member, tournament=self.tournament, group=1, stage=1)
         self.match.save()
-        self.url = reverse('win_contender_one', kwargs={'match_id': self.match.id})
+        self.url = reverse('win_contender_two', kwargs={'match_id': self.match.id})
 
-    def test_get_win_contender_one_url(self):
-        self.assertEqual(self.url, f'/win_contender_one/{self.match.id}')
+    def test_get_win_contender_two_url(self):
+        self.assertEqual(self.url, f'/win_contender_two/{self.match.id}')
 
-    def test_win_contender_one_redirects_when_not_logged_in(self):
+    def test_win_contender_two_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_successful_get_win_contender_one(self):
+    def test_successful_get_win_contender_two(self):
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('manage_tournament', kwargs={'tournament_id': self.tournament.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'manage_tournament.html')
         self.match.refresh_from_db()
-        self.assertEqual(self.match.contender_one, self.member)
+        self.assertEqual(self.match.contender_two, self.other_member)
 
-    def test_win_contender_one_with_invalid_id(self):
+    def test_win_contender_two_with_invalid_id(self):
         self.client.login(email=self.officer.email, password='Password123')
-        url = reverse('win_contender_one', kwargs={'match_id': self.match.id+9999})
+        url = reverse('win_contender_two', kwargs={'match_id': self.match.id+9999})
         response = self.client.get(url, follow=True)
         redirect_url = reverse('start')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
