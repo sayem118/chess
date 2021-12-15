@@ -91,7 +91,7 @@ def manage_tournament(request, tournament_id):
     except ObjectDoesNotExist:
         participants = None
     try:
-        matches = Match.objects.filter( tournament = tournament_in ).filter(winner = None)
+        matches = Match.objects.filter( tournament = tournament_in ).filter(played = False)
     except ObjectDoesNotExist:
         matches = None
     return render(request, "manage_tournament.html", {'tournament':tournament_in, "participants":participants,"matches":matches})
