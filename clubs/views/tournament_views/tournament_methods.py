@@ -52,6 +52,5 @@ def setup_next_stage(tournament, last_stage):
         winner_id_list.append(m.winner.id)
     winners = User.objects.filter(id__in=winner_id_list)
 
-    print(winners)
     # to modify thing in generate matches to be like this lmao
     generate_matches(winners, 2, last_stage-1, tournament)

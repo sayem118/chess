@@ -24,7 +24,6 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
     form_class = CreateTournamentForm
 
     def form_valid(self, form):
-        print(f'current club{ self.request.user.current_club }')
         form.instance.club = self.request.user.current_club
         form.instance.creator = self.request.user
         form.save()
@@ -33,7 +32,7 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('tournaments_list_view')
 
-
+@login_required
 def tournaments_list_view(request):
     created = Tournament.objects.filter( creator = request.user )
     entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
@@ -81,6 +80,7 @@ def manage_tournament(request, tournament_id):
         matches = None
     return render(request, "manage_tournament.html", {'tournament':tournament_in, "participants":participants,"matches":matches})
 
+
 @required_role(Membership.OFFICER)
 def schedule_matches(request, tournament_id):
 
@@ -124,6 +124,7 @@ def initialize_matches(request, tournament_id):
         return redirect('manage_tournament', tournament_id  = tournament_id)
 
 
+@login_required
 def win_contender_one(request, match_id):
     match = Match.objects.get( id = match_id )
     match.winner = match.contender_one
@@ -134,6 +135,8 @@ def win_contender_one(request, match_id):
 
     return redirect('manage_tournament', match.tournament.id)
 
+
+@login_required
 def win_contender_two(request,match_id):
     match = Match.objects.get( id = match_id )
     match.winner = match.contender_two
