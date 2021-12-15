@@ -53,7 +53,7 @@ class ManageTournamentViewTestCase(TestCase):
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        self.assertTemplateUsed(response, 'manage_tournament.html')
 
     def test_cannot_manage_if_not_in_tournament(self):
         self.client.login(email=self.other_member.email, password='Password123')
