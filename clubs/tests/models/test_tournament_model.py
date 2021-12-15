@@ -84,6 +84,18 @@ class TournamentModelTestCase(TestCase):
         self.tournament.capacity = None
         self._assert_tournament_is_invalid()
 
+    def test_capacity_must_not_be_negative(self):
+        self.tournament.capacity = -1
+        self._assert_tournament_is_invalid()
+
+    def test_capacity_can_be_up_to_96(self):
+        self.tournament.capacity = 96
+        self._assert_tournament_is_invalid()
+
+    def test_capacity_must_not_be_greater_than_96(self):
+        self.tournament.capacity = 97
+        self._assert_tournament_is_invalid()
+
     def test_winner_may_be_blank(self):
         self.tournament.winner = None
         self._assert_tournament_is_valid()

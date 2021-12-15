@@ -59,7 +59,7 @@ class DrawMatchViewTestCase(TestCase):
         self.assertTrue(self.match.played)
 
     def test_successful_draw_match_when_knockout(self):
-        self.match.stage = 1
+        self.match.stage = 4
         self.match.save()
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url, follow=True)

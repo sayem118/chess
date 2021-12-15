@@ -5,7 +5,7 @@
     "fields": {
       "name": "Chess Tournament",
       "description": "This is a chess tournament",
-      "deadline": "2023-01-01 00:00:00.0000",
+      "deadline": "2023-01-01T00:00:00+00:00",
       "capacity": 96,
       "club": 8,
       "participants": [3, 4],
@@ -19,7 +19,7 @@
     "fields": {
       "name": "Battle of the Titans",
       "description": "Chess tournament battle",
-      "deadline": "2023-01-02 00:00:00.0000",
+      "deadline": "2023-01-02T00:00:00+00:00",
       "capacity": 96,
       "club": 7,
       "participants": [],
