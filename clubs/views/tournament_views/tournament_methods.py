@@ -1,8 +1,9 @@
 """Tournament methods"""
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect
 
-from clubs.models import Match
+from clubs.models import Match, Tournament_entry, Tournament, User
 
 
 def generate_matches(participants, group_size, stage, tournament):
