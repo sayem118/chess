@@ -186,3 +186,19 @@ h3.profile-title {
   text-decoration: underline;
   color: black;
 }
+
+.greyed-out {
+  background-color: #bfbfbf;
+  border-color: #bfbfbf;
+  color: #333333;
+}
+
+.grey-text {
+  color: #333333;
+}
+
+.greyed-out:hover {
+  background-color: #bfbfbf;
+  border-color: #bfbfbf;
+  color: #333333;
+}
