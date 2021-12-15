@@ -123,6 +123,7 @@ def initialize_matches(request, tournament_id):
         messages.error(request, "The number of participants does not allow for a properly structured contest.")
         return redirect('manage_tournament', tournament_id  = tournament_id)
 
+
 @login_required
 def win_contender_one(request, match_id):
     match = Match.objects.get( id = match_id )
