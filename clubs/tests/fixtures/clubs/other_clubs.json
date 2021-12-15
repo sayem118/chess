@@ -1,7 +1,7 @@
 [
   {
     "model": "clubs.club",
-    "pk": 7,
+    "pk": 8,
     "fields": {
       "name": "The Royal Rooks",
       "location": "Manchester",

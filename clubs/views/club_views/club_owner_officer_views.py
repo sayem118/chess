@@ -13,7 +13,7 @@ from clubs.models import User, Membership
 class ApplicantListView(LoginRequiredMixin, ListView):
     model = User
     template_name = "approve_applicants.html"
-    context_object_name = "applicant"
+    context_object_name = "applicants"
     paginate_by = settings.USERS_PER_PAGE
 
     @method_decorator(required_role(Membership.OFFICER))

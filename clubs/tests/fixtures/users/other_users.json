@@ -17,6 +17,20 @@
     "model": "clubs.user",
     "pk": 3,
     "fields": {
+      "first_name": "Janine",
+      "last_name": "Doe",
+      "email": "janinedoe@example.org",
+      "bio": "We are who we are",
+      "experience_level": "No experience at all",
+      "personal_statement": "I love playing the violin",
+      "password": "pbkdf2_sha256$260000$pILinojg9wMnsFm4bzW9LQ$PgODjeC0Rz9GVDdVHRCbjIWUbXwP/boO6kpydA/SIrU=",
+      "is_active": true
+    }
+  },
+  {
+    "model": "clubs.user",
+    "pk": 4,
+    "fields": {
       "first_name": "Jane",
       "last_name": "Doe",
       "email": "janedoe@example.org",
@@ -29,7 +43,7 @@
   },
   {
     "model": "clubs.user",
-    "pk": 4,
+    "pk": 5,
     "fields": {
       "first_name": "James",
       "last_name": "Doe",
@@ -43,7 +57,7 @@
   },
   {
     "model": "clubs.user",
-    "pk": 5,
+    "pk": 6,
     "fields": {
       "first_name": "Jenny",
       "last_name": "Doe",

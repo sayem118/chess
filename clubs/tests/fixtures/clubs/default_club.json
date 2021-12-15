@@ -1,7 +1,7 @@
 [
   {
     "model": "clubs.club",
-    "pk": 6,
+    "pk": 7,
     "fields": {
       "name": "Chess Club",
       "location": "London",

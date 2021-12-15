@@ -1,15 +1,15 @@
-"""Tests of the join tournament view."""
+"""Tests of the manage tournament view."""
 
 from django.test import TestCase
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from clubs.models import User, Club, Membership, Tournament
+from clubs.models import User, Club, Tournament
 from clubs.tests.helpers import reverse_with_next
 
 
-class JoinTournamentViewTestCase(TestCase):
-    """Tests of the join tournament view."""
+class ManageTournamentViewTestCase(TestCase):
+    """Tests of the manage tournament view."""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -36,33 +36,30 @@ class JoinTournamentViewTestCase(TestCase):
         self.owner.select_club(self.other_club)
         self.tournament = Tournament.objects.get(name='Chess Tournament')
         self.other_tournament = Tournament.objects.get(name='Battle of the Titans')
-        self.url = reverse('join_tournament', kwargs={'tournament_id': self.tournament.id})
+        self.url = reverse('manage_tournament', kwargs={'tournament_id': self.tournament.id})
 
-    def test_get_join_tournament_url(self):
-        self.assertEqual(self.url,f'/join_tournament/{self.tournament.id}')
+    def test_get_manage_tournament_url(self):
+        self.assertEqual(self.url,f'/manage_tournament/{self.tournament.id}')
 
-    def test_get_join_tournament_with_invalid_id(self):
-        self.client.login(email=self.other_member.email, password='Password123')
-        url = reverse('join_tournament', kwargs={'tournament_id': self.tournament.id+9999})
+    def test_get_manage_tournament_with_invalid_id(self):
+        self.client.login(email=self.officer.email, password='Password123')
+        url = reverse('leave_tournament', kwargs={'tournament_id': self.tournament.id+9999})
         response = self.client.get(url, follow=True)
         response_url = reverse('tournaments_list_view')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
 
-    def test_successful_join_tournament(self):
-        self.client.login(email=self.other_member.email, password='Password123')
-        response = self.client.get(self.url, follow=True)
-        response_url = reverse('tournaments_list_view')
-        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'tournaments_list_view.html')
-        self.tournament.refresh_from_db()
-        self.assertIn(self.other_member, self.tournament.participants.all())
-
-    def test_cannot_join_tournament_if_organiser(self):
+    def test_get_successful_manage_tournament(self):
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url, follow=True)
-        response_url = reverse('tournaments_list_view')
-        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
+
+    def test_cannot_manage_if_not_in_tournament(self):
+        self.client.login(email=self.other_member.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        response_url = reverse('start')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'start.html')
         self.tournament.refresh_from_db()
         self.assertNotIn(self.other_member, self.tournament.participants.all())

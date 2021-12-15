@@ -1,46 +1,55 @@
 [
   {
     "model": "clubs.membership",
-    "pk": 8,
-    "fields": {
-      "user": 1,
-      "club": 6,
-      "role": 3
-    }
-  },
-  {
-    "model": "clubs.membership",
     "pk": 9,
     "fields": {
-      "user": 2,
+      "user": 1,
       "club": 7,
-      "role": 0
+      "role": 3
     }
   },
   {
     "model": "clubs.membership",
     "pk": 10,
     "fields": {
-      "user": 3,
-      "club": 7,
-      "role": 1
+      "user": 2,
+      "club": 8,
+      "role": 0
     }
   },
   {
     "model": "clubs.membership",
     "pk": 11,
     "fields": {
-      "user": 4,
-      "club": 7,
-      "role": 2
+      "user": 3,
+      "club": 8,
+      "role": 1
     }
   },
   {
     "model": "clubs.membership",
     "pk": 12,
     "fields": {
+      "user": 4,
+      "club": 8,
+      "role": 1
+    }
+  },
+  {
+    "model": "clubs.membership",
+    "pk": 13,
+    "fields": {
       "user": 5,
-      "club": 7,
+      "club": 8,
+      "role": 2
+    }
+  },
+  {
+    "model": "clubs.membership",
+    "pk": 14,
+    "fields": {
+      "user": 6,
+      "club": 8,
       "role": 3
     }
   }
