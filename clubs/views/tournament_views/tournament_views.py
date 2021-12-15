@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.urls import reverse
 from django.db.models import F
+from django.utils.decorators import method_decorator
 
 from clubs.models import User, Tournament, Tournament_entry, Match, Membership, Club
 from clubs.forms import CreateTournamentForm
@@ -22,6 +23,10 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
     template_name='create_tournament.html'
     model = Tournament
     form_class = CreateTournamentForm
+
+    @method_decorator(required_role(Membership.OFFICER))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         form.instance.club = self.request.user.current_club
