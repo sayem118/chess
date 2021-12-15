@@ -43,7 +43,7 @@ class ManageTournamentViewTestCase(TestCase):
 
     def test_get_manage_tournament_with_invalid_id(self):
         self.client.login(email=self.officer.email, password='Password123')
-        url = reverse('leave_tournament', kwargs={'tournament_id': self.tournament.id+9999})
+        url = reverse('manage_tournament', kwargs={'tournament_id': self.tournament.id+9999})
         response = self.client.get(url, follow=True)
         response_url = reverse('tournaments_list_view')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)

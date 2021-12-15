@@ -51,5 +51,5 @@ urlpatterns = [
     path('schedule_matches/<int:tournament_id>', views.schedule_matches, name='schedule_matches'),
     path('win_contender_one/<int:match_id>', views.win_contender_one, name='win_contender_one'),
     path('win_contender_two/<int:match_id>', views.win_contender_two, name='win_contender_two'),
-    path('draw_match/<int:match_id>',views.draw_match, name='draw_match'),
+    path('draw_match/<int:match_id>', views.draw_match, name='draw_match')
 ]

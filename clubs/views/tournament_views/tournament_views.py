@@ -69,8 +69,7 @@ def leave_tournament(request, tournament_id):
     try:
         tournament = Tournament.objects.get( id = tournament_id )
         entry_to_delete = Tournament_entry.objects.filter( tournament = tournament ).get( participant = request.user )
-        if entry_to_delete:
-            entry_to_delete.delete()
+        entry_to_delete.delete()
     except ObjectDoesNotExist:
         pass
     return redirect('tournaments_list_view')
@@ -105,12 +104,8 @@ def schedule_matches(request, tournament_id):
         tournament = Tournament.objects.get( id = tournament_id )
     except ObjectDoesNotExist:
         return redirect('tournaments_list_view')
-    try :
-        matches_check = Match.objects.filter( tournament = tournament )
-    except ObjectDoesNotExist:
-        matches_check = None
-
-    if matches_check == None or matches_check.count()==0:
+    matches_check = Match.objects.filter( tournament = tournament )
+    if matches_check.count()==0:
         return initialize_matches(request, tournament_id)
     else:
         messages.error(request, "The matches have already been scheduled")
@@ -142,7 +137,7 @@ def win_contender_two(request, match_id):
     except ObjectDoesNotExist:
         return redirect('start')
 
-
+@login_required
 def draw_match(request, match_id):
     try:
         match = Match.objects.get(id = match_id)

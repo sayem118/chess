@@ -9,7 +9,7 @@ from clubs.tests.helpers import reverse_with_next
 
 
 class WinContenderTwoViewTestCase(TestCase):
-    """Tests of thewin contender two view."""
+    """Tests of the win contender two view."""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -55,7 +55,8 @@ class WinContenderTwoViewTestCase(TestCase):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'manage_tournament.html')
         self.match.refresh_from_db()
-        self.assertEqual(self.match.contender_two, self.other_member)
+        self.assertEqual(self.match.winner, self.other_member)
+        self.assertTrue(self.match.played)
 
     def test_win_contender_two_with_invalid_id(self):
         self.client.login(email=self.officer.email, password='Password123')
