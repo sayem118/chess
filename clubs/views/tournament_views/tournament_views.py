@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 
 from clubs.models import User, Tournament, Tournament_entry, Match, Membership, Club
 from clubs.forms import CreateTournamentForm
-from clubs.helpers import required_role
+from clubs.helpers import required_role, prohibited_role
 
 from .tournament_methods import *
 
@@ -37,7 +37,8 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('tournaments_list_view')
 
-@login_required
+
+@prohibited_role(Membership.APPLICANT)
 def tournaments_list_view(request):
     created = Tournament.objects.filter( creator = request.user )
     entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
@@ -46,16 +47,12 @@ def tournaments_list_view(request):
     return render(request, 'tournaments_list_view.html', {'created':created,'entered':entered, 'not_entered':not_entered})
 
 
-@login_required
+@prohibited_role(Membership.APPLICANT)
 def join_tournament(request, tournament_id):
     try:
         tournament = Tournament.objects.get(id = tournament_id )
         if tournament.creator != request.user:
-            if Membership.objects.filter( club = tournament.club, user = request.user, role__in = [Membership.MEMBER, Membership.OFFICER, Membership.OWNER] ).count() == 1:
-                newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
-            else:
-                messages.error(request, "You cannot take part in a tournament from a club you're not a full member of")
-                return redirect('tournaments_list_view')
+            newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
         else:
             messages.error(request, "You cannot take part in a tournament you created")
             return redirect('tournaments_list_view')
@@ -64,7 +61,7 @@ def join_tournament(request, tournament_id):
     return redirect('tournaments_list_view')
 
 
-@login_required
+@prohibited_role(Membership.APPLICANT)
 def leave_tournament(request, tournament_id):
     try:
         tournament = Tournament.objects.get( id = tournament_id )
@@ -83,16 +80,11 @@ def manage_tournament(request, tournament_id):
         tournament_in = Tournament.objects.get( id = tournament_id )
     except ObjectDoesNotExist:
         return redirect('tournaments_list_view')
-    try:
-        participants = set()
-        for entry in Tournament_entry.objects.filter( tournament = tournament_in ).select_related('participant'):
-            participants.add(entry.participant)
-    except ObjectDoesNotExist:
-        participants = None
-    try:
-        matches = Match.objects.filter( tournament = tournament_in ).filter(played = False)
-    except ObjectDoesNotExist:
-        matches = None
+    participants = set()
+    for entry in Tournament_entry.objects.filter( tournament = tournament_in ).select_related('participant'):
+        participants.add(entry.participant)
+    matches = Match.objects.filter( tournament = tournament_in ).filter(played = False)
+
     return render(request, "manage_tournament.html", {'tournament':tournament_in, "participants":participants,"matches":matches})
 
 
@@ -112,7 +104,7 @@ def schedule_matches(request, tournament_id):
         return redirect('manage_tournament', tournament_id = tournament_id)
 
 
-@login_required
+@required_role(Membership.OFFICER)
 def win_contender_one(request, match_id):
     try:
         match = Match.objects.get( id = match_id )
@@ -125,7 +117,7 @@ def win_contender_one(request, match_id):
         return redirect('start')
 
 
-@login_required
+@required_role(Membership.OFFICER)
 def win_contender_two(request, match_id):
     try:
         match = Match.objects.get( id = match_id )
@@ -137,7 +129,8 @@ def win_contender_two(request, match_id):
     except ObjectDoesNotExist:
         return redirect('start')
 
-@login_required
+
+@required_role(Membership.OFFICER)
 def draw_match(request, match_id):
     try:
         match = Match.objects.get(id = match_id)

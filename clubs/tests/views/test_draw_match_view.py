@@ -44,7 +44,7 @@ class DrawMatchViewTestCase(TestCase):
         self.assertEqual(self.url, f'/draw_match/{self.match.id}')
 
     def test_draw_match_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
+        redirect_url = reverse('log_in')
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
@@ -59,7 +59,7 @@ class DrawMatchViewTestCase(TestCase):
         self.assertTrue(self.match.played)
 
     def test_successful_draw_match_when_knockout(self):
-        self.match.stage = 1
+        self.match.stage = 4
         self.match.save()
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url, follow=True)

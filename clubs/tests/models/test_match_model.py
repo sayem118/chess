@@ -58,6 +58,14 @@ class MatchModelTestCase(TestCase):
         self.match.stage = None
         self._assert_match_is_invalid()
 
+    def test_group_must_not_be_negative(self):
+        self.match.group = -1
+        self._assert_match_is_invalid()
+
+    def test_stage_must_not_be_negative(self):
+        self.match.stage = -1
+        self._assert_match_is_invalid()
+
     def test_winner_may_be_blank(self):
         self.winner = None
         self._assert_match_is_valid()

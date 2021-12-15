@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from clubs.models import User, Club, Membership, Tournament
+from clubs.models import User, Club, Membership, Tournament, Match
 from clubs.tests.helpers import reverse_with_next
 
 
@@ -61,7 +61,10 @@ class ScheduleMatchesViewTestCase(TestCase):
     def test_cannot_schedule_matches_when_already_scheduled(self):
         self.client.login(email=self.officer.email, password='Password123')
         self.client.get(self.url)
+        matches_before = Match.objects.filter(tournament=self.tournament)
         response = self.client.get(self.url, follow=True)
+        matches_after = Match.objects.filter(tournament=self.tournament)
+        self.assertEqual(len(matches_before), len(matches_after))
         redirect_url = reverse('manage_tournament', kwargs={'tournament_id': self.tournament.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'manage_tournament.html')

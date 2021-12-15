@@ -1,5 +1,5 @@
 """Unit tests for the Tournament entry model."""
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
@@ -20,9 +20,9 @@ class TournamentEntryModelTestCase(TestCase):
 
     def setUp(self):
         self.member = User.objects.get(email='janedoe@example.org')
-        self.other_member = User.objects.get(email='janedoe@example.org')
+        self.owner = User.objects.get(email='jennydoe@example.org')
         self.tournament = Tournament.objects.get(name="Chess Tournament")
-        self.tournament_entry = Tournament_entry(participant=self.member, tournament=self.tournament)
+        self.tournament_entry = Tournament_entry(participant=self.owner, tournament=self.tournament)
 
     def test_valid_tournament_entry(self):
         self._assert_tournament_entry_is_valid()
@@ -33,6 +33,10 @@ class TournamentEntryModelTestCase(TestCase):
 
     def test_tournament_must_not_be_blank(self):
         self.tournament_entry.tournament = None
+        self._assert_tournament_entry_is_invalid()
+
+    def test_tournment_entry_must_be_unique(self):
+        self.tournament_entry.participant = self.member
         self._assert_tournament_entry_is_invalid()
 
     def _assert_tournament_entry_is_valid(self):

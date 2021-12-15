@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from clubs.models import User, Club, Tournament
+from clubs.models import User, Club, Tournament, Tournament_entry
 from clubs.tests.helpers import reverse_with_next
 
 
@@ -55,11 +55,18 @@ class ManageTournamentViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manage_tournament.html')
 
+    def test_get_manage_tournament_with_no_participants(self):
+        self.client.login(email=self.officer.email, password='Password123')
+        url = reverse('manage_tournament', kwargs={'tournament_id': self.other_tournament.id})
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'manage_tournament.html')
+
     def test_cannot_manage_if_not_in_tournament(self):
-        self.client.login(email=self.other_member.email, password='Password123')
+        self.client.login(email=self.owner.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         response_url = reverse('start')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'start.html')
         self.tournament.refresh_from_db()
-        self.assertNotIn(self.other_member, self.tournament.participants.all())
+        self.assertNotIn(self.owner, self.tournament.participants.all())

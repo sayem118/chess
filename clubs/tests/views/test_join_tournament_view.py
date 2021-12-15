@@ -50,13 +50,13 @@ class JoinTournamentViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
 
     def test_successful_join_tournament(self):
-        self.client.login(email=self.other_member.email, password='Password123')
+        self.client.login(email=self.owner.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         response_url = reverse('tournaments_list_view')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
         self.tournament.refresh_from_db()
-        self.assertIn(self.other_member, self.tournament.participants.all())
+        self.assertIn(self.owner, self.tournament.participants.all())
 
     def test_cannot_join_tournament_if_organiser(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -65,4 +65,13 @@ class JoinTournamentViewTestCase(TestCase):
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
         self.tournament.refresh_from_db()
-        self.assertNotIn(self.other_member, self.tournament.participants.all())
+        self.assertNotIn(self.officer, self.tournament.participants.all())
+
+    def test_cannot_join_tournament_if_applicant(self):
+        self.client.login(email=self.applicant.email, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        response_url = reverse('start')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'start.html')
+        self.tournament.refresh_from_db()
+        self.assertNotIn(self.applicant, self.tournament.participants.all())

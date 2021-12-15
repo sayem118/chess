@@ -40,7 +40,7 @@ class TournamentListTest(TestCase,AssertHTMLMixin):
         self.assertEqual(self.url, '/tournaments_list_view/')
 
     def test_club_list_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
+        redirect_url = reverse('log_in')
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
@@ -52,16 +52,18 @@ class TournamentListTest(TestCase,AssertHTMLMixin):
     def test_not_accessible_to_applicant(self):
         self.client.login(email=self.applicant.email, password='Password123')
         response = self.client.get(self.url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        redirect_url = reverse('start')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'start.html')
         self.assertNotContains(response, self.tournament.name)
         self.assertNotContains(response, self.other_tournament.name)
 
     def test_not_accessable_with_no_club_selected(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        redirect_url = reverse('start')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'start.html')
         self.assertNotContains(response, self.tournament.name)
         self.assertNotContains(response, self.other_tournament.name)
 
@@ -70,8 +72,9 @@ class TournamentListTest(TestCase,AssertHTMLMixin):
         test_user = User.objects.get(email='test@example.org')
         self.client.login(email=test_user.email, password='Password123')
         response = self.client.get(self.url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        redirect_url = reverse('start')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'start.html')
         self.assertNotContains(response, self.tournament.name)
         self.assertNotContains(response, self.other_tournament.name)
 
