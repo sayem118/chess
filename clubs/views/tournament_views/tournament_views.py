@@ -24,7 +24,6 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
     form_class = CreateTournamentForm
 
     def form_valid(self, form):
-        print(f'current club{ self.request.user.current_club }')
         form.instance.club = self.request.user.current_club
         form.instance.creator = self.request.user
         form.save()
