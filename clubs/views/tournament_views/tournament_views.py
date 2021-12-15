@@ -80,16 +80,11 @@ def manage_tournament(request, tournament_id):
         tournament_in = Tournament.objects.get( id = tournament_id )
     except ObjectDoesNotExist:
         return redirect('tournaments_list_view')
-    try:
-        participants = set()
-        for entry in Tournament_entry.objects.filter( tournament = tournament_in ).select_related('participant'):
-            participants.add(entry.participant)
-    except ObjectDoesNotExist:
-        participants = None
-    try:
-        matches = Match.objects.filter( tournament = tournament_in ).filter(played = False)
-    except ObjectDoesNotExist:
-        matches = None
+    participants = set()
+    for entry in Tournament_entry.objects.filter( tournament = tournament_in ).select_related('participant'):
+        participants.add(entry.participant)
+    matches = Match.objects.filter( tournament = tournament_in ).filter(played = False)
+
     return render(request, "manage_tournament.html", {'tournament':tournament_in, "participants":participants,"matches":matches})
 
 
