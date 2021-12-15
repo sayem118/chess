@@ -179,3 +179,9 @@ class Match(models.Model):
 class Tournament_entry(models.Model):
     participant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     tournament = models.ForeignKey(Tournament, on_delete = models.CASCADE)
+
+    class Meta:
+        db_table = 'tournament_entry'
+        constraints = [
+            models.UniqueConstraint(name='unique_entry', fields=['participant', 'tournament']),
+        ]

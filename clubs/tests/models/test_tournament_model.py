@@ -84,9 +84,9 @@ class TournamentModelTestCase(TestCase):
         self.tournament.capacity = None
         self._assert_tournament_is_invalid()
 
-    """def test_winner_may_be_blank(self):
+    def test_winner_may_be_blank(self):
         self.tournament.winner = None
-        self._assert_tournament_is_valid()"""
+        self._assert_tournament_is_valid()
 
     def _assert_tournament_is_valid(self):
         try:
