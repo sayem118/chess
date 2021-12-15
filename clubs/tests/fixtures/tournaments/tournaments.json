@@ -1,0 +1,30 @@
+[
+  {
+    "model": "clubs.tournament",
+    "pk": 13,
+    "fields": {
+      "name": "Chess Tournament",
+      "description": "This is a chess tournament",
+      "deadline": "2023-01-01 00:00:00.0000",
+      "capacity": 96,
+      "club": 7,
+      "participants": [3, 5],
+      "creator": 4,
+      "winner": 3
+    }
+  },
+  {
+    "model": "clubs.tournament",
+    "pk": 14,
+    "fields": {
+      "name": "Battle of the Titans",
+      "description": "Chess tournament battle",
+      "deadline": "2023-01-02 00:00:00.0000",
+      "capacity": 96,
+      "club": 7,
+      "participants": [3, 5],
+      "creator": 4,
+      "winner": 5
+    }
+  }
+]
