@@ -1,15 +1,15 @@
-"""Tests of the join tournament view."""
+"""Tests of the leave tournament view."""
 
 from django.test import TestCase
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from clubs.models import User, Club, Membership, Tournament
+from clubs.models import User, Club, Tournament
 from clubs.tests.helpers import reverse_with_next
 
 
-class JoinTournamentViewTestCase(TestCase):
-    """Tests of the join tournament view."""
+class LeaveTournamentViewTestCase(TestCase):
+    """Tests of the leave tournament view."""
 
     fixtures = [
         'clubs/tests/fixtures/users/default_user.json',
@@ -34,30 +34,30 @@ class JoinTournamentViewTestCase(TestCase):
         self.owner.select_club(self.other_club)
         self.tournament = Tournament.objects.get(name='Chess Tournament')
         self.other_tournament = Tournament.objects.get(name='Battle of the Titans')
-        self.url = reverse('join_tournament', kwargs={'tournament_id': self.tournament.id})
+        self.url = reverse('leave_tournament', kwargs={'tournament_id': self.tournament.id})
 
-    def test_get_join_tournament_url(self):
-        self.assertEqual(self.url,f'/join_tournament/{self.tournament.id}')
+    def test_get_leave_tournament_url(self):
+        self.assertEqual(self.url,f'/leave_tournament/{self.tournament.id}')
 
-    def test_get_join_tournament_with_invalid_id(self):
-        self.client.login(email=self.member.email, password='Password123')
-        url = reverse('join_tournament', kwargs={'tournament_id': self.tournament.id+9999})
+    def test_get_leave_tournament_with_invalid_id(self):
+        self.client.login(email=self.owner.email, password='Password123')
+        url = reverse('leave_tournament', kwargs={'tournament_id': self.tournament.id+9999})
         response = self.client.get(url, follow=True)
         response_url = reverse('tournaments_list_view')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
 
-    def test_successful_join_tournament(self):
-        self.client.login(email=self.member.email, password='Password123')
+    def test_successful_leave_tournament(self):
+        self.client.login(email=self.owner.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         response_url = reverse('tournaments_list_view')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'tournaments_list_view.html')
         self.tournament.refresh_from_db()
-        self.assertIn(self.member, self.tournament.participants.all())
+        self.assertNotIn(self.owner, self.tournament.participants.all())
 
-    def test_cannot_join_tournament_if_organiser(self):
-        self.client.login(email=self.officer.email, password='Password123')
+    def test_cannot_leave_if_not_in_tournament(self):
+        self.client.login(email=self.member.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         response_url = reverse('tournaments_list_view')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
