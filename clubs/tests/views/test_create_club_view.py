@@ -8,7 +8,7 @@ from clubs.models import User, Club, Membership
 from clubs.tests.helpers import reverse_with_next
 
 
-class SignUpViewTestCase(TestCase):
+class CreateClubViewTestCase(TestCase):
     """Tests of the create club view."""
 
     fixtures = [
