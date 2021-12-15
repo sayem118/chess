@@ -2,11 +2,13 @@
 {% load bootstrap_pagination %}
 {% block content %}
     <div class="container">
+    {% if user.current_club_not_none and user.current_club_role == 2 %}
     <div class="row">
       <div class="col-12">
         <a href="{% url 'create_tournament' %}" class="btn btn-primary">New tournament</a>
       </div>
     </div>
+    {% endif %}
     <div class="row">
       <div class="col-12">
         {% if created %}
