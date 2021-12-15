@@ -51,5 +51,5 @@ class MatchAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for matches"""
 
     list_display = [
-        'contender_one', 'contender_two', 'tournament', 'group', 'stage', 'winner'
+        'contender_one', 'contender_two', 'tournament', 'group', 'stage', 'winner', 'played'
     ]
