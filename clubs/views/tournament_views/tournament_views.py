@@ -66,8 +66,12 @@ def leave_tournament(request, tournament_id):
 @required_role(Membership.OFFICER)
 def manage_tournament(request, tournament_id):
 
+    tournament_in = None
     try:
         tournament_in = Tournament.objects.get( id = tournament_id )
+    except ObjectDoesNotExist:
+        return redirect('tournaments_list_view')
+    try:
         participants = set()
         for entry in Tournament_entry.objects.filter( tournament = tournament_in ).select_related('participant'):
             participants.add(entry.participant)
@@ -83,8 +87,12 @@ def manage_tournament(request, tournament_id):
 @required_role(Membership.OFFICER)
 def schedule_matches(request, tournament_id):
 
-    try :
+    tournament = None
+    try:
         tournament = Tournament.objects.get( id = tournament_id )
+    except ObjectDoesNotExist:
+        return redirect('tournaments_list_view')
+    try :
         matches_check = Match.objects.filter( tournament = tournament )
     except ObjectDoesNotExist:
         matches_check = None
@@ -94,7 +102,6 @@ def schedule_matches(request, tournament_id):
     else:
         messages.error(request, "The matches have already been scheduled")
         return redirect('manage_tournament', tournament_id = tournament_id)
-
 
 
 @login_required

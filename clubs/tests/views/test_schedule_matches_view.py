@@ -76,9 +76,9 @@ class ScheduleMatchesViewTestCase(TestCase):
         self.client.login(email=self.officer.email, password='Password123')
         url = reverse('schedule_matches', kwargs={'tournament_id': self.tournament.id+9999})
         response = self.client.get(url, follow=True)
-        redirect_url = reverse('manage_tournament', kwarsgs={'tournament_id': self.tournament.id})
+        redirect_url = reverse('tournaments_list_view')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'manage_tournament.html')
+        self.assertTemplateUsed(response, 'tournaments_list_view.html')
 
     def assert_redirects(self, test_user):
         if test_user:
