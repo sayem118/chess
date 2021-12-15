@@ -43,7 +43,7 @@ class CreateTournamentViewTestCase(TestCase):
             'capacity': 90
         }
 
-    def test_create_club_url(self):
+    def test_get_create_tournament_url(self):
         self.assertEqual(self.url, '/create_tournament/')
 
     def test_get_create_tournament(self):

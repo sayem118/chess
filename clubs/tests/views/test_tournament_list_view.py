@@ -1,14 +1,14 @@
-"""Test of the club list view"""
+"""Test of the tournament list view"""
 
 from django.test import TestCase
 from django.urls import reverse
 from with_asserts.mixin import AssertHTMLMixin
 
-from clubs.models import User, Club, Membership
+from clubs.models import User, Club, Tournament
 from clubs.tests.helpers import reverse_with_next
 
 
-class ClubListTest(TestCase, AssertHTMLMixin):
+class TournamentListTest(TestCase,AssertHTMLMixin):
     """Test of the tournament list view"""
 
     fixtures = [
@@ -16,11 +16,12 @@ class ClubListTest(TestCase, AssertHTMLMixin):
         'clubs/tests/fixtures/users/other_users.json',
         'clubs/tests/fixtures/clubs/default_club.json',
         'clubs/tests/fixtures/clubs/other_clubs.json',
-        'clubs/tests/fixtures/memberships/memberships.json'
+        'clubs/tests/fixtures/memberships/memberships.json',
+        'clubs/tests/fixtures/tournaments/tournaments.json'
     ]
 
     def setUp(self):
-        self.url = reverse('club_list')
+        self.url = reverse('tournaments_list_view')
         self.user = User.objects.get(email='johndoe@example.org')
         self.applicant = User.objects.get(email='jamiedoe@example.org')
         self.member = User.objects.get(email='janedoe@example.org')
@@ -32,9 +33,11 @@ class ClubListTest(TestCase, AssertHTMLMixin):
         self.member.select_club(self.other_club)
         self.officer.select_club(self.other_club)
         self.owner.select_club(self.other_club)
+        self.tournament = Tournament.objects.get(name='Chess Tournament')
+        self.other_tournament = Tournament.objects.get(name='Battle of the Titans')
 
-    def test_club_list_url(self):
-        self.assertEqual(self.url, '/club_list/')
+    def test_tournament_list_url(self):
+        self.assertEqual(self.url, '/tournaments_list_view/')
 
     def test_club_list_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
@@ -59,6 +62,6 @@ class ClubListTest(TestCase, AssertHTMLMixin):
         self.client.login(email=test_user.email, password='Password123')
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'club_list.html')
-        self.assertContains(response, self.club.name)
-        self.assertContains(response, self.other_club.name)
+        self.assertTemplateUsed(response, 'tournaments_list_view.html')
+        self.assertContains(response, self.tournament.name)
+        self.assertContains(response, self.other_tournament.name)
