@@ -1,0 +1,58 @@
+{% extends 'base_content.html' %}
+{% load bootstrap_pagination %}
+{% block content %}
+    <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2> Name: {{ tournament.name }}</h2>
+        <p>Club: {{ tournament.club}} </p>
+        <p>Description: {{ tournament.description }}</p>
+        <p>Deadline: {{ tournament.deadline }} </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          {% if matches %}
+          <table class="table">
+            {% for match in matches %}
+            <tr>
+              <td>
+                 {{ match.contender_one.full_name }}
+                 <form action="{% url 'win_contender_one' match_id=match.id %}" method="get">
+                   <button class="btn btn-primary">Set winner</button>
+                 </form>
+              </td>
+              <td> vs. </td>
+              <td>
+                {{ match.contender_two.full_name }}
+                <form action="{% url 'win_contender_two' match_id=match.id %}" method="get">
+                  <button class="btn btn-primary">Set winner</button>
+                </form>
+              </td>
+              <td>
+
+            </td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <form action="{% url 'schedule_matches' tournament_id=tournament.id %}" method="get">
+              <button class="btn btn-primary">Schedule matches</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row" >
+        <div class="col-12" >
+          <h3> Participants: </h3>
+          <table class="table">
+              {% for participant in participants %}
+                  <tr>
+                      {% include 'partials/user_as_table_row.html' with user=participant %}
+                    </tr>
+                    {% endfor %}
+                  </table>
+        </div>
+      </div>
+    </div>
+{% endblock %}
