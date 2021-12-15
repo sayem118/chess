@@ -42,12 +42,12 @@ def tournaments_list_view(request):
 
 @login_required
 def join_tournament(request, tournament_id):
-    if Tournament.objects.get( id = tournament_id).creator != request.user:
-        try:
+    try:
+        if Tournament.objects.get( id = tournament_id).creator != request.user:
             tournament = Tournament.objects.get(id = tournament_id )
             newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
-        except ObjectDoesNotExist:
-            pass
+    except ObjectDoesNotExist:
+        pass
     return redirect('tournaments_list_view')
 
 
