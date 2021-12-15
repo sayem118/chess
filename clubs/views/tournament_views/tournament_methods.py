@@ -5,13 +5,30 @@ from django.shortcuts import redirect
 
 from clubs.models import Match, Tournament_entry, Tournament, User
 
+import random
 
 def generate_matches(participants, group_size, stage, tournament):
     # to add functionality that randomizes who ends up in which group
+
+    aux_list = []
+    randomized_participants = []
+
+    for p in participants:
+        aux_list.append(p)
+    print(aux_list)
+
+    while len(aux_list):
+        ind = random.randint(0, len(aux_list)-1)
+        holder = aux_list[ind]
+        aux_list.remove(holder)
+        randomized_participants.append(holder)
+
+    print(randomized_participants)
+
     count = 0
     group_count = 0
     group_list = []
-    for p in participants:
+    for p in randomized_participants:
         group_list.append(p)
         count += 1
         if count == group_size:
@@ -76,6 +93,7 @@ def get_winners(tournament, stage):
 
     #Then, go through each group and get the two winners based on match outcomes
     group_id = 0
+    winner_id_list = []
     while group_id < no_of_groups:
         user_score_dict = {}
         matches_in_group = Match.objects.filter(tournament = tournament).filter(stage = stage).filter(group = group_id).select_related('winner').select_related('contender_one').select_related('contender_two')
