@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.db.models import F
 
-from clubs.models import User, Tournament, Tournament_entry, Match, Membership
+from clubs.models import User, Tournament, Tournament_entry, Match, Membership, Club
 from clubs.forms import CreateTournamentForm
 from clubs.helpers import required_role
 
@@ -36,7 +36,8 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
 def tournaments_list_view(request):
     created = Tournament.objects.filter( creator = request.user )
     entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
-    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user ).filter( club__in = request.user.club_set.all() )
+    clubs_full_member_of = Club.objects.filter( membership__user = request.user, membership__role = Membership.MEMBER)
+    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user ).filter( club__in = clubs_full_member_of )
     return render(request, 'tournaments_list_view.html', {'created':created,'entered':entered, 'not_entered':not_entered})
 
 
