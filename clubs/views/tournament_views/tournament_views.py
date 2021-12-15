@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.db.models import F
 
-from clubs.models import User, Tournament, Tournament_entry, Match, Membership
+from clubs.models import User, Tournament, Tournament_entry, Match, Membership, Club
 from clubs.forms import CreateTournamentForm
 from clubs.helpers import required_role
 
@@ -36,16 +36,24 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
 def tournaments_list_view(request):
     created = Tournament.objects.filter( creator = request.user )
     entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
-    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user )
+    clubs_full_member_of = Club.objects.filter( membership__user = request.user, membership__role__in = [Membership.MEMBER, Membership.OFFICER, Membership.OWNER] )
+    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user ).filter( club__in = clubs_full_member_of )
     return render(request, 'tournaments_list_view.html', {'created':created,'entered':entered, 'not_entered':not_entered})
 
 
 @login_required
 def join_tournament(request, tournament_id):
     try:
-        if Tournament.objects.get( id = tournament_id).creator != request.user:
-            tournament = Tournament.objects.get(id = tournament_id )
-            newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
+        tournament = Tournament.objects.get(id = tournament_id )
+        if tournament.creator != request.user:
+            if Membership.objects.filter( club = tournament.club, user = request.user, role__in = [Membership.MEMBER, Membership.OFFICER, Membership.OWNER] ).count() == 1:
+                newentry = Tournament_entry.objects.create(tournament = tournament, participant = request.user)
+            else:
+                messages.error(request, "You cannot take part in a tournament from a club you're not a full member of")
+                return redirect('tournaments_list_view')
+        else:
+            messages.error(request, "You cannot take part in a tournament you created")
+            return redirect('tournaments_list_view')
     except ObjectDoesNotExist:
         pass
     return redirect('tournaments_list_view')

@@ -48,6 +48,7 @@ def setup_next_stage(tournament, last_stage):
 
     #winners = User.objects.filter(matches_won__tournament = tournament).filter(matches_won__stage = last_stage)
     matches_last_stage = Match.objects.filter(tournament = tournament).filter(stage = last_stage)
+    print(matches_last_stage)
     winner_id_list = []
     for m in matches_last_stage:
         winner_id_list.append(m.winner.id)
