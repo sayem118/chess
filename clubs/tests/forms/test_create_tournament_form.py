@@ -1,8 +1,8 @@
 """Unit tests of the create tournament form."""
 from django import forms
 from django.test import TestCase
-from datetime import datetime
 from django.utils import timezone
+from datetime import datetime
 from dateutil import tz
 
 from clubs.forms import CreateTournamentForm
@@ -18,7 +18,7 @@ class CreateTournamentFormTestCase(TestCase):
         'clubs/tests/fixtures/clubs/default_club.json',
         'clubs/tests/fixtures/clubs/other_clubs.json',
         'clubs/tests/fixtures/memberships/memberships.json',
-        'clubs/tests/fixtures/tournaments/tournaments.json',
+        'clubs/tests/fixtures/tournaments/tournaments.json'
     ]
 
     def setUp(self):

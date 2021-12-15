@@ -99,7 +99,6 @@ class SignUpViewTestCase(TestCase):
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Club.objects.count()
         self.assertEqual(after_count, before_count)
-        response_url = reverse('my_clubs')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'create_club.html')
         club = Club.objects.get(name='Chess Club')
