@@ -139,6 +139,7 @@ def win_contender_one(request, match_id):
 
     return redirect('manage_tournament', match.tournament.id)
 
+
 @login_required
 def win_contender_two(request,match_id):
     match = Match.objects.get( id = match_id )
