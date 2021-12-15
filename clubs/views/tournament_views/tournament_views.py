@@ -104,12 +104,8 @@ def schedule_matches(request, tournament_id):
         tournament = Tournament.objects.get( id = tournament_id )
     except ObjectDoesNotExist:
         return redirect('tournaments_list_view')
-    try :
-        matches_check = Match.objects.filter( tournament = tournament )
-    except ObjectDoesNotExist:
-        matches_check = None
-
-    if matches_check == None or matches_check.count()==0:
+    matches_check = Match.objects.filter( tournament = tournament )
+    if matches_check.count()==0:
         return initialize_matches(request, tournament_id)
     else:
         messages.error(request, "The matches have already been scheduled")
