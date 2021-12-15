@@ -36,7 +36,7 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
 def tournaments_list_view(request):
     created = Tournament.objects.filter( creator = request.user )
     entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
-    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user )
+    not_entered = Tournament.objects.exclude( creator = request.user ).exclude( tournament_entry__participant = request.user ).filter( club__in = request.user.club_set.all() )
     return render(request, 'tournaments_list_view.html', {'created':created,'entered':entered, 'not_entered':not_entered})
 
 
