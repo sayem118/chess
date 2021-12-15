@@ -69,8 +69,7 @@ def leave_tournament(request, tournament_id):
     try:
         tournament = Tournament.objects.get( id = tournament_id )
         entry_to_delete = Tournament_entry.objects.filter( tournament = tournament ).get( participant = request.user )
-        if entry_to_delete:
-            entry_to_delete.delete()
+        entry_to_delete.delete()
     except ObjectDoesNotExist:
         pass
     return redirect('tournaments_list_view')
