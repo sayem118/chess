@@ -35,10 +35,8 @@ class ApproveApplicantViewTestCase(TestCase):
         self.assertEqual(self.url, f'/approve_applicant/{self.applicant.id}')
 
     def test_successfully_approve_applicant(self):
-        self.client.login(email=self.officer.email, password='Password123')
-        self.client.get(self.url)
-        self.applicant.refresh_from_db()
-        self.assertEqual(self.applicant.current_club_role, Membership.MEMBER)
+        self.assert_approve(self.officer)
+        self.assert_approve(self.owner)
 
     def test_approve_applicant_not_redirects_when_not_logged_in(self):
         redirect_url = reverse('log_in')
@@ -52,14 +50,10 @@ class ApproveApplicantViewTestCase(TestCase):
     def test_redirects_when_no_club_selected(self):
         self.assert_redirects(self.user)
 
-    def test_cannot_approve_member(self):
-        self.client.login(email=self.officer.email, password='Password123')
-        redirect_url = reverse('applicants_list')
-        url = reverse('approve_applicant', kwargs={'user_id': self.member.id})
-        response = self.client.get(url, follow=True)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertEqual(self.applicant.current_club_role, Membership.APPLICANT)
-        self.assertEqual(self.member.current_club_role, Membership.MEMBER)
+    def test_cannot_approve_full_members(self):
+        self.assert_cannot_approve(self.member)
+        self.assert_cannot_approve(self.officer)
+        self.assert_cannot_approve(self.owner)
 
     def test_redirects_with_invalid_applicant_not_id(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -75,3 +69,21 @@ class ApproveApplicantViewTestCase(TestCase):
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         if role is not None:
             self.assertEqual(test_user.current_club_role, role)
+
+    def assert_cannot_approve(self, test_user):
+        role_before = test_user.current_club_role
+        self.client.login(email=self.officer.email, password='Password123')
+        redirect_url = reverse('applicants_list')
+        url = reverse('approve_applicant', kwargs={'user_id': test_user.id})
+        response = self.client.get(url, follow=True)
+        self.applicant.refresh_from_db()
+        test_user.refresh_from_db()
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertEqual(self.applicant.current_club_role, Membership.APPLICANT)
+        self.assertEqual(test_user.current_club_role, role_before)
+
+    def assert_approve(self, test_user):
+        self.client.login(email=test_user.email, password='Password123')
+        self.client.get(self.url)
+        self.applicant.refresh_from_db()
+        self.assertEqual(self.applicant.current_club_role, Membership.MEMBER)
