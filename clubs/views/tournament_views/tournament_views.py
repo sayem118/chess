@@ -136,7 +136,7 @@ def draw_match(request, match_id):
         match = Match.objects.get(id = match_id)
         match.played = True
         match.save()
-        if ( is_knockout_round(match_id )): # if the stage is smaller than 5, this was a knckout round, and another match is needed to establish who goes on to the next stage
+        if ( is_knockout_round(match_id )):
             generate_draw_rematch(match_id)
         else:
             go_to_next_stage_or_end_tournament(match_id)

@@ -183,20 +183,32 @@ def get_winners(tournament, stage):
                 if not (m.winner.id in user_score_dict):
                     user_score_dict[m.winner.id] = 0
                 user_score_dict[m.winner.id]+=1
+                if m.contender_one == m.winner:
+                    if not (m.contender_two.id in user_score_dict):
+                        user_score_dict[m.contender_two.id] = 0
+                else:
+                    if not (m.contender_one.id in user_score_dict):
+                        user_score_dict[m.contender_one.id] = 0
 
         greatest_score = -1
-        second_greatest_Score = -2
+        second_greatest_score = -2
         first_winner_id = None
         second_winner_id = None
         for key in user_score_dict.keys():
             if  user_score_dict[key] > greatest_score :
                 greatest_score = user_score_dict[key]
                 first_winner_id = key
-            elif user_score_dict[key] > second_greatest_Score:
-                second_greatest_Score = user_score_dict[key]
+            elif user_score_dict[key] > second_greatest_score:
+                second_greatest_score = user_score_dict[key]
                 second_winner_id = key
 
+        print( user_score_dict )
+        print( len(user_score_dict.keys()) )
+        print( first_winner_id )
+        print (second_winner_id)
+
         if len(user_score_dict.keys()) > 2:
+
             winner_id_list.append(first_winner_id)
             winner_id_list.append(second_winner_id)
         else:
