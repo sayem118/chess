@@ -18,8 +18,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         example_clubs = self.create_clubs()
         example_users = self.create_users()
-        self.add_example_users_to_default_club(example_users)
         self.add_default_users_to_example_clubs(example_clubs)
+        self.add_example_users_to_default_club(example_users)
 
     def create_users(self):
         self.create_default_users()
@@ -136,9 +136,7 @@ class Command(BaseCommand):
             user = users[i]
             role = Membership.APPLICANT
 
-            if i == 0:
-                role = Membership.OWNER
-            elif i < users_count // 3:
+            if i < users_count // 3:
                 role = Membership.OFFICER
             elif i < 2 * users_count // 3:
                 role = Membership.MEMBER
@@ -171,3 +169,8 @@ class Command(BaseCommand):
         self.add_user_to_club_as_role(self.create_user(), club3, Membership.OWNER)
         self.add_user_to_club_as_role(self.create_user(), club3, Membership.OFFICER)
         self.add_user_to_club_as_role(self.create_user(), club3, Membership.APPLICANT)
+
+        default_club = Club.objects.get(name='Kerbal Chess Club')
+        self.add_user_to_club_as_role(user1, default_club, Membership.MEMBER)
+        self.add_user_to_club_as_role(user2, default_club, Membership.OFFICER)
+        self.add_user_to_club_as_role(user3, default_club, Membership.OWNER)
