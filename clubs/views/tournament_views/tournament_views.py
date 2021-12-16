@@ -136,10 +136,27 @@ def draw_match(request, match_id):
         match = Match.objects.get(id = match_id)
         match.played = True
         match.save()
-        if (match.stage < 5): # if the stage is smaller than 5, this was a knckout round, and another match is needed to establish who goes on to the next stage
+        if ( is_knockout_round(match_id )):
             generate_draw_rematch(match_id)
         else:
             go_to_next_stage_or_end_tournament(match_id)
         return redirect('manage_tournament', match.tournament.id)
     except ObjectDoesNotExist:
         return redirect('start')
+
+def is_knockout_round( match_id ):
+    match = Match.objects.get( id = match_id)
+
+    matches_in_group = Match.objects.filter(tournament = match.tournament).filter(stage = match.stage).filter(group = match.group).select_related('contender_one').select_related('contender_two')
+
+    participants = set()
+
+    for m in matches_in_group:
+        participants.add(m.contender_one)
+        participants.add(m.contender_two)
+
+    if len(participants) == 2:
+        print( " is indeed a knockout" )
+        return True
+    else:
+        return False
