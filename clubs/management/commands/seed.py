@@ -174,5 +174,5 @@ class Command(BaseCommand):
 
         default_club = Club.objects.get(name='Kerbal Chess Club')
         self.add_user_to_club_as_role(user1, default_club, Membership.MEMBER)
-        self.add_user_to_club_as_role(user2, default_club, Membership.OFFICER)
+        self.add_user_to_club_as_role(user2, default_club, Membership.MEMBER)
         self.add_user_to_club_as_role(user3, default_club, Membership.MEMBER)
