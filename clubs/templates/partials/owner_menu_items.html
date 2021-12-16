@@ -1,8 +1,8 @@
 {% if user.current_club_not_none and user.current_club_role == 3 %}
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'members_list' %}">Promote members</a>
+        <a class="nav-link" href="{% url 'members_list' %}">Promote Members</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'officers_list' %}">Manage officers</a>
+        <a class="nav-link" href="{% url 'officers_list' %}">Manage Officers</a>
     </li>
 {% endif %}
