@@ -9,7 +9,7 @@ from django.views.generic import ListView
 from clubs.helpers import required_role
 from clubs.models import User, Membership
 
-
+"""a list to show all applicants"""
 class ApplicantListView(LoginRequiredMixin, ListView):
     model = User
     template_name = "approve_applicants.html"
@@ -25,7 +25,7 @@ class ApplicantListView(LoginRequiredMixin, ListView):
         applicants = club.associates.filter(membership__role=Membership.APPLICANT)
         return applicants
 
-
+"""a list to display all members of the club"""
 class MemberListView(LoginRequiredMixin, ListView):
     model = User
     template_name = "promote_members.html"
@@ -41,7 +41,7 @@ class MemberListView(LoginRequiredMixin, ListView):
         members = club.associates.filter(membership__role=Membership.MEMBER)
         return members
 
-
+"""list to displau all officers of club"""
 class OfficerListView(LoginRequiredMixin, ListView):
     model = User
     template_name = "manage_officers.html"
@@ -57,7 +57,7 @@ class OfficerListView(LoginRequiredMixin, ListView):
         officers = club.associates.filter(membership__role=Membership.OFFICER)
         return officers
 
-
+"""method for approving applications"""
 @required_role(Membership.OFFICER)
 def approve_applicant(request, user_id):
     try:
@@ -71,8 +71,8 @@ def approve_applicant(request, user_id):
         return redirect('start')
     else:
         return redirect('applicants_list')
-    
 
+"""method to promote users to officer"""
 @required_role(Membership.OWNER)
 def promote_member(request, user_id):
     try:
@@ -87,7 +87,7 @@ def promote_member(request, user_id):
     else:
         return redirect('members_list')
 
-
+"""method to demote an officer"""
 @required_role(Membership.OWNER)
 def demote_officer(request, user_id):
     try:
@@ -102,7 +102,7 @@ def demote_officer(request, user_id):
     else:
         return redirect('officers_list')
 
-
+"""method to transfer ownership to another user"""
 @required_role(Membership.OWNER)
 def transfer_ownership(request, user_id):
     try:

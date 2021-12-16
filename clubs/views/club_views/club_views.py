@@ -77,7 +77,7 @@ class ShowClubView(DetailView):
         except Http404:
             return redirect('start')
 
-
+"""view to apply for a club"""
 @login_required
 def apply_for_club(request, club_id):
     try:
@@ -88,7 +88,7 @@ def apply_for_club(request, club_id):
         return redirect('my_clubs')
     return redirect('my_clubs')
 
-
+"""view to leave a club"""
 @login_required
 def leave_club(request, club_id):
     try:
@@ -106,7 +106,7 @@ def leave_club(request, club_id):
 
     return redirect('my_clubs')
 
-
+"""view to get list of clubs a user is in"""
 @login_required
 def my_clubs(request):
     user = request.user
@@ -124,7 +124,7 @@ def my_clubs(request):
     clubs_user_not_in = Club.objects.exclude(membership__user=user)
     return render(request, 'my_clubs.html', {'clubs_user_in': clubs_user_in, 'clubs_user_not_in': clubs_user_not_in})
 
-
+"""view to switch between clubs"""
 @login_required
 def select_club(request, club_id):
     user = request.user
