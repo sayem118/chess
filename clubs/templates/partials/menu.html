@@ -7,10 +7,10 @@
           <li class="nav-item">
               <a class="nav-link" href="{% url 'user_list' %}">Users</a>
           </li>
-          <li class="nav-item">
-              <a class="nav-link" href="{% url 'tournaments_list_view' %}">Tournaments</a>
-          </li>
         {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'tournaments_list_view' %}">Tournaments</a>
+        </li>
         {% include 'partials/officer_menu_items.html' %}
         {% include 'partials/owner_menu_items.html' %}
     </ul>

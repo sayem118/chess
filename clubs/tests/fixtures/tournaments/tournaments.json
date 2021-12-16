@@ -22,9 +22,9 @@
       "deadline": "2023-01-02T00:00:00+00:00",
       "capacity": 96,
       "club": 7,
-      "participants": [],
-      "creator": 5,
-      "winner": 4
+      "participants": [1],
+      "creator": 1,
+      "winner": 1
     }
   }
 ]
