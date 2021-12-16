@@ -38,7 +38,7 @@ class CreateTournamentView(LoginRequiredMixin, FormView):
         return reverse('tournaments_list_view')
 
 
-@prohibited_role(Membership.APPLICANT)
+@login_required
 def tournaments_list_view(request):
     created = Tournament.objects.filter( creator = request.user )
     entered = Tournament.objects.exclude( creator = request.user ).filter( tournament_entry__participant = request.user )
