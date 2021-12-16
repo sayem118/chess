@@ -53,3 +53,4 @@ The packages used by this application are specified in `requirements.txt`
 
 The following describes any code which has been reused
 - The majority of the code has taken inspiration from the lectures and source code provided from the module 5CCS2SEG
+- Code used for the custom User Manager was taken from this article: https://www.fomfus.com/articles/how-to-use-email-as-username-for-django-authentication-removing-the-username/
