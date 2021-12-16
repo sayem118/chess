@@ -136,7 +136,9 @@ class Command(BaseCommand):
             user = users[i]
             role = Membership.APPLICANT
 
-            if i < users_count // 3:
+            if i == 0:
+                role = Membership.OWNER
+            elif i < users_count // 3:
                 role = Membership.OFFICER
             elif i < 2 * users_count // 3:
                 role = Membership.MEMBER
@@ -149,7 +151,7 @@ class Command(BaseCommand):
         user1 = User.objects.get(email='jeb@example.org')
         club1 = clubs[0]
         self.add_user_to_club_as_role(user1, club1, Membership.OFFICER)
-        self.add_user_to_club_as_role(user1, club0, Membership.MEMBER)
+
         self.add_user_to_club_as_role(self.create_user(), club1, Membership.OWNER)
         self.add_user_to_club_as_role(self.create_user(), club1, Membership.MEMBER)
         self.add_user_to_club_as_role(self.create_user(), club1, Membership.APPLICANT)
@@ -157,7 +159,7 @@ class Command(BaseCommand):
         user2 = User.objects.get(email='val@example.org')
         club2 = clubs[1]
         self.add_user_to_club_as_role(user2, club2, Membership.OWNER)
-        self.add_user_to_club_as_role(user2, club0, Membership.MEMBER)
+
         self.add_user_to_club_as_role(self.create_user(), club2, Membership.OFFICER)
         self.add_user_to_club_as_role(self.create_user(), club2, Membership.MEMBER)
         self.add_user_to_club_as_role(self.create_user(), club2, Membership.APPLICANT)
@@ -165,7 +167,7 @@ class Command(BaseCommand):
         user3 = User.objects.get(email='billie@example.org')
         club3 = clubs[2]
         self.add_user_to_club_as_role(user3, club3, Membership.MEMBER)
-        self.add_user_to_club_as_role(user3, club0, Membership.MEMBER)
+
         self.add_user_to_club_as_role(self.create_user(), club3, Membership.OWNER)
         self.add_user_to_club_as_role(self.create_user(), club3, Membership.OFFICER)
         self.add_user_to_club_as_role(self.create_user(), club3, Membership.APPLICANT)
@@ -173,4 +175,4 @@ class Command(BaseCommand):
         default_club = Club.objects.get(name='Kerbal Chess Club')
         self.add_user_to_club_as_role(user1, default_club, Membership.MEMBER)
         self.add_user_to_club_as_role(user2, default_club, Membership.OFFICER)
-        self.add_user_to_club_as_role(user3, default_club, Membership.OWNER)
+        self.add_user_to_club_as_role(user3, default_club, Membership.MEMBER)
