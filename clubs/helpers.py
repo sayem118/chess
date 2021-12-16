@@ -18,10 +18,9 @@ def required_role(role):
             user = request.user
             if user.is_anonymous:
                 return redirect('log_in')
-            club = user.current_club
-            if user.current_club_not_none == False:
+            if not user.current_club_not_none:
                 return redirect('start')
-            if not club.is_of_role(user, role):
+            if user.current_club_role < role:
                 return redirect('start')
             else:
                 return view_function(request, *args, **kwargs)
@@ -38,7 +37,7 @@ def prohibited_role(role):
             if user.is_anonymous:
                 return redirect('log_in')
             club = user.current_club
-            if user.current_club_not_none == False:
+            if not user.current_club_not_none:
                 return redirect('start')
             elif club.is_of_role(user, role):
                 return redirect('start')
