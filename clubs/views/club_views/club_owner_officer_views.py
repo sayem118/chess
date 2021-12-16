@@ -71,14 +71,7 @@ def approve_applicant(request, user_id):
         return redirect('start')
     else:
         return redirect('applicants_list')
-
-
-# @required_role(Membership.OWNER)
-# def members_list(request):
-#     club = request.user.current_club
-#     members = club.associates.filter(membership__role=Membership.MEMBER)
-#     return render(request, 'promote_members.html', {'members': members})
-
+    
 
 @required_role(Membership.OWNER)
 def promote_member(request, user_id):
@@ -93,13 +86,6 @@ def promote_member(request, user_id):
         return redirect('start')
     else:
         return redirect('members_list')
-
-
-# @required_role(Membership.OWNER)
-# def officers_list(request):
-#     club = request.user.current_club
-#     officers = club.associates.filter(membership__role=Membership.OFFICER)
-#     return render(request, 'manage_officers.html', {'officers': officers})
 
 
 @required_role(Membership.OWNER)
@@ -130,9 +116,3 @@ def transfer_ownership(request, user_id):
         return redirect('start')
     else:
         return redirect('start')
-
-# @required_role(Membership.OFFICER)
-# def applicants_list(request):
-#     club = request.user.current_club
-#     applicants = club.associates.filter(membership__role=Membership.APPLICANT)
-#     return render(request, 'approve_applicants.html', {'applicants': applicants})
