@@ -90,7 +90,7 @@ class TournamentModelTestCase(TestCase):
 
     def test_capacity_can_be_up_to_96(self):
         self.tournament.capacity = 96
-        self._assert_tournament_is_invalid()
+        self._assert_tournament_is_valid()
 
     def test_capacity_must_not_be_greater_than_96(self):
         self.tournament.capacity = 97
